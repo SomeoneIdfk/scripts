@@ -133,12 +133,12 @@ end
 
 print('[FARM] Loaded server-hop.')
 
+repeat wait() until game:IsLoaded()
+
 if data.TWins.Value < 5 and data.CTWins.Value < 5 then
     Serverhop()
     wait(10)
 end
-
-repeat wait() until game:IsLoaded()
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ionlol/Hexagon-fixed-for-July-28-Roblox-update-/main/fix"))();
 

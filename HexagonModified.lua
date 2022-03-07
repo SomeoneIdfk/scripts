@@ -1816,89 +1816,25 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 	end
 end)
 
-function teleportToteammate()
-	tpttval = tpttval
-
-	if tpttval == nil then
-		tpttval = false
-	end
-
-	tpcounter = tpcounter
-
-	if tpcounter == nil then
-		tpcounter = 1
-	end
-
-	if tpttval == false then
-		tpttval = true
-		if IsAlive(LocalPlayer) then
-			for x = 1,25 do
-				LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(locationsaved + Vector3.new(0, 0, 0))
-				wait()
+function teleportTospawnpoint()
+	if IsAlive(LocalPlayer) then
+		if game:GetService('Players').LocalPlayer.Status.Team.Value == "T" then
+			for i,v in pairs(WorkSpace.Map.TSpawns:GetChildren()) do
+				lastspawnpoint = v
 			end
-			
-			print("Teleported back to spawnpoint.")
-		end
 
-		tpttval = false
-	elseif tpttval == true then
-		if tpcounter == 0 then
-			tpttval = false
-			tpcounter = 1
-			teleportToteammate()
-		else
-			tpcounter = tpcounter - 1
-			print('Weird error? Correcting next round...')
+			LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 1, 0))
+		elseif game:GetService('Players').LocalPlayer.Status.Team.Value == "CT" then
+			for i,v in pairs(WorkSpace.Map.CTSpawns:GetChildren()) do
+				lastspawnpoint = v
+			end
+
+			LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 1, 0))
 		end
 	end
 end
 
 local ExperimentalTabCategoryTeleport = ExperimentalTab:AddCategory("Teleport", 1)
-
-ExperimentalTabCategoryTeleport:AddToggle("Teleport back to spawnpoint", false, "ExperimentalTabCategoryTeleportSpawnpoint", function(val)
-	if val == true then
-		gamedata = WorkSpace.Status
-		btwins = gamedata.TWins.Value
-		bctwins = gamedata.CTWins.Value
-		locationsaved = nil
-		trueorfalse = true
-		pausetps = 0
-		zerozero = false
-		SpawnpointLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if btwins == gamedata.TWins.Value and bctwins == gamedata.CTWins.Value then
-					wait(1)
-				else
-					pausetps = 1
-					zerozero = false
-
-					wait(3)
-					if LocalPlayer.Character:FindFirstChild("Humanoid") then
-						if LocalPlayer.Character.Humanoid.Health ~= 0 and trueorfalse == true then
-							trueorfalse = false
-							wait(1)
-							locationsaved = LocalPlayer.Character.HumanoidRootPart.Position
-							print("Spawnpoint location saved!", locationsaved)
-							btwins = gamedata.TWins.Value
-							bctwins = gamedata.CTWins.Value
-
-							pausetps = 0
-						end
-					else
-						if locationsaved ~= nil and trueorfalse == false then
-							locationsaved = nil
-							trueorfalse = true
-						end
-					end
-				end
-			end)
-		end)
-	elseif val == false and SpawnpointLoop then
-		SpawnpointLoop:Disconnect()
-		pausetps = 0
-		trueorfalse = true
-	end
-end)
 
 ExperimentalTabCategoryTeleport:AddDropdown("Teleport Method", {"Players", "Bomb Sites"}, "Players", "ExperimentalTabCategoryTeleportTeleportOptions")
 
@@ -1961,7 +1897,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						else
 							if teleported == false then
 								teleported = true
-								teleportToteammate()
+								teleportTospawnpoint()
 							end
 						end
 					elseif string.match(tostring(playertp1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(tostring(playertp2), library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(tostring(playertp3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
@@ -1990,7 +1926,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						else
 							if teleported == false then
 								teleported = true
-								teleportToteammate()
+								teleportTospawnpoint()
 							end
 						end
 					
@@ -2024,7 +1960,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
-		teleportToteammate()
+		teleportTospawnpoint()
 	end
 end)
 
@@ -2033,7 +1969,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Constant Teleport", false, "Experimen
 		constanttp = true
 	elseif val == false and constanttp then
 		constanttp = false
-		teleportToteammate()
+		teleportTospawnpoint()
 	end
 end)
 
@@ -2059,7 +1995,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 							end
 						elseif IsAlive(LocalPlayer) then
-							teleportToteammate()
+							teleportTospawnpoint()
 						end
 					end
 				end
@@ -2067,9 +2003,14 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end)
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
-		teleportToteammate()
+		teleportTospawnpoint()
 	end
 end)
+
+local ExperimentalTabCategoryCredits = ExperimentalTab:AddCategory("Credits", 1)
+
+ExperimentalTabCategoryCredits:AddLabel("Experimental tab made by:")
+ExperimentalTabCategoryCredits:AddLabel("SomeoneIdfk#4763")
 
 local ExperimentalTabCategoryPlayer1 = ExperimentalTab:AddCategory("Player 1", 2)
 
@@ -2346,11 +2287,6 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 		KillSpecificLoop3:Disconnect()
 	end
 end)
-
-local ExperimentalTabCategoryCredits = ExperimentalTab:AddCategory("Credits", 2)
-
-ExperimentalTabCategoryCredits:AddLabel("Experimental tab made by:")
-ExperimentalTabCategoryCredits:AddLabel("SomeoneIdfk#4763")
 
 local SettingsTabCategoryCredits = SettingsTab:AddCategory("Credits", 2)
 

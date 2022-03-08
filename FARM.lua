@@ -131,7 +131,7 @@ print('[FARM] Loaded server-hop.')
 
 repeat wait() until game:IsLoaded()
 
-if data.TWins.Value < 5 or data.CTWins.Value < 5 then
+if data.TWins.Value < 5 and data.CTWins.Value < 5 then
     while true do
         Serverhop()
         wait(10)

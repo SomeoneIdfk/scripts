@@ -2010,7 +2010,7 @@ end)
 local ExperimentalTabCategoryCredits = ExperimentalTab:AddCategory("Credits", 1)
 
 ExperimentalTabCategoryCredits:AddLabel("Experimental tab made by:")
-ExperimentalTabCategoryCredits:AddLabel("SomeoneIdfk#4763")
+ExperimentalTabCategoryCredits:AddLabel("SomeoneIdfk")
 
 local ExperimentalTabCategoryPlayer1 = ExperimentalTab:AddCategory("Player 1", 2)
 

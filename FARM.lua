@@ -4,7 +4,7 @@ local data = game:GetService("Workspace").Status
 local v_u  = game:GetService('VirtualUser')
 
 local script_version = '1.3'
-local script_creator = 'SomeoneIdfk#4763'
+local script_creator = 'SomeoneIdfk'
 local github = 'https://github.com/SomeoneIdfk/scripts'
 
 print('[FARM] Version:', script_version)

@@ -1781,33 +1781,83 @@ ExperimentalTabCategoryOptions:AddDropdown("Gamemode", {"Teams", "FFA"}, "Teams"
 
 ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "ExperimentalTabCategoryOptionsRefresh", function(val)
 	if val == true then
+		trueorfalse3 = true
 		RefreshLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				local playerlistkillall = {"-"}
-				local playerlistfollow = {"-"}
-				for i,v in pairs(game.Players:GetChildren()) do
-					if v ~= LocalPlayer then
-						if IsAlive(v) then
-							playerlistfollow[v] = v
-						end
+				if trueorfalse3 == true then
+					trueorfalse3 = false
 
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-							if GetTeam(v) ~= GetTeam(LocalPlayer) then
+					local playerlistkillall = {"-"}
+					local playerlistfollow = {"-"}
+					player1f = false
+					player2f = false
+					player3f = false
+					playerfollowf = false
+					for i,v in pairs(game.Players:GetChildren()) do
+						if v ~= LocalPlayer then
+							if IsAlive(v) then
+								playerlistfollow[v] = v
+							end
+
+							if tostring(v) == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
+								player1f = true
+							end
+
+							if tostring(v) == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
+								player2f = true
+							end
+
+							if tostring(v) == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
+								player3f = true
+							end
+
+							if tostring(v) == library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value then
+								playerfollowf = true
+							end
+
+							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
+								if GetTeam(v) ~= GetTeam(LocalPlayer) then
+									playerlistkillall[v] = v
+								end
+							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 								playerlistkillall[v] = v
 							end
-						elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-							playerlistkillall[v] = v
 						end
 					end
-				end
 
-				if prev_players ~= playerlistfollow then
-					local prev_players = playerlistfollow
+					if prev_players ~= playerlistfollow then
+						local prev_players = playerlistfollow
 
-					library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.options = playerlistfollow
-					library.pointers.ExperimentalTabCategoryPlayer1Players.options = playerlistkillall
-					library.pointers.ExperimentalTabCategoryPlayer2Players.options = playerlistkillall
-					library.pointers.ExperimentalTabCategoryPlayer3Players.options = playerlistkillall
+						if playerfollowf == true then
+							library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.options = playerlistfollow
+						else
+							library.pointers.ExperimentalTabCategoryTeleportPLRFollowList:Set("-")
+							library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.options = playerlistfollow
+						end
+					
+						if player1f == true then
+							library.pointers.ExperimentalTabCategoryPlayer1Players.options = playerlistkillall
+						else
+							library.pointers.ExperimentalTabCategoryPlayer1Players:Set("-")
+							library.pointers.ExperimentalTabCategoryPlayer1Players.options = playerlistkillall
+						end
+
+						if player2f == true then
+							library.pointers.ExperimentalTabCategoryPlayer2Players.options = playerlistkillall
+						else
+							library.pointers.ExperimentalTabCategoryPlayer2Players:Set("-")
+							library.pointers.ExperimentalTabCategoryPlayer2Players.options = playerlistkillall
+						end
+
+						if player3f == true then
+							library.pointers.ExperimentalTabCategoryPlayer3Players.options = playerlistkillall
+						else
+							library.pointers.ExperimentalTabCategoryPlayer3Players:Set("-")
+							library.pointers.ExperimentalTabCategoryPlayer3Players.options = playerlistkillall
+						end
+					end
+
+					trueorfalse3 = true
 				end
 			end)
 		end)
@@ -1864,96 +1914,131 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		teleported = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if pausetps == 0 then
-					if constanttp or KillEnemiesLoop then
-						playerlisttest = {}
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-							for i,v in pairs(game.Players:GetChildren()) do
-								if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) then
-									table.insert(playerlisttest, v)
-								end
-							end
-						end
-						if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
-											if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-												LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
-												wait()
-											elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-												LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
-											end
-										end
-									end
-								end
-							end
-						else
-							if teleported == false then
-								teleported = true
-								teleportTospawnpoint()
-							end
-						end
-					elseif string.match(tostring(playertp1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(tostring(playertp2), library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(tostring(playertp3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
-						if playertp1 ~= "-" and playertp2 ~= "-" and playertp3 ~= "-" then
-							if IsAlive(playertp1) or IsAlive(playertp2) or IsAlive(playertp3) then
-								if IsAlive(LocalPlayer) then
-									teleported = false
-									if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-										LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-										wait()
-										LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-									elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-										for i,v in pairs(game.Players:GetChildren()) do
-											if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
-												if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-													LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
-													wait()
-												elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-													LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
-												end
-											end
-										end
-									end
-								end
-							end
-						else
-							if teleported == false then
-								teleported = true
-								teleportTospawnpoint()
-							end
-						end
-					
-					else
-						print("Re-ordering teleport player list.")
+				if constanttp or KillEnemiesLoop then
+					playerlisttest = {}
+					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 						for i,v in pairs(game.Players:GetChildren()) do
-							if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
-								playertp1 = v
-							elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
-								playertp1 = "-"
-							end
-			
-							if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
-								playertp2 = v
-							elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
-								playertp2 = "-"
-							end
-						
-							if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
-								playertp3 = v
-							elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
-								playertp3 = "-"
+							if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) then
+								table.insert(playerlisttest, v)
 							end
 						end
 					end
+					if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+						if IsAlive(LocalPlayer) then
+							teleported = false
+							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+								wait()
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+								for i,v in pairs(game.Players:GetChildren()) do
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
+											wait()
+										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+										end
+									end
+								end
+							end
+						end
+					else
+						if teleported == false then
+							teleported = true
+							teleportTospawnpoint()
+						end
+					end
+				elseif string.match(tostring(playertp1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(tostring(playertp2), library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(tostring(playertp3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
+					if IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" then
+						if IsAlive(LocalPlayer) then
+							teleported = false
+							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+								wait()
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+								for i,v in pairs(game.Players:GetChildren()) do
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
+											wait()
+										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+										end
+									end
+								end
+							end
+						end
+					elseif IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" then
+						if IsAlive(LocalPlayer) then
+							teleported = false
+							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+								wait()
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+								for i,v in pairs(game.Players:GetChildren()) do
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
+											wait()
+										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+										end
+									end
+								end
+							end
+						end
+					elseif IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" then
+						if IsAlive(LocalPlayer) then
+							teleported = false
+							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+								wait()
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+								for i,v in pairs(game.Players:GetChildren()) do
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
+											wait()
+										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+										end
+									end
+								end
+							end
+						end
+					else
+						if teleported == false then
+							teleported = true
+							wait(1)
+							teleportTospawnpoint()
+						end
+					end
+				
 				else
-					wait()
+					print("Re-ordering teleport player list.")
+					for i,v in pairs(game.Players:GetChildren()) do
+						if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
+							playertp1 = v
+						elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
+							playertp1 = "-"
+						end
+		
+						if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
+							playertp2 = v
+						elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
+							playertp2 = "-"
+						end
+					
+						if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
+							playertp3 = v
+						elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
+							playertp3 = "-"
+						end
+					end
 				end
 			end)
 		end)
@@ -2007,10 +2092,29 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 	end
 end)
 
+function Serverhop()
+    wait(1)
+	local x = {}
+	for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
+		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+			x[#x + 1] = v.id
+		end
+	end
+	if #x > 0 then
+		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
+	else
+		return "Protocol:cantfind"
+	end
+end
+
 local ExperimentalTabCategoryCredits = ExperimentalTab:AddCategory("Credits", 1)
 
 ExperimentalTabCategoryCredits:AddLabel("Experimental tab made by:")
 ExperimentalTabCategoryCredits:AddLabel("SomeoneIdfk")
+ExperimentalTabCategoryCredits:AddLabel("No discord for you.")
+ExperimentalTabCategoryCredits:AddLabel("")
+ExperimentalTabCategoryCredits:AddLabel("Special thanks to this beta tester!")
+ExperimentalTabCategoryCredits:AddLabel("hxg.addictt#8871")
 
 local ExperimentalTabCategoryPlayer1 = ExperimentalTab:AddCategory("Player 1", 2)
 
@@ -2046,6 +2150,8 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 
 							while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
@@ -2065,6 +2171,8 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								
 							while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
@@ -2083,6 +2191,8 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
@@ -2138,6 +2248,8 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 							
 							while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
@@ -2157,6 +2269,8 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 	
 							while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
@@ -2175,6 +2289,8 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
@@ -2230,6 +2346,8 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 							
 							while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
@@ -2248,6 +2366,8 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 	
 							while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
@@ -2268,6 +2388,8 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 
 							while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						end
@@ -2287,6 +2409,428 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 		KillSpecificLoop3:Disconnect()
 	end
 end)
+
+local ExperimentalTabCategoryFarm = ExperimentalTab:AddCategory("Farm", 2)
+
+ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryFarmEnable", function(val)
+	if val == true then
+		trueorfalse2 = true
+		trueorfalse4 = true
+		wvalue = 0
+		data = WorkSpace.Status
+		map = WorkSpace.Map.Origin.Value
+		prevscore = library.pointers.ExperimentalTabCategoryFarmScore.value
+		ticks = 0
+
+		if data.TWins.Value < library.pointers.ExperimentalTabCategoryFarmScore.value and data.CTWins.Value < library.pointers.ExperimentalTabCategoryFarmScore.value and library.pointers.ExperimentalTabCategoryFarmServerHop.value == true then
+			while true do
+				Serverhop()
+				wait(10)
+			end
+		end
+		FarmLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if wvalue ~= 30 then
+					wvalue = wvalue + 1
+					if wvalue == 15 then
+						if data.TWins.Value == 7 and data.CTWins.Value == 7 and library.pointers.ExperimentalTabCategoryFarmServerHop.value == true then
+							while true do
+								Serverhop()
+								wait(10)
+							end
+						elseif data.TWins.value < library.pointers.ExperimentalTabCategoryFarmScore.value and data.CTWins.Value < library.pointers.ExperimentalTabCategoryFarmScore.value and library.pointers.ExperimentalTabCategoryFarmServerHop.value == true then
+							while true do
+								Serverhop()
+								wait(10)
+							end
+					
+						elseif data.TWins.Value ~= data.CTWins.Value then
+							if data.TWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.TWins.Value > data.CTWins.Value then
+								if game:GetService('Players').LocalPlayer.Status.Team.Value ~= "T" then
+									if data.NumT.Value <= data.NumCT.Value then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+									elseif (data.NumT.Value - data.NumCT.Value) == 1 then
+										if game:GetService('Players').LocalPlayer.Status.Team.Value == "Spectator" then
+											game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+											game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+										end
+									end
+								end
+					
+							elseif data.CTWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.CTWins.Value > data.TWins.Value then
+								if game:GetService('Players').LocalPlayer.Status.Team.Value ~= "CT" then
+									if data.NumCT.Value <= data.NumT.Value then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+									elseif (data.NumCT.Value - data.NumT.Value) == 1 then
+										if game:GetService('Players').LocalPlayer.Status.Team.Value == "Spectator" then
+											game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+											game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+										end
+									end
+								end
+							end
+						end
+					elseif wvalue == 27 then
+						if library.pointers.ExperimentalTabCategoryFarmBuyCases.value == true and library.pointers.ExperimentalTabCategoryFarmSelectedCase.value ~= "-" then
+							if game:GetService('Players').LocalPlayer.SkinFolder.Funds.Value > 50 and trueorfalse4 == true then
+								trueorfalse4 = false
+								game.ReplicatedStorage.Events.DataEvent:FireServer({"BuyCase", library.pointers.ExperimentalTabCategoryFarmSelectedCase.value})
+								wait(1)
+								trueorfalse4 = true
+							end
+						end
+					elseif wvalue == 28 then
+						if prevscore ~= library.pointers.ExperimentalTabCategoryFarmScore.value and library.pointers.ExperimentalTabCategoryFarmServerHop.value == true then
+							prevscore = library.pointers.ExperimentalTabCategoryFarmScore.value
+							while true do
+								Serverhop()
+								wait(10)
+							end
+						end
+					elseif wvalue == 29 then
+						if WorkSpace.Map.Origin.Value ~= map and library.pointers.ExperimentalTabCategoryFarmServerHop.value == true then
+							while true do
+								Serverhop()
+								wait(10)
+							end
+						end
+					end
+				elseif wvalue == 30 then
+					wvalue = 0
+					if ticks == 20 then
+						trueorfalse2 = true
+						ticks = 0
+					end
+
+					if library.pointers.ExperimentalTabCategoryFarmKillPlayer.value == true and game:GetService('Players').LocalPlayer.Character:FindFirstChild("Humanoid") then
+						if game:GetService('Players').LocalPlayer.Character.Humanoid.Health ~= 0 and trueorfalse2 == true then
+							trueorfalse2 = false
+							wait(6)
+							game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
+							wait(1)
+							trueorfalse2 = true
+						elseif trueorfalse2 == false then
+							ticks = ticks + 1
+						end
+					end
+				end
+			end)
+		end)
+	elseif val == false and FarmLoop then
+		FarmLoop:Disconnect()
+	end
+end)
+
+ExperimentalTabCategoryFarm:AddToggle("Buy cases", false, "ExperimentalTabCategoryFarmBuyCases")
+
+ExperimentalTabCategoryFarm:AddDropdown("Selected case", {"-", "Militia Case", "Modern Case", "Hapax Case", "Karambit Case", "Remastered Case", "Vortax Case", "SCR Case", "Imagenim Case", "Kitter Case", "Hiato Case"}, "-", "ExperimentalTabCategoryFarmSelectedCase")
+
+ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
+
+ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
+
+ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 7, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
+
+local SkinsTab = Window:CreateTab("Skins")
+
+local SkinsTabRifles = SkinsTab:AddCategory("Rifles", 1)
+
+SkinsTabRifles:AddToggle("Enable", false, "SkinsTabRiflesEnabled", function(val)
+	if val == true then
+		SkinsTabRiflesLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value ~= library.pointers.SkinsTabRiflesGalil.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = library.pointers.SkinsTabRiflesGalil.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value ~= library.pointers.SkinsTabRiflesAK47.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = library.pointers.SkinsTabRiflesAK47.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value ~= library.pointers.SkinsTabRiflesSG.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = library.pointers.SkinsTabRiflesSG.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value ~= library.pointers.SkinsTabRiflesM4A4.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = library.pointers.SkinsTabRiflesM4A4.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value ~= library.pointers.SkinsTabRiflesAUG.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = library.pointers.SkinsTabRiflesAUG.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value ~= library.pointers.SkinsTabRiflesFamas.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = library.pointers.SkinsTabRiflesFamas.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value ~= library.pointers.SkinsTabRiflesM4A1.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = library.pointers.SkinsTabRiflesM4A1.value
+				end
+				wait(1)
+			end)
+		end)
+	elseif val == false and SkinsTabRiflesLoop then
+		SkinsTabRiflesLoop:Disconnect()
+	end
+end)
+SkinsTabRifles:AddDropdown("Galil", {"Stock", "Hardware", "Hardware 2", "Toxicity", "Frosted", "Worn"}, "Stock", "SkinsTabRiflesGalil")
+SkinsTabRifles:AddDropdown("Ak-47", {"Stock", "Hallows", "Ace", "Code Orange", "Clown", "Variant Camo", "Eve", "VAV", "Quantum", "Hypersonic", "Mean Green", "Bloodboom", "Scapter", "Skin Committee", "Patch", "Outlaws", "Gifted", "Ugly Sweater", "Secret Santa", "Precision", "Outrunner", "Godess", "Maker", "Ghost", "Glo", "Survivor", "Shooting Star", "Halo", "Inversion", "Plated", "Quicktime", "Yltude", "Jester", "Scythe", "Neonline", "Galaxy Corpse"}, "Stock", "SkinsTabRiflesAK47")
+SkinsTabRifles:AddDropdown("Scout", {"Stock", "Xmas", "Coffin Biter", "Railgun", "Hellborn", "Hot Cocoa", "Theory", "Pulse", "Monstruo", "Flowing Mists", "Neon Regulation", "Posh", "Darkness"}, "Stock", "SkinsTabRiflesScout")
+SkinsTabRifles:AddDropdown("SG 553", {"Stock", "Yltude", "Knighthood", "Variant Camo", "Magma", "DropX", "Dummy", "Kitty Cat", "Drop-Out", "Control"}, "Stock", "SkinsTabRiflesSG")
+SkinsTabRifles:AddDropdown("AWP", {"Stock", "Grepkin", "Instinct", "Nerf", "JTF2", "Difference", "Weeb", "Pink Vision", "Desert Camo", "Bloodborne", "Lunar", "Scapter", "Coffin Biter", "Pear Tree", "Northern Lights", "Racer", "Forever", "Blastech", "Abaddon", "Retroactive", "Pinkie", "Autumness", "Venomus", "Hika", "Silence", "Kumanjayi", "Dragon", "Illusion", "Regina", "Quicktime", "Toxic Nitro", "Darkness", "Oriental", "Grim"}, "Stock", "SkinsTabRiflesAWP")
+SkinsTabRifles:AddDropdown("G3SG1", {"Stock", "Foliage", "Hex", "Amethyst", "Autumn", "Mahogany", "Holly Bound"}, "Stock", "SkinsTabRiflesG3SG1")
+SkinsTabRifles:AddDropdown("M4A4", {"Stock", "Devil", "Pinkvision", "Desert Camo", "BOT[S]", "Precision", "Candyskull", "Scapter", "Toy Soldier", "Endline", "Pondside", "Ice Cap", "Pinkie", "Racer", "Stardust", "King", "Flashy Ride", "RayTrack", "Mistletoe", "Delinquent", "Quicktime", "Jester", "Darkness"}, "Stock", "SkinsTabRiflesM4A4")
+SkinsTabRifles:AddDropdown("AUG", {"Stock", "Phoenix", "Dream Hound", "Enlisted", "Homestead", "Sunsthetic", "NightHawk", "Maker", "Graffiti", "Chilly Night", "Mystique", "Soldier"}, "Stock", "SkinsTabRiflesAUG")
+SkinsTabRifles:AddDropdown("Famas F1", {"Stock", "Abstract", "Haunted Forest", "Goliath", "Redux", "Toxic Rain", "Centipede", "Medic", "Cogged", "KugaX", "Shocker", "MK11", "Imprisioned"}, "Stock", "SkinsTabRiflesFamas")
+SkinsTabRifles:AddDropdown("M4A1", {"Stock", "Toucan", "Animatic", "Desert Camo", "Wastelander", "Heavens Gate", "Tecnician", "Impulse", "Burning", "Lunar", "Necropolis", "Jester", "Nightmare"}, "Stock", "SkinsTabRiflesM4A1")
+
+local SkinsTabHeavy = SkinsTab:AddCategory("Heavy", 1)
+
+SkinsTabHeavy:AddToggle("Enable", false, "SkinsTabHeavyEnabled", function(val)
+	if val == true then
+		SkinsTabHeavyLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value ~= library.pointers.SkinsTabHeavyMAG7.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = library.pointers.SkinsTabHeavyMAG7.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value ~= library.pointers.SkinsTabHeavySawedOff.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = library.pointers.SkinsTabHeavySawedOff.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
+				end
+				wait(1)
+			end)
+		end)
+	elseif val == false and SkinsTabHeavyLoop then
+		SkinsTabHeavyLoop:Disconnect()
+	end
+end)
+SkinsTabHeavy:AddDropdown("Nova", {"Stock", "Terraformer", "Tiger", "Black Ice", "Sharkesh", "Paradise", "Starry Night", "Cookie", "Tricked", "Defective", "Oath"}, "Stock", "SkinsTabHeavyNova")
+SkinsTabHeavy:AddDropdown("XM1014", {"Stock", "Red", "Spectrum", "Artic", "Atomic", "Campfire", "Predator", "MK11", "Endless Night"}, "Stock", "SkinsTabHeavyXM")
+SkinsTabHeavy:AddDropdown("MAG-7", {"Stock", "Molten", "Striped", "Frosty", "Outbreak", "Bombshell", "C4UTION"}, "Stock", "SkinsTabHeavyMAG7")
+SkinsTabHeavy:AddDropdown("Sawed Off", {"Stock", "Spooky", "Colorbloom", "Casino", "Opal", "Executioner", "Sullys Blacklight"}, "Stock", "SkinsTabHeavySawedOff")
+SkinsTabHeavy:AddDropdown("M249", {"Stock", "Aggressor", "Wolf", "P2020", "Spooky", "Lantern", "Halloween Treats"}, "Stock", "SkinsTabHeavyM249")
+SkinsTabHeavy:AddDropdown("MG42", {"Stock", "Winterfell", "Default", "Quazar", "Midnightbones", "Wetland", "Striped"}, "Stock", "SkinsTabHeavyNegev")
+
+local SkinsTabAdd = SkinsTab:AddCategory("Additional", 1)
+
+waittrueorfalse = true
+SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
+	if val == true then
+		prevadd = nil
+		SkinsTabAddLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if prevadd ~= library.pointers.SkinsTabAddSelection.value then
+					prevadd = library.pointers.SkinsTabAddSelection.value
+					if waittrueorfalse == true then
+						waittrueorfalse = false
+						wait(3)
+					end
+					local InventoryLoadout = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"]
+					AllSkinsTable = {}
+					if library.pointers.SkinsTabAddSelection.value == "All" then
+						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
+									table.insert(AllSkinsTable, {v.Name.."_Stock"})
+									
+									for i2,v2 in pairs(v:GetChildren()) do
+										if v2.Name ~= "Stock" then
+											table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+										end
+									end
+								end
+							end
+						end
+							
+						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								table.insert(AllSkinsTable, {v.Name.."_Stock"})
+							end
+						end
+				
+						for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
+							if v:IsA("Folder") and v.Name ~= "Models" then
+								for i2,v2 in pairs(v:GetChildren()) do
+									table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+								end
+							end
+						end
+					elseif library.pointers.SkinsTabAddSelection.value == "Knives&Gloves" then
+						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
+									table.insert(AllSkinsTable, {v.Name.."_Stock"})
+									
+									for i2,v2 in pairs(v:GetChildren()) do
+										if v2.Name ~= "Stock" then
+											table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+										end
+									end
+								end
+							end
+						end
+							
+						for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
+							if v:IsA("Folder") and v.Name ~= "Models" then
+								for i2,v2 in pairs(v:GetChildren()) do
+									table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+								end
+							end
+						end
+					elseif library.pointers.SkinsTabAddSelection.value == "Stock Weapons" then
+						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								table.insert(AllSkinsTable, {v.Name.."_Stock"})
+							end
+						end
+					end
+				
+					cbClient.CurrentInventory = AllSkinsTable
+				
+					if InventoryLoadout.Visible == true then
+						InventoryLoadout.Visible = false
+						InventoryLoadout.Visible = true
+					end
+				end
+				wait(1)
+			end)
+		end)
+	elseif val == false and SkinsTabAddLoop then
+		SkinsTabAddLoop:Disconnect()
+	end
+end)
+SkinsTabAdd:AddDropdown("Additional", {"Default", "Knives&Gloves", "Stock Weapons", "All"}, "Default", "SkinsTabAddSelection")
+
+local SkinsTabCategoryCredits = SkinsTab:AddCategory("Credits", 1)
+
+SkinsTabCategoryCredits:AddLabel("Skins tab made by:")
+SkinsTabCategoryCredits:AddLabel("SomeoneIdfk")
+SkinsTabCategoryCredits:AddLabel("No discord for you.")
+SkinsTabCategoryCredits:AddLabel("")
+SkinsTabCategoryCredits:AddLabel("Special thanks to this beta tester!")
+SkinsTabCategoryCredits:AddLabel("hxg.addictt#8871")
+
+local SkinsTabSMGs = SkinsTab:AddCategory("SMGs", 2)
+
+SkinsTabSMGs:AddToggle("Enable", false, "SkinsTabSMGsEnabled", function(val)
+	if val == true then
+		SkinsTabSMGsLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value ~= library.pointers.SkinsTabSMGsMP9.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = library.pointers.SkinsTabSMGsMP9.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value ~= library.pointers.SkinsTabSMGsMAC10.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = library.pointers.SkinsTabSMGsMAC10.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value ~= library.pointers.SkinsTabSMGsMP7.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value ~= library.pointers.SkinstabSMGsMP7.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = library.pointers.SkinstabSMGsMP7.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
+				end
+				wait(1)
+			end)
+		end)
+	elseif val == false and SkinsTabSMGsLoop then
+		SkinsTabSMGsLoop:Disconnect()
+	end
+end)
+SkinsTabSMGs:AddDropdown("MP9", {"Stock", "Velvita", "Blueroyal", "Decked Halls", "Cookie Man", "Wilderness", "Vaporwave", "Cob Web", "SnowTime", "Control"}, "Stock", "SkinsTabSMGsMP9")
+SkinsTabSMGs:AddDropdown("MAC-10", {"Stock", "Pimpin", "Wetland", "Turbo", "Golden Rings", "Skeleboney", "Artists Intent", "Toxic", "Blaze", "Scythe", "Devil"}, "Stock", "SkinsTabSMGsMAC10")
+SkinsTabSMGs:AddDropdown("MP5", {"Stock", "Sunshot", "Calaxian", "Goo", "Holiday", "Silent Ops", "Industrial", "Reindeer", "Cogged", "Trauma"}, "Stock", "SkinsTabSMGsMP7")
+SkinsTabSMGs:AddDropdown("UMP-45", {"Stock", "Militia Camo", "Magma", "Redline", "Death Grip", "Molten", "Gum Drop", "Orbit"}, "Stock", "SkinsTabSMGsUMP")
+SkinsTabSMGs:AddDropdown("P90", {"Stock", "Skulls", "Redcopy", "Demon Within", "P-Chan", "Krampus", "Pine", "Elegant", "Northern Lights", "Argus", "Curse"}, "Stock", "SkinsTabSMGsP90")
+SkinsTabSMGs:AddDropdown("Thompson", {"Stock", "Festive", "Shattered", "Oblivion", "Sergeant", "Saint Nick", "Autumic"}, "Stock", "SkinsTabSMGsBizon")
+
+local SkinsTabPistols = SkinsTab:AddCategory("Pistols", 2)
+
+SkinsTabPistols:AddToggle("Enable", false, "SkinsTabPistolsEnabled", function(val)
+	if val == true then
+		SkinsTabPistolsLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value ~= library.pointers.SkinsTabPistolsGlock.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = library.pointers.SkinsTabPistolsGlock.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value ~= library.pointers.SkinsTabPistolsTec9.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = library.pointers.SkinsTabPistolsTec9.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value ~= library.pointers.SkinsTabPistolsP2000.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = library.pointers.SkinsTabPistolsP2000.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value ~= library.pointers.SkinsTabPistolsFiveSeven.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = library.pointers.SkinsTabPistolsFiveSeven.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value ~= library.pointers.SkinsTabPistolsUSP.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = library.pointers.SkinsTabPistolsUSP.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
+				end
+				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
+				end
+				wait(1)
+			end)
+		end)
+	elseif val == false and SkinsTabPistolsLoop then
+		SkinsTabPistolsLoop:Disconnect()
+	end
+end)
+SkinsTabPistols:AddDropdown("Glock-18", {"Stock", "Desert Camo", "Day Dreamer", "Wetland", "Anubis", "Midnight Tiger", "Scapter", "Gravestomper", "Tarnish", "Rush", "Angler", "Spacedust", "Money Maker", "RSL", "White Sauce", "Biotrip", "Underwater", "Hallows"}, "Stock", "SkinsTabPistolsGlock")
+SkinsTabPistols:AddDropdown("Dual Berettas", {"Stock", "Floral", "Xmas", "Neon web", "Hexline", "Carbonized", "Old Fashioned", "Dusty Manor"}, "Stock", "SkinsTabPistolsDualBerettas")
+SkinsTabPistols:AddDropdown("P250", {"Stock", "Bomber", "Green Web", "TC250", "Amber", "Frosted", "Solstice", "Equinox", "Goldish", "Shark", "Midnight"}, "Stock", "SkinsTabPistolsP250")
+SkinsTabPistols:AddDropdown("TEC-9", {"Stock", "Gift Wrapped", "Ironline", "Skintech", "Stocking Stuffer", "Samurai", "Phol", "Charger", "Performer", "Seasoned"}, "Stock", "SkinsTabPistolsTec9")
+SkinsTabPistols:AddDropdown("Deagle", {"Stock", "Glittery", "Grim", "Weeb", "Krystallos", "Honor-bound", "TC", "Xmas", "Scapter", "Cool Blue", "Survivor", "Cold Truth", "Heat", "ROLVe", "Independence", "Racer", "Pumpkin Buster", "Skin Committee", "DropX", "Crystal", "Blue Fur"}, "Stock", "SkinsTabPistolsDesertEagle")
+SkinsTabPistols:AddDropdown("PX4", {"Stock", "Comet", "Golden Age", "Apathy", "Candycorn", "Lunar", "Ruby", "Camo Dipped", "Dark Beast", "Pinkie", "Silence"}, "Stock", "SkinsTabPistolsP2000")
+SkinsTabPistols:AddDropdown("Five-seveN", {"Stock", "Stigma", "Danjo", "Summer", "Gifted", "Midnight Ride", "Fluid", "Sub Zero", "Autumn Fade", "Mr. Anatomy"}, "Stock", "SkinsTabPistolsFiveSeven")
+SkinsTabPistols:AddDropdown("USP-S", {"Stock", "Skull", "Yellowbelly", "Crimson", "Jade Dream", "Racing", "Frostbite", "Nighttown", "Paradise", "Dizzy", "Kraken", "Worlds Away", "Unseen", "Holiday", "Survivor"}, "Stock", "SkinsTabPistolsUSP")
+SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock", "Lightning", "Orange Web", "Festive", "Spectre", "Designed", "Holidays", "Hallow"}, "Stock", "SkinsTabPistolsCZ")
+SkinsTabPistols:AddDropdown("44 Magnum", {"Stock", "Violet", "Hunter", "Spades", "Exquisite", "TG"}, "Stock", "SkinsTabPistolsR8")
 
 local SettingsTabCategoryCredits = SettingsTab:AddCategory("Credits", 2)
 

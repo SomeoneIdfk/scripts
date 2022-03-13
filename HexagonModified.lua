@@ -1793,6 +1793,7 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 					player2f = false
 					player3f = false
 					playerfollowf = false
+					playertroll = false
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v ~= LocalPlayer then
 							if IsAlive(v) then
@@ -1815,6 +1816,10 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 								playerfollowf = true
 							end
 
+							if tostring(v) == library.pointers.TrollTabGrenadeSP.value then
+								playertroll = true
+							end
+
 							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 								if GetTeam(v) ~= GetTeam(LocalPlayer) then
 									playerlistkillall[v] = v
@@ -1827,6 +1832,13 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 
 					if prev_players ~= playerlistfollow then
 						local prev_players = playerlistfollow
+
+						if playertroll == true then
+							library.pointers.TrollTabGrenadeSP.options = playerlistfollow
+						else
+							library.pointers.TrollTabGrenadeSP:Set("-")
+							library.pointers.TrollTabGrenadeSP.options = playerlistfollow
+						end
 
 						if playerfollowf == true then
 							library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.options = playerlistfollow
@@ -1912,9 +1924,10 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 			end
 		end
 		teleported = false
+		pausetps = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if constanttp or KillEnemiesLoop then
+				if constanttp or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 						for i,v in pairs(game.Players:GetChildren()) do
@@ -1932,12 +1945,13 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
 							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false then
 										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+											wait()
 										end
 									end
 								end
@@ -1945,12 +1959,15 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						end
 					else
 						if teleported == false then
+							pausetps = true
 							teleported = true
+							wait()
 							teleportTospawnpoint()
+							pausetps = false
 						end
 					end
 				elseif string.match(tostring(playertp1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(tostring(playertp2), library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(tostring(playertp3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
-					if IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" then
+					if IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false
 							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
@@ -1959,18 +1976,19 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
 							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false then
 										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+											wait()
 										end
 									end
 								end
 							end
 						end
-					elseif IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" then
+					elseif IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false
 							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
@@ -1979,18 +1997,19 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
 							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false then
 										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+											wait()
 										end
 									end
 								end
 							end
 						end
-					elseif IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" then
+					elseif IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false
 							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
@@ -1999,12 +2018,13 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
 							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) then
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false then
 										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 0)
+											wait()
 										end
 									end
 								end
@@ -2012,9 +2032,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						end
 					else
 						if teleported == false then
+							pausetps = true
 							teleported = true
-							wait(1)
+							wait()
 							teleportTospawnpoint()
+							pausetps = false
 						end
 					end
 				
@@ -2045,7 +2067,10 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
+		pausetps = true
+		wait()
 		teleportTospawnpoint()
+		pausetps = false
 	end
 end)
 
@@ -2054,7 +2079,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Constant Teleport", false, "Experimen
 		constanttp = true
 	elseif val == false and constanttp then
 		constanttp = false
-		teleportTospawnpoint()
 	end
 end)
 
@@ -2072,7 +2096,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value ~= "-" then
-					if pausetps == 0 then
+					if pausetps == false then
 						if IsAlive(LocalPlayer) and IsAlive(followplayer) then
 							if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 30) - 15), 0, (math.random(0, 30) - 15))
@@ -2080,7 +2104,10 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 							end
 						elseif IsAlive(LocalPlayer) then
+							pausetps = true
+							wait()
 							teleportTospawnpoint()
+							pausetps = false
 						end
 					end
 				end
@@ -2088,7 +2115,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end)
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
+		pausetps = true
+		wait(1)
 		teleportTospawnpoint()
+		wait(1)
+		pausetps = false
 	end
 end)
 
@@ -2113,8 +2144,9 @@ ExperimentalTabCategoryCredits:AddLabel("Experimental tab made by:")
 ExperimentalTabCategoryCredits:AddLabel("SomeoneIdfk")
 ExperimentalTabCategoryCredits:AddLabel("No discord for you.")
 ExperimentalTabCategoryCredits:AddLabel("")
-ExperimentalTabCategoryCredits:AddLabel("Special thanks to this beta tester!")
+ExperimentalTabCategoryCredits:AddLabel("Special thanks to these beta testers!")
 ExperimentalTabCategoryCredits:AddLabel("hxg.addictt#8871")
+ExperimentalTabCategoryCredits:AddLabel("Sex Offender#2997")
 
 local ExperimentalTabCategoryPlayer1 = ExperimentalTab:AddCategory("Player 1", 2)
 
@@ -2728,8 +2760,9 @@ SkinsTabCategoryCredits:AddLabel("Skins tab made by:")
 SkinsTabCategoryCredits:AddLabel("SomeoneIdfk")
 SkinsTabCategoryCredits:AddLabel("No discord for you.")
 SkinsTabCategoryCredits:AddLabel("")
-SkinsTabCategoryCredits:AddLabel("Special thanks to this beta tester!")
+SkinsTabCategoryCredits:AddLabel("Special thanks to these beta testers!")
 SkinsTabCategoryCredits:AddLabel("hxg.addictt#8871")
+SkinsTabCategoryCredits:AddLabel("Sex Offender#2997")
 
 local SkinsTabSMGs = SkinsTab:AddCategory("SMGs", 2)
 
@@ -2831,6 +2864,123 @@ SkinsTabPistols:AddDropdown("Five-seveN", {"Stock", "Stigma", "Danjo", "Summer",
 SkinsTabPistols:AddDropdown("USP-S", {"Stock", "Skull", "Yellowbelly", "Crimson", "Jade Dream", "Racing", "Frostbite", "Nighttown", "Paradise", "Dizzy", "Kraken", "Worlds Away", "Unseen", "Holiday", "Survivor"}, "Stock", "SkinsTabPistolsUSP")
 SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock", "Lightning", "Orange Web", "Festive", "Spectre", "Designed", "Holidays", "Hallow"}, "Stock", "SkinsTabPistolsCZ")
 SkinsTabPistols:AddDropdown("44 Magnum", {"Stock", "Violet", "Hunter", "Spades", "Exquisite", "TG"}, "Stock", "SkinsTabPistolsR8")
+
+local TrollTab = Window:CreateTab("Troll")
+
+local TrollTabGrenade = TrollTab:AddCategory("Grenade")
+
+TrollTabGrenade:AddDropdown("Player", {"-"}, "-", "TrollTabGrenadeSP")
+TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val)
+	if val == true then
+		for i,v in pairs(game.Players:GetChildren()) do
+			if v.Name == library.pointers.TrollTabGrenadeSP.value then
+				player4 = v
+			elseif library.pointers.TrollTabGrenadeSP.value == "-" then
+				player4 = nil
+			end
+		end
+		trueorfalse8 = true
+		TrollTabGrenadeLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if trueorfalse8 == true and IsAlive(LocalPlayer) and IsAlive(player4) and library.pointers.TrollTabGrenadeSP.value == tostring(player4) then
+					trueorfalse8 = false
+
+					cframe = LocalPlayer.Character.HumanoidRootPart.CFrame
+
+					LocalPlayer.Character.HumanoidRootPart.CFrame = player4.Character.HumanoidRootPart.CFrame * CFrame.new(0, 10, 0)
+					wait(0.1)
+					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons["Flashbang"].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
+					wait(0.3)
+					LocalPlayer.Character.HumanoidRootPart.CFrame = cframe * CFrame.new(0, 0, 0)
+
+					wait(5)
+					trueorfalse8 = true
+				elseif not library.pointers.TrollTabGrenadeSP.value == tostring(player4) then
+					if library.pointers.TrollTabGrenadeSP.value == "-" then
+						player4 = nil
+					else
+						for i,v in pairs(game.Players:GetChildren()) do
+							if v.Name == library.pointers.TrollTabGrenadeSP.value then
+								player4 = v
+							end
+						end
+					end
+				end
+			end)
+		end)
+	elseif val == false and TrollTabGrenadeLoop then
+		TrollTabGrenadeLoop:Disconnect()
+	end
+end)
+
+local TrollTabSound = TrollTab:AddCategory("Sound")
+
+TrollTabSound:AddDropdown("Speed", {"Full speed", "Spammy", "Spam", "Slow", "Confusion"}, "Spam", "TrollTabSoundSpeed")
+TrollTabSound:AddToggle("Sound Spam", false, "TrollTabSoundSpam", function(val)
+	if val == true then
+		trueorfalse5 = true
+		trueorfalse6 = true
+		TrollTabSoundLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if trueorfalse5 == true and IsAlive(LocalPlayer) then
+					trueorfalse5 = false
+					for i,v in pairs(TableToNames(Sounds)) do
+						local soundstring = tostring(v)
+						if Sounds[soundstring] ~= nil and Sounds[soundstring]:IsA("Sound") and trueorfalse6 == true then
+							Sounds[soundstring]:Play()
+							if library.pointers.TrollTabSoundSpeed.value == "Spammy" then
+								wait(0.2)
+							elseif library.pointers.TrollTabSoundSpeed.value == "Spam" then
+								wait(1)
+							elseif library.pointers.TrollTabSoundSpeed.value == "Slow" then
+								wait(5)
+							elseif library.pointers.TrollTabSoundSpeed.value == "Confusion" then
+								wait(60)
+							end
+						end
+					end
+					trueorfalse5 = true
+				end
+			end)
+		end)
+	elseif val == false and TrollTabSoundLoop then
+		TrollTabSoundLoop:Disconnect()
+		trueorfalse6 = false
+	end
+end)
+
+local TrollTabSpawn = TrollTab:AddCategory("Spawn Item")
+
+TrollTabSpawn:AddDropdown("Item", Weapons, "-", "TrollTabSpawnSelected")
+TrollTabSpawn:AddToggle("Enable", false, "TrollTabSpawnEnable", function(val)
+	if val == true then
+		trueorfalse7 = true
+		TrollTabSpawnLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if trueorfalse7 == true and IsAlive(LocalPlayer) and library.pointers.TrollTabSpawnSelected.value ~= "-" then
+					trueorfalse7 = false
+					if game.ReplicatedStorage.Weapons:FindFirstChild(library.pointers.TrollTabSpawnSelected.value) then
+						game.ReplicatedStorage.Events.Drop:FireServer(
+							game.ReplicatedStorage.Weapons[library.pointers.TrollTabSpawnSelected.value],
+							LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 4),
+							game.ReplicatedStorage.Weapons[library.pointers.TrollTabSpawnSelected.value].Ammo.Value,
+							game.ReplicatedStorage.Weapons[library.pointers.TrollTabSpawnSelected.value].StoredAmmo.Value,
+							false,
+							LocalPlayer,
+							false,
+							false
+						)
+					end
+					wait(0.5)
+					trueorfalse7 = true
+				end
+			end)
+		end)
+	elseif val == false and TrollTabSpawnLoop then
+		TrollTabSpawnLoop:Disconnect()
+	end
+	
+end)
 
 local SettingsTabCategoryCredits = SettingsTab:AddCategory("Credits", 2)
 

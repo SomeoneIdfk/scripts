@@ -3086,25 +3086,17 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 					currentmap2 = WorkSpace.Map.Origin.Value
 
 					if currentmap2 == "de_seaside" then
-						originalwater = WorkSpace.Map.Killers.WaterKiller
-						clonedwater = originalwater:Clone()
+						originalkillers = WorkSpace:FindFirstChild("Map"):FindFirstChild("Killers")
+						clonedkillers = originalkillers:Clone()
 
-						clonedwater.Parent = originalwater.Parent
-						clonedwater.Size += Vector3.new(5, 2, 5)
-						clonedwater.Transparency = 1
-						clonedwater.CFrame = originalwater.CFrame * CFrame.new(0, 0, 0)
-						clonedwater.CanCollide = true
-						clonedwater.Name = "WaterBox"
+						clonedkillers.Parent = originalkillers.Parent
+						clonedkillers.WaterKiller.Transparency = 1
+						clonedkillers.WaterKiller.CanCollide = true
+						clonedkillers.WaterKiller.Name = "WaterBox"
 
-						originalroof = WorkSpace.Map.Killers.RoofKiller
-						clonedroof = originalroof:Clone()
+						clonedkillers.RoofKiller:Destroy()
 
-						clonedroof.Parent = originalroof.Parent
-						clonedroof.Size += Vector3.new(5, 5, 5)
-						clonedroof.Transparency = 1
-						clonedroof.CFrame = originalroof.CFrame * CFrame.new(0, 0, 0)
-						clonedroof.CanCollide = true
-						clonedroof.Name = "RoofBox"
+						originalkillers:Destroy()
 					end
 				else
 					wait(1)
@@ -3113,10 +3105,6 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 		end)
 	elseif val == false and TrollTabMapWOWLoop then
 		TrollTabMapWOWLoop:Disconnect()
-		if currentmap2 == "de_seaside" then
-			clonedwater:Destroy()
-			clonedroof:Destroy()
-		end
 	end
 end)
 

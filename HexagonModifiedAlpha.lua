@@ -2231,8 +2231,6 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
@@ -2254,8 +2252,6 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
@@ -2274,8 +2270,6 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2339,8 +2333,6 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
@@ -2362,8 +2354,6 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
@@ -2382,8 +2372,6 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2447,8 +2435,6 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
@@ -2470,8 +2456,6 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								wait()
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
@@ -2490,8 +2474,6 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))

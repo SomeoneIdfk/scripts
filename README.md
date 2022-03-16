@@ -5,6 +5,7 @@ Credit farming script:
 
 Modified version of Hexagon:
 **loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua"))();**
+
 Alpha version:
 **loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua"))();**
 

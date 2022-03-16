@@ -1938,6 +1938,9 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		pausetps = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
+				print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
+				print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
+				print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
 				if constanttp or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1980,10 +1983,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 							pausetps = false
 						end
 					end
-				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
-					print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
-					print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
-					print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
+				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) and pausetps == false then
 					if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false

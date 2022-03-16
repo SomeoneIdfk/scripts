@@ -1981,6 +1981,9 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						end
 					end
 				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
+					print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
+					print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
+					print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
 					if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false

@@ -2777,9 +2777,7 @@ SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 							
 						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
 							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								if not v.Name == "Gut Knife" or not v.Name == "Bayonet" or not v.Name == "Butterfly Knife" or not v.Name == "Falchion Knife" or not v.Name == "Karambit" or not v.Name == "Huntsman Knife" or not v.Name == "Cleaver" or not v.Name == "Sickle" or not v.Name == "Beared Axe" then
-									table.insert(AllSkinsTable, {v.Name.."_Stock"})
-								end
+								table.insert(AllSkinsTable, {v.Name.."_Stock"})
 							end
 						end
 				

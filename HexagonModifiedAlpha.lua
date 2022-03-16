@@ -1912,10 +1912,10 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
 				playertp1 = v
-				player1tpm = tostring(v)
+				playertp1m = tostring(v)
 			elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
 				playertp1 = nil
-				player1tpm = "-"
+				playertp1m = "-"
 			end
 
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then

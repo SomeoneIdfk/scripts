@@ -1655,11 +1655,9 @@ ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hex
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
 	if val == true then
-		trueorfalse9 = true
 		KillEnemiesLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if IsAlive(LocalPlayer) and trueorfalse9 == true then
-					trueorfalse9 = false
+				if IsAlive(LocalPlayer) then
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v ~= LocalPlayer and IsAlive(v) then
 							if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
@@ -1679,10 +1677,7 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new()
 											}
 										
-										while IsAlive(LocalPlayer) and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) do
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-											wait()
-										end
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1699,10 +1694,7 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new()
 										}
 								
-									while IsAlive(LocalPlayer) and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) do
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-										wait()
-									end
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								end
 							elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
 								if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1721,10 +1713,7 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new()
 											}
 				
-										while IsAlive(LocalPlayer) and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) do
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-											wait()
-										end
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1741,10 +1730,7 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new()
 										}
 			
-									while IsAlive(LocalPlayer) and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) do
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-										wait()
-									end
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								end
 							elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
 								if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1763,10 +1749,7 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new(0, 0, 0)
 											}
 
-										while IsAlive(LocalPlayer) and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) do
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-											wait()
-										end
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1783,16 +1766,11 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new(0, 0, 0)
 										}
 
-									while IsAlive(LocalPlayer) and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) do
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-										wait()
-									end
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								end
 							end
 						end
 					end
-
-					trueorfalse9 = true
 				end
 			end)
 		end)

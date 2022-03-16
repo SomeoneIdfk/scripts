@@ -2137,6 +2137,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
 						if IsAlive(LocalPlayer) and IsAlive(followplayer) then
+							teleported2 = false
 							if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 30) - 15), 0, (math.random(0, 30) - 15))
 							elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
@@ -2145,10 +2146,13 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 1, 3)
 							end
 						elseif IsAlive(LocalPlayer) then
-							pausetps = true
-							wait()
-							teleportTospawnpoint()
-							pausetps = false
+							if teleported2 == false then
+								pausetps = true
+								teleported2 = true
+								wait()
+								teleportTospawnpoint()
+								pausetps = false
+							end
 						end
 					end
 				else
@@ -2970,14 +2974,14 @@ TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val
 					cframe = LocalPlayer.Character.HumanoidRootPart.CFrame
 
 					LocalPlayer.Character.HumanoidRootPart.CFrame = player4.Character.HumanoidRootPart.CFrame * CFrame.new(0, 10, 0)
-					wait(0.1)
+					wait(0.3)
 					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons["Flashbang"].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
 					wait(0.3)
 					LocalPlayer.Character.HumanoidRootPart.CFrame = cframe * CFrame.new(0, 0, 0)
 
 					wait(5)
 					trueorfalse8 = true
-				elseif not library.pointers.TrollTabGrenadeSP.value == tostring(player4) then
+				elseif library.pointers.TrollTabGrenadeSP.value ~= tostring(player4) then
 					if library.pointers.TrollTabGrenadeSP.value == "-" then
 						player4 = nil
 					else
@@ -3109,6 +3113,17 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 		end
 	end
 end)
+
+local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
+
+TrollTabCategoryCredits:AddLabel("The troll tab is unfinished.")
+TrollTabCategoryCredits:AddLabel("Troll tab made by:")
+TrollTabCategoryCredits:AddLabel("SomeoneIdfk")
+TrollTabCategoryCredits:AddLabel("No discord for you.")
+TrollTabCategoryCredits:AddLabel("")
+TrollTabCategoryCredits:AddLabel("Special thanks to these beta testers!")
+TrollTabCategoryCredits:AddLabel("hxg.addictt#8871")
+TrollTabCategoryCredits:AddLabel("Sex Offender#2997")
 
 local SettingsTabCategoryCredits = SettingsTab:AddCategory("Credits", 2)
 

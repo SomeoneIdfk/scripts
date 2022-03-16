@@ -17,8 +17,8 @@ local RunService = game:GetService("RunService")
 -- Environment 
 local getrawmetatable = getrawmetatable or false
 local mousemove = mousemove or mousemoverel or mouse_move or false
+local senv = getsenv(game.Players.LocalPlayer.PlayerGui.Client)senv.splatterBlood = function() end
 local getsenv = getsenv or false
---local senv = getsenv(game.Players.LocalPlayer.PlayerGui.Client)senv.splatterBlood = function() end
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false

@@ -1631,7 +1631,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 					    elseif v:IsA("MeshPart") then
 					        v.Material = "Plastic"
 					        v.Reflectance = 0
-					        v.TextureID = 10385902758728957
+					        v.TextureID = 30117799
 					    end
 					end
 					for i, e in pairs(l:GetChildren()) do
@@ -1937,9 +1937,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		teleported = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				--print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
-				--print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
-				--print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
 				if constanttp or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then

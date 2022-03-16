@@ -1935,12 +1935,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 			end
 		end
 		teleported = false
-		pausetps = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
-				print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
-				print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
+				--print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
+				--print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
+				--print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
 				if constanttp or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -2216,6 +2215,7 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 				if string.match(tostring(player1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) then
 					if player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
 						if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
+							print('ok')
 							local Arguments = {
 								[1] = player1.Character.Head,
 								[2] = player1.Character.Head.Position,

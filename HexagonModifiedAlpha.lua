@@ -18,10 +18,11 @@ local RunService = game:GetService("RunService")
 local getrawmetatable = getrawmetatable or false
 local mousemove = mousemove or mousemoverel or mouse_move or false
 local getsenv = getsenv or false
+local senv = getsenv(game.Players.LocalPlayer.PlayerGui.Client)senv.splatterBlood = function()
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false
-pausetps = 0
+pausetps = false
 
 
 Hint.Text = "Hexagon | Setting up configuration settings..."
@@ -2979,7 +2980,7 @@ TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val
 
 					cframe = LocalPlayer.Character.HumanoidRootPart.CFrame
 
-					LocalPlayer.Character.HumanoidRootPart.CFrame = player4.Character.HumanoidRootPart.CFrame * CFrame.new(0, 10, 0)
+					LocalPlayer.Character.HumanoidRootPart.CFrame = player4.Character.HumanoidRootPart.CFrame * CFrame.new(0, 20, -10)
 					wait(0.3)
 					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons["Flashbang"].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
 					wait(0.3)

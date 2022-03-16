@@ -1938,9 +1938,9 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		pausetps = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				print(playertp1, playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
-				print(playertp2, playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
-				print(playertp3, playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
+				print(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value)
+				print(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value)
+				print(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value)
 				if constanttp or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then

@@ -3111,6 +3111,7 @@ end)
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 
 TrollTabCategoryCredits:AddLabel("The troll tab is unfinished.")
+TrollTabCategoryCredits:AddLabel("")
 TrollTabCategoryCredits:AddLabel("Troll tab made by:")
 TrollTabCategoryCredits:AddLabel("SomeoneIdfk")
 TrollTabCategoryCredits:AddLabel("No discord for you.")

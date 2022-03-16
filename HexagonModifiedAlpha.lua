@@ -1912,20 +1912,26 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
 				playertp1 = v
+				player1tpm = tostring(v)
 			elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
 				playertp1 = nil
+				player1tpm = "-"
 			end
 
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
 				playertp2 = v
+				playertp2m = tostring(v)
 			elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
 				playertp2 = nil
+				playertp2m = "-"
 			end
 			
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
 				playertp3 = v
+				playertp3m = tostring(v)
 			elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
 				playertp3 = nil
+				playertp3m = "-"
 			end
 		end
 		teleported = false
@@ -1974,8 +1980,8 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 							pausetps = false
 						end
 					end
-				elseif string.match(tostring(playertp1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(tostring(playertp2), library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(tostring(playertp3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
-					if IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
+				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
+					if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false
 							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
@@ -1999,7 +2005,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								end
 							end
 						end
-					elseif IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
+					elseif library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false
 							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
@@ -2023,7 +2029,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								end
 							end
 						end
-					elseif IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
+					elseif library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
 						if IsAlive(LocalPlayer) then
 							teleported = false
 							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
@@ -2062,20 +2068,26 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
 							playertp1 = v
+							playertp1m = tostring(v)
 						elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
 							playertp1 = nil
+							playertp1m = "-"
 						end
 		
 						if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
 							playertp2 = v
+							playertp2m = tostring(v)
 						elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
 							playertp2 = nil
+							playertp2m = "-"
 						end
 					
 						if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
 							playertp3 = v
+							playertp3m = tostring(v)
 						elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
 							playertp3 = nil
+							playertp3m = "-"
 						end
 					end
 				end

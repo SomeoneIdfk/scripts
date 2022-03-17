@@ -3105,12 +3105,16 @@ TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 			if wslp.Value == "M4A4" or wslp.Value == "AK47" then
 				weapontype = "Primary"
 				weapon = wslp.Value
+			else
+				weapontype = "Secondary"
+				weapon = wslp.Value
 			end
 		end
 		TrollTabWeaponIALoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if IsAlive(LocalPlayer) then
-					if wslp.Value ~= wslp.Value then
+					print(weapon)
+					if weapon ~= wslp.Value then
 						weapontype = "Primary"
 						weapon = wslp.Value
 

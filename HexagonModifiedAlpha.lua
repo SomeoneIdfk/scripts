@@ -1974,7 +1974,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						if teleported == false then
 							pausetps = true
 							teleported = true
-							wait()
 							teleportTospawnpoint()
 							pausetps = false
 						end
@@ -2056,7 +2055,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						if teleported == false then
 							pausetps = true
 							teleported = true
-							wait()
 							teleportTospawnpoint()
 							pausetps = false
 						end
@@ -2096,7 +2094,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
 		pausetps = true
-		wait()
 		teleportTospawnpoint()
 		pausetps = false
 	end
@@ -2139,7 +2136,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 							if teleported2 == false then
 								pausetps = true
 								teleported2 = true
-								wait()
 								teleportTospawnpoint()
 								pausetps = false
 							end
@@ -2160,9 +2156,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
 		pausetps = true
-		wait(1)
 		teleportTospawnpoint()
-		wait(1)
 		pausetps = false
 	end
 end)
@@ -2212,7 +2206,6 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 				if string.match(tostring(player1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) then
 					if player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
 						if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
-							print('ok')
 							local Arguments = {
 								[1] = player1.Character.Head,
 								[2] = player1.Character.Head.Position,
@@ -2955,6 +2948,7 @@ local TrollTab = Window:CreateTab("Troll")
 local TrollTabGrenade = TrollTab:AddCategory("Grenade")
 
 TrollTabGrenade:AddDropdown("Player", {"-"}, "-", "TrollTabGrenadeSP")
+TrollTabGrenade:Adddropdown("Grenade", {"Molotov","HE Grenade","Decoy Grenade","Smoke Grenade","Incendiary Grenade","Flashbang"}, "Flashbang", "TrollTabGrenadeSG")
 TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val)
 	if val == true then
 		for i,v in pairs(game.Players:GetChildren()) do
@@ -2976,7 +2970,7 @@ TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val
 
 					LocalPlayer.Character.HumanoidRootPart.CFrame = player4.Character.HumanoidRootPart.CFrame * CFrame.new(0, 20, -10)
 					wait(0.3)
-					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons["Flashbang"].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
+					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons[library.pointers.TrollTabGrenadeSG.value].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
 					wait(0.3)
 					LocalPlayer.Character.HumanoidRootPart.CFrame = cframe * CFrame.new(0, 0, 0)
 
@@ -3090,7 +3084,6 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 						clonedkillers.WaterKiller.Name = "WaterBox"
 
 						clonedkillers.RoofKiller:Destroy()
-
 						originalkillers:Destroy()
 					end
 				else
@@ -3100,6 +3093,20 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 		end)
 	elseif val == false and TrollTabMapWOWLoop then
 		TrollTabMapWOWLoop:Disconnect()
+	end
+end)
+
+local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
+
+TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
+	if val == true then
+		TrollTabWeaponIALoop = cbClient.GetPropertyChangedSignal("ammocount"):Connect(function()
+			pcall(function()
+				cbClient.ammocount = 30
+			end)
+		end)
+	elseif val == false then
+		TrollTabWeaponIALoop:Disconnect()
 	end
 end)
 

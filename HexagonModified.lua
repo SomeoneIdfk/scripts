@@ -2212,7 +2212,6 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 				if string.match(tostring(player1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) then
 					if player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
 						if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
-							print('ok')
 							local Arguments = {
 								[1] = player1.Character.Head,
 								[2] = player1.Character.Head.Position,

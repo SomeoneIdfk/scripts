@@ -168,9 +168,9 @@ local library = {
         buttons = Color3.fromRGB(0, 255, 0), -- toggle, sliders colors
         text = Color3.fromRGB(255, 255, 255),
         textboxtext = Color3.fromRGB(255, 255, 255),
-        main = Color3.fromRGB(30, 30, 30),
+        main = Color3.fromRGB(0, 0, 0),
         outline = Color3.fromRGB(0, 0, 0),
-        tabholder = Color3.fromRGB(35, 35, 35),
+        tabholder = Color3.fromRGB(0, 0, 0),
         tabbutton = Color3.fromRGB(255, 255, 255),
         tabselected = Color3.fromRGB(50, 50, 50)
     }

@@ -3109,11 +3109,14 @@ TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 				weapontype = "Secondary"
 				weapon = wslp.Value
 			end
+		else
+			weapontype = nil
+			weapon = nil
 		end
 		TrollTabWeaponIALoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if IsAlive(LocalPlayer) then
-					print(weapon)
+					print("Weapon", weapon)
 					if weapon ~= wslp.Value then
 						weapontype = "Primary"
 						weapon = wslp.Value

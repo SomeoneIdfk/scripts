@@ -3100,7 +3100,12 @@ local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
 
 TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 	if val == true then
-		wslp = WorkSpace:FindFirstChild(tostring(LocalPlayer))
+		if WorkSpace:FindFirstChild(tostring(LocalPlayer)) then
+			print("Found", WorkSpace:FindFirstChild(tostring(LocalPlayer)))
+			wslp = WorkSpace:FindFirstChild(tostring(LocalPlayer))
+		else
+			print('oof')
+		end
 
 		while true do
 			print(wslp)

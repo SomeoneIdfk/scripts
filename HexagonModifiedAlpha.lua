@@ -3101,9 +3101,7 @@ local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
 TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 	if val == true then
 		TrollTabWeaponIALoop = cbClient.GetPropertyChangedSignal("ammocount"):Connect(function()
-			pcall(function()
-				cbClient.ammocount = 30
-			end)
+			cbClient.ammocount = 30
 		end)
 	elseif val == false and TrollTabWeaponIALoop then
 		TrollTabWeaponIALoop:Disconnect()

@@ -3103,7 +3103,7 @@ TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 		TrollTabWeaponIALoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				cbClient.ammocount = 0
-				cBClient.ammocount2 = 0
+				cBClient.ammocount2 = 1
 			end)
 		end)
 	elseif val == false and TrollTabWeaponIALoop then

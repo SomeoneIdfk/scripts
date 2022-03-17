@@ -153,8 +153,8 @@ end
 
 local library = {
 	windows = {},
-    pointers = {},
-    settings = {
+	pointers = {},
+	settings = {
         guiname = "Hexagon",
 		title = "Hexagon [SomeoneIdfk Edition]",
 		logo = "rbxassetid://4350178803", -- "http://www.roblox.com/asset/?id=6597976562",

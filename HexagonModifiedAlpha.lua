@@ -3114,9 +3114,12 @@ TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 						weapontype = "Primary"
 						weapon = wslp.Value
 
+						print(weapon)
+
 						for i,v in pairs(game.ReplicatedStorage.Weapons) do
 							if tostring(v) == weapon then
 								weaponammo = v.Ammo.Value
+								print(weaponammo)
 							end
 						end
 					end

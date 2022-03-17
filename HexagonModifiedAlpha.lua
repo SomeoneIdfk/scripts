@@ -3105,7 +3105,7 @@ TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 				cbClient.ammocount = 30
 			end)
 		end)
-	elseif val == false then
+	elseif val == false and TrollTabWeaponIALoop then
 		TrollTabWeaponIALoop:Disconnect()
 	end
 end)

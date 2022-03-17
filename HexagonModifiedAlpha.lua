@@ -3100,10 +3100,35 @@ local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
 
 TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 	if val == true then
+		wslp = WorkSpace:FindFirstChild(LocalPlayer.Name).EquippedTool
+		if IsAlive(LocalPlayer) then
+			if wslp.Value == "M4A4" or wslp.Value == "AK47" then
+				weapontype = "Primary"
+				weapon = wslp.Value
+			end
+		end
 		TrollTabWeaponIALoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				cbClient.ammocount = 0
-				cBClient.ammocount2 = 1
+				if IsAlive(LocalPlayer) then
+					if not wslp.Value == wslp.Value then
+						weapontype = "Primary"
+						weapon = wslp.Value
+
+						for i,v in pairs(game.ReplicatedStorage.Weapons) do
+							if tostring(v) == weapon then
+								weaponammo = v.Ammo.Value
+							end
+						end
+					end
+
+					if weapontype == "Primary" then
+						if not cbClient.ammocount == weaponammo then
+							cbClient.ammocount = weaponammo
+						end
+					elseif weapontype == "Secondary" then
+						cbClient.ammocount2 = 1
+					end
+				end
 			end)
 		end)
 	elseif val == false and TrollTabWeaponIALoop then

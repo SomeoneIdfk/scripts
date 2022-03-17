@@ -3101,23 +3101,30 @@ local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
 TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 	if val == true then
 		if WorkSpace:FindFirstChild(LocalPlayer.Name) then
-			wslp = WorkSpace:FindFirstChild(LocalPlayer.Name)
-			print("Found", wslp)
-		else
-			print('oof')
+			wslp = WorkSpace:FindFirstChild(LocalPlayer.Name).EquippedTool
 		end
 
-		while true do
-			wait(1)
-		end
-		
 		if IsAlive(LocalPlayer) then
 			if wslp.Value == "M4A4" or wslp.Value == "AK47" then
 				weapontype = "Primary"
 				weapon = wslp.Value
+
+				for i,v in pairs(game.ReplicatedStorage.Weapons) do
+					if tostring(v) == weapon then
+						weaponammo = v.Ammo.Value
+						print(weaponammo)
+					end
+				end
 			else
 				weapontype = "Secondary"
 				weapon = wslp.Value
+
+				for i,v in pairs(game.ReplicatedStorage.Weapons) do
+					if tostring(v) == weapon then
+						weaponammo = v.Ammo.Value
+						print(weaponammo)
+					end
+				end
 			end
 		else
 			weapontype = nil

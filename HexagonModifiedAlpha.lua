@@ -2948,7 +2948,7 @@ local TrollTab = Window:CreateTab("Troll")
 local TrollTabGrenade = TrollTab:AddCategory("Grenade")
 
 TrollTabGrenade:AddDropdown("Player", {"-"}, "-", "TrollTabGrenadeSP")
-TrollTabGrenade:Adddropdown("Grenade", {"Molotov", "HE Grenade", "Decoy Grenade", "Smoke Grenade", "Incendiary Grenade", "Flashbang"}, "Flashbang", "TrollTabGrenadeSG")
+TrollTabGrenade:AddDropdown("Grenade", {"Molotov", "HE Grenade", "Decoy Grenade", "Smoke Grenade", "Incendiary Grenade", "Flashbang"}, "Flashbang", "TrollTabGrenadeSG")
 TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val)
 	if val == true then
 		for i,v in pairs(game.Players:GetChildren()) do

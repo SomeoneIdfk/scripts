@@ -3100,7 +3100,12 @@ local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
 
 TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 	if val == true then
-		wslp = WorkSpace:FindFirstChild(LocalPlayer.Name).EquippedTool
+		wslp = WorkSpace:FindFirstChild(tostring(LocalPlayer))
+
+		while true do
+			print(wslp)
+		end
+
 		if IsAlive(LocalPlayer) then
 			if wslp.Value == "M4A4" or wslp.Value == "AK47" then
 				weapontype = "Primary"

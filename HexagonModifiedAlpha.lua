@@ -2639,7 +2639,7 @@ ExperimentalTabCategoryFarm:AddToggle("Anti Vote Kick", false, "ExperimentalTabC
 ExperimentalTabCategoryFarm:AddDropdown("Anti Vote Kick Action", {"Rejoin", "Server Hop"}, "Rejoin", "ExperimentalTabCategoryFarmAVKA")
 ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
-ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 7, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
+ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 
 local SkinsTab = Window:CreateTab("Skins")
 

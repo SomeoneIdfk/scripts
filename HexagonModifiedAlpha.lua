@@ -1882,6 +1882,7 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 end)
 
 function teleportTospawnpoint()
+	wait()
 	if IsAlive(LocalPlayer) then
 		if game:GetService('Players').LocalPlayer.Status.Team.Value == "T" then
 			for i,v in pairs(WorkSpace.Map.TSpawns:GetChildren()) do

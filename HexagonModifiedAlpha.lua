@@ -1647,6 +1647,8 @@ ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Loo
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
 	if val == true then
+		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
+
 		KillEnemiesLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if IsAlive(LocalPlayer) then

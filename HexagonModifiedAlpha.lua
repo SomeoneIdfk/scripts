@@ -3077,6 +3077,20 @@ end)
 
 local TrollTabMap = TrollTab:AddCategory("Map")
 
+TrollTabMap:AddToggle("Remove Preparation", false, "TrollTabMapRP", function(val)
+	if val == true then
+		TrollTabMapRPLoop = WorkSpace:FindFirstChild("Status"):FindFirstChild("Preparation"):GetPropertyChangedSignal("Value"):Connect(function()
+			pcall(function()
+				if game:FindFirstChild("Workspace"):FindFirstChild("Status"):FindFirstChild("Preparation") then
+					WorkSpace.Status.Preparation.Value = false
+				end
+			end)
+		end)
+	elseif val == false and TrollTabMapRPLoop then
+		TrollTabMapRPLoop:Disconnect()
+	end
+end)
+TrollTabMap:AddLabel("")
 TrollTabMap:AddLabel("Seaside only!")
 TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 	if val == true then

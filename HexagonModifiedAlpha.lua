@@ -1668,7 +1668,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new()
 											}
 										
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										while IsAlive(LocalPlayer) and IsAlive(v) do
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											wait()
+										end
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1685,7 +1688,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new()
 										}
 								
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									while IsAlive(LocalPlayer) and IsAlive(v) do
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										wait()
+									end
 								end
 							elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
 								if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1704,7 +1710,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new()
 											}
 				
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										while IsAlive(LocalPlayer) and IsAlive(v) do
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											wait()
+										end
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1721,7 +1730,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new()
 										}
 			
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									while IsAlive(LocalPlayer) and IsAlive(v) do
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										wait()
+									end
 								end
 							elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
 								if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1740,7 +1752,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new(0, 0, 0)
 											}
 
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										while IsAlive(LocalPlayer) and IsAlive(v) do
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											wait()
+										end
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1757,7 +1772,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new(0, 0, 0)
 										}
 
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									while IsAlive(LocalPlayer) and IsAlive(v) do
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										wait()
+									end
 								end
 							end
 						end

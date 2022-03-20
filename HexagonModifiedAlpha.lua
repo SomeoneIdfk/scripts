@@ -7,6 +7,7 @@ Hint.Text = "Hexagon | Waiting for the game to load..."
 
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
+getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 
 Hint.Text = "Hexagon | Setting up environment..."
 
@@ -17,7 +18,6 @@ local RunService = game:GetService("RunService")
 -- Environment 
 local getrawmetatable = getrawmetatable or false
 local mousemove = mousemove or mousemoverel or mouse_move or false
-local senv = getsenv(game.Players.LocalPlayer.PlayerGui.Client)senv.splatterBlood = function() end
 local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false

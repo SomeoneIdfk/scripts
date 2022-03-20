@@ -2623,9 +2623,9 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 								wait(21)
 							end
 
-							if library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Set health" then
+							if library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Set Health" then
 								game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
-							elseif library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Switch teams" then
+							elseif library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Team Switch" then
 								if data.TWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.TWins.Value > data.CTWins.Value then
 									if data.NumT.Value <= data.NumCT.Value or data.NumT.Value - data.NumCT.Value == 1 or data.NumT.Value - data.NumCT.Value == 2 then
 										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
@@ -2659,7 +2659,7 @@ ExperimentalTabCategoryFarm:AddToggle("Anti Vote Kick", false, "ExperimentalTabC
 ExperimentalTabCategoryFarm:AddDropdown("Anti Vote Kick Action", {"Rejoin", "Server Hop"}, "Rejoin", "ExperimentalTabCategoryFarmAVKA")
 ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
-ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set health", "Team switch"}, "Set health", "ExperimentalTabCategoryFarmKillMethod")
+ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set Health", "Team Switch"}, "Set health", "ExperimentalTabCategoryFarmKillMethod")
 ExperimentalTabCategoryFarm:AddDropdown("Gamemode", {"Casual", "Unranked"}, "Casual", "ExperimentalTabCategoryFarmGamemode")
 ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 

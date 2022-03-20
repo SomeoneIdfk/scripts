@@ -2618,7 +2618,21 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 						if game:GetService('Players').LocalPlayer.Character.Humanoid.Health ~= 0 and trueorfalse2 == true then
 							trueorfalse2 = false
 							wait(6)
-							game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
+							if library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Set health" then
+								game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
+							elseif library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Switch teams" then
+								if data.TWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.TWins.Value > data.CTWins.Value then
+									if data.NumT.Value <= data.NumCT.Value then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+									end
+								elseif data.CTWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.CTWins.Value > data.TWins.Value then
+									if data.NumCT.Value <= data.NumT.Value then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+									end
+								end
+							end
 							wait(1)
 							trueorfalse2 = true
 						elseif trueorfalse2 == false then
@@ -2640,6 +2654,7 @@ ExperimentalTabCategoryFarm:AddToggle("Anti Vote Kick", false, "ExperimentalTabC
 ExperimentalTabCategoryFarm:AddDropdown("Anti Vote Kick Action", {"Rejoin", "Server Hop"}, "Rejoin", "ExperimentalTabCategoryFarmAVKA")
 ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
+ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set health", "Team switch"}, "Set health", "ExperimentalTabCategoryFarmKillMethod")
 ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 
 local SkinsTab = Window:CreateTab("Skins")

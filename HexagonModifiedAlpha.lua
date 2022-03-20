@@ -2666,8 +2666,8 @@ ExperimentalTabCategoryFarm:AddDropdown("Anti Vote Kick Action", {"Rejoin", "Ser
 ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
 ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set health", "Team switch"}, "Set health", "ExperimentalTabCategoryFarmKillMethod")
-ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 ExperimentalTabCategoryFarm:AddDropdown("Gamemode", {"Casual", "Unranked"}, "Casual", "ExperimentalTabCategoryFarmGamemode")
+ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 
 local SkinsTab = Window:CreateTab("Skins")
 

@@ -2659,7 +2659,7 @@ ExperimentalTabCategoryFarm:AddToggle("Anti Vote Kick", false, "ExperimentalTabC
 ExperimentalTabCategoryFarm:AddDropdown("Anti Vote Kick Action", {"Rejoin", "Server Hop"}, "Rejoin", "ExperimentalTabCategoryFarmAVKA")
 ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
-ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set Health", "Team Switch"}, "Set health", "ExperimentalTabCategoryFarmKillMethod")
+ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set Health", "Team Switch"}, "Set Health", "ExperimentalTabCategoryFarmKillMethod")
 ExperimentalTabCategoryFarm:AddDropdown("Gamemode", {"Casual", "Unranked"}, "Casual", "ExperimentalTabCategoryFarmGamemode")
 ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 

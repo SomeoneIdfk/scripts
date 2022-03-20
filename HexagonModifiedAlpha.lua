@@ -3188,6 +3188,7 @@ TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
 		TrollTabWeaponIALoop:Disconnect()
 	end
 end)
+TrollTabWeapon:AddLabel("Doesn't work yet!")
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 

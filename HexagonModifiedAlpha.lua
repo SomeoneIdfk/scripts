@@ -2622,7 +2622,7 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 							elseif library.pointers.ExperimentalTabCategoryFarmGamemode.value == "Unranked" then
 								wait(21)
 							end
-							
+
 							if library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Set health" then
 								game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
 							elseif library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Switch teams" then
@@ -2630,9 +2630,15 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 									if data.NumT.Value <= data.NumCT.Value then
 										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
 										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+									elseif data.NumT.Value - data.NumCT.Value == 2 then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
 									end
 								elseif data.CTWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.CTWins.Value > data.TWins.Value then
 									if data.NumCT.Value <= data.NumT.Value then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+									elseif data.NumCT.Value - data.NumT.Value == 2 then
 										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
 										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
 									end

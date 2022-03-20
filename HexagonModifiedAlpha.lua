@@ -2617,7 +2617,12 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 					if library.pointers.ExperimentalTabCategoryFarmKillPlayer.value == true and game:GetService('Players').LocalPlayer.Character:FindFirstChild("Humanoid") then
 						if game:GetService('Players').LocalPlayer.Character.Humanoid.Health ~= 0 and trueorfalse2 == true then
 							trueorfalse2 = false
-							wait(6)
+							if library.pointers.ExperimentalTabCategoryFarmGamemode.value == "Casual" then
+								wait(6)
+							elseif library.pointers.ExperimentalTabCategoryFarmGamemode.value == "Unranked" then
+								wait(21)
+							end
+							
 							if library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Set health" then
 								game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
 							elseif library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Switch teams" then
@@ -2656,6 +2661,7 @@ ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCateg
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
 ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set health", "Team switch"}, "Set health", "ExperimentalTabCategoryFarmKillMethod")
 ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
+ExperimentalTabCategoryFarm:AddDropdown("Gamemode", {"Casual", "Unranked"}, "Casual", "ExperimentalTabCategoryFarmGamemode")
 
 local SkinsTab = Window:CreateTab("Skins")
 

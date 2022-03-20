@@ -7,6 +7,7 @@ Hint.Text = "Hexagon | Waiting for the game to load..."
 
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
+getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 
 Hint.Text = "Hexagon | Setting up environment..."
 
@@ -17,7 +18,6 @@ local RunService = game:GetService("RunService")
 -- Environment 
 local getrawmetatable = getrawmetatable or false
 local mousemove = mousemove or mousemoverel or mouse_move or false
-local senv = getsenv(game.Players.LocalPlayer.PlayerGui.Client)senv.splatterBlood = function() end
 local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false
@@ -448,13 +448,8 @@ AimbotTabCategoryLegitbot:AddToggle("Enabled", false, "AimbotTabCategoryLegitbot
 						if hitboxpart ~= nil then
 							local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(hitboxpart.Position)
 
-							if library.pointers.AimbotTabCategoryLegitbotSmoothnessToggle.value == true then
-								local PositionX = (Mouse.X-Vector.X)/library.pointers.AimbotTabCategoryLegitbotSmoothness.value + 1
-								local PositionY = (Mouse.Y-Vector.Y)/library.pointers.AimbotTabCategoryLegitbotSmoothness.value + 1
-							elseif library.pointers.AimbotTabCategoryLegitbotSmoothnessToggle == false then
-								local PositionX = Mouse.X-Vector.X
-								local PositionY = Mouse.Y-Vector.Y
-							end
+							local PositionX = (Mouse.X-Vector.X)/library.pointers.AimbotTabCategoryLegitbotSmoothness.value + 1
+							local PositionY = (Mouse.Y-Vector.Y)/library.pointers.AimbotTabCategoryLegitbotSmoothness.value + 1
 							
 							if library.pointers.AimbotTabCategoryLegitbotSilent.value == true then
 								SilentLegitbot.target = hitboxpart
@@ -480,8 +475,6 @@ AimbotTabCategoryLegitbot:AddToggle("Enabled", false, "AimbotTabCategoryLegitbot
 		LegitbotLoop:Disconnect()
 	end
 end)
-
-AimbotTabCategoryLegitbot:AddToggle("Smoothness", false, "AimbotTabCategoryLegitbotSmoothnessToggle")
 
 AimbotTabCategoryLegitbot:AddToggle("Silent", false, "AimbotTabCategoryLegitbotSilent")
 
@@ -1465,17 +1458,7 @@ local SettingsTabCategoryMain = SettingsTab:AddCategory("Main", 1)
 SettingsTabCategoryMain:AddKeybind("Toggle Keybind", Enum.KeyCode.RightShift, "SettingsTabCategoryUIToggleKeybind")
 
 SettingsTabCategoryMain:AddButton("Server Hop", function()
-	local x = {}
-	for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
-		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
-			x[#x + 1] = v.id
-		end
-	end
-	if #x > 0 then
-		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
-	else
-		return "Protocol:cantfind"
-	end
+	Serverhop()
 end)
 
 SettingsTabCategoryMain:AddButton("Server Rejoin", function()
@@ -1678,7 +1661,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new()
 											}
 										
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										while IsAlive(LocalPlayer) and IsAlive(v) do
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											wait()
+										end
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1695,7 +1681,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new()
 										}
 								
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									while IsAlive(LocalPlayer) and IsAlive(v) do
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										wait()
+									end
 								end
 							elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
 								if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1714,7 +1703,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new()
 											}
 				
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										while IsAlive(LocalPlayer) and IsAlive(v) do
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											wait()
+										end
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1731,7 +1723,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new()
 										}
 			
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									while IsAlive(LocalPlayer) and IsAlive(v) do
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										wait()
+									end
 								end
 							elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
 								if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -1750,7 +1745,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											[13] = Vector3.new(0, 0, 0)
 											}
 
-										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										while IsAlive(LocalPlayer) and IsAlive(v) do
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											wait()
+										end
 									end
 								elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 									local Arguments = {
@@ -1767,7 +1765,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										[13] = Vector3.new(0, 0, 0)
 										}
 
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									while IsAlive(LocalPlayer) and IsAlive(v) do
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										wait()
+									end
 								end
 							end
 						end
@@ -1882,6 +1883,7 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 end)
 
 function teleportTospawnpoint()
+	wait()
 	if IsAlive(LocalPlayer) then
 		if game:GetService('Players').LocalPlayer.Status.Team.Value == "T" then
 			for i,v in pairs(WorkSpace.Map.TSpawns:GetChildren()) do
@@ -1974,7 +1976,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						if teleported == false then
 							pausetps = true
 							teleported = true
-							wait()
 							teleportTospawnpoint()
 							pausetps = false
 						end
@@ -2056,7 +2057,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						if teleported == false then
 							pausetps = true
 							teleported = true
-							wait()
 							teleportTospawnpoint()
 							pausetps = false
 						end
@@ -2096,7 +2096,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
 		pausetps = true
-		wait()
 		teleportTospawnpoint()
 		pausetps = false
 	end
@@ -2139,7 +2138,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 							if teleported2 == false then
 								pausetps = true
 								teleported2 = true
-								wait()
 								teleportTospawnpoint()
 								pausetps = false
 							end
@@ -2160,9 +2158,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
 		pausetps = true
-		wait(1)
 		teleportTospawnpoint()
-		wait(1)
 		pausetps = false
 	end
 end)
@@ -2622,8 +2618,27 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 					if library.pointers.ExperimentalTabCategoryFarmKillPlayer.value == true and game:GetService('Players').LocalPlayer.Character:FindFirstChild("Humanoid") then
 						if game:GetService('Players').LocalPlayer.Character.Humanoid.Health ~= 0 and trueorfalse2 == true then
 							trueorfalse2 = false
-							wait(6)
-							game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
+							if library.pointers.ExperimentalTabCategoryFarmGamemode.value == "Casual" then
+								wait(6)
+							elseif library.pointers.ExperimentalTabCategoryFarmGamemode.value == "Unranked" then
+								wait(21)
+							end
+
+							if library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Set Health" then
+								game:GetService('Players').LocalPlayer.Character.Humanoid.Health = 0
+							elseif library.pointers.ExperimentalTabCategoryFarmKillMethod.value == "Team Switch" then
+								if data.TWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.TWins.Value > data.CTWins.Value then
+									if data.NumT.Value <= data.NumCT.Value or data.NumT.Value - data.NumCT.Value == 1 or data.NumT.Value - data.NumCT.Value == 2 then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+									end
+								elseif data.CTWins.Value > library.pointers.ExperimentalTabCategoryFarmScore.value and data.CTWins.Value > data.TWins.Value then
+									if data.NumCT.Value <= data.NumT.Value or data.NumCT.Value - data.NumT.Value == 1 or data.NumCT.Value - data.NumT.Value == 2 then
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('T')
+										game:GetService("ReplicatedStorage").Events.JoinTeam:FireServer('CT')
+									end
+								end
+							end
 							wait(1)
 							trueorfalse2 = true
 						elseif trueorfalse2 == false then
@@ -2645,7 +2660,9 @@ ExperimentalTabCategoryFarm:AddToggle("Anti Vote Kick", false, "ExperimentalTabC
 ExperimentalTabCategoryFarm:AddDropdown("Anti Vote Kick Action", {"Rejoin", "Server Hop"}, "Rejoin", "ExperimentalTabCategoryFarmAVKA")
 ExperimentalTabCategoryFarm:AddToggle("Server hop", false, "ExperimentalTabCategoryFarmServerHop")
 ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabCategoryFarmKillPlayer")
-ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 7, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
+ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set Health", "Team Switch"}, "Set Health", "ExperimentalTabCategoryFarmKillMethod")
+ExperimentalTabCategoryFarm:AddDropdown("Gamemode", {"Casual", "Unranked"}, "Casual", "ExperimentalTabCategoryFarmGamemode")
+ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
 
 local SkinsTab = Window:CreateTab("Skins")
 
@@ -2954,6 +2971,7 @@ local TrollTab = Window:CreateTab("Troll")
 local TrollTabGrenade = TrollTab:AddCategory("Grenade")
 
 TrollTabGrenade:AddDropdown("Player", {"-"}, "-", "TrollTabGrenadeSP")
+TrollTabGrenade:AddDropdown("Grenade", {"Molotov", "HE Grenade", "Decoy Grenade", "Smoke Grenade", "Incendiary Grenade", "Flashbang"}, "Flashbang", "TrollTabGrenadeSG")
 TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val)
 	if val == true then
 		for i,v in pairs(game.Players:GetChildren()) do
@@ -2975,7 +2993,7 @@ TrollTabGrenade:AddToggle("Enable", false, "TrollTabGrenadeToggle", function(val
 
 					LocalPlayer.Character.HumanoidRootPart.CFrame = player4.Character.HumanoidRootPart.CFrame * CFrame.new(0, 20, -10)
 					wait(0.3)
-					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons["Flashbang"].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
+					game:GetService("ReplicatedStorage").Events.ThrowGrenade:FireServer(game:GetService("ReplicatedStorage").Weapons[library.pointers.TrollTabGrenadeSG.value].Model, nil, 25, 35, Vector3.new(0,-100,3), nil, nil)
 					wait(0.3)
 					LocalPlayer.Character.HumanoidRootPart.CFrame = cframe * CFrame.new(0, 0, 0)
 
@@ -3070,6 +3088,20 @@ end)
 
 local TrollTabMap = TrollTab:AddCategory("Map")
 
+TrollTabMap:AddToggle("Remove Preparation", false, "TrollTabMapRP", function(val)
+	if val == true then
+		TrollTabMapRPLoop = WorkSpace:FindFirstChild("Status"):FindFirstChild("Preparation"):GetPropertyChangedSignal("Value"):Connect(function()
+			pcall(function()
+				if game:FindFirstChild("Workspace"):FindFirstChild("Status"):FindFirstChild("Preparation") then
+					WorkSpace.Status.Preparation.Value = false
+				end
+			end)
+		end)
+	elseif val == false and TrollTabMapRPLoop then
+		TrollTabMapRPLoop:Disconnect()
+	end
+end)
+TrollTabMap:AddLabel("")
 TrollTabMap:AddLabel("Seaside only!")
 TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 	if val == true then
@@ -3089,7 +3121,6 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 						clonedkillers.WaterKiller.Name = "WaterBox"
 
 						clonedkillers.RoofKiller:Destroy()
-
 						originalkillers:Destroy()
 					end
 				else

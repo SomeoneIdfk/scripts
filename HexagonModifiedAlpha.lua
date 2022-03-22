@@ -1604,7 +1604,6 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 					l.GlobalShadows = false
 					l.FogEnd = 9e9
 					l.Brightness = 0
-					settings().Rendering.QualityLevel = "Level01"
 					for i, v in pairs(g:GetDescendants()) do
 					    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
 					        v.Material = "Plastic"
@@ -3192,25 +3191,28 @@ local TrollTabPlayer = TrollTab:AddCategory("Player", 2)
 
 shittalklib = {
 	"L",
-	"F",
 	"Couldn't handle it?",
 	"Oh you're already dead?",
 	"Dead so soon?",
-	"Oof, step up your game",
-	"Mans got bad cheats LOL"
+	"Oof, step up your game.",
+	"Mans got bad cheats. LOL!",
+    "When you die with cheats smh.",
+    "Mate, you're bad at the game!"
 }
 
 TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
 	if val == true then
 		TrollTabPlayerTSLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
-				game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
-					shittalklib[math.random(0, #shittalklib)],
-					false,
-					"Innocent",
-					false,
-					true
-				)
+                if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
+				    game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+					    shittalklib[math.random(0, #shittalklib)],
+					    false,
+					    "Innocent",
+					    false,
+					    true
+				    )
+                end
 			end)
 		end)
 	elseif val == false and TrollTabPlayerTSLoop then

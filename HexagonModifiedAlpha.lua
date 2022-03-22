@@ -2228,6 +2228,7 @@ ExperimentalTabCategoryPlayer1:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer1Kill", function(val)
 	if val == true then
+		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
 				player1 = v
@@ -2336,6 +2337,7 @@ ExperimentalTabCategoryPlayer2:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer2Kill", function(val)
 	if val == true then
+		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
 				player2 = v
@@ -2444,6 +2446,7 @@ ExperimentalTabCategoryPlayer3:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer3Kill", function(val)
 	if val == true then
+		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
 				player3 = v

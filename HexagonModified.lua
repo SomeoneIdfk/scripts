@@ -3197,7 +3197,8 @@ shittalklib = {
 	"Oof, step up your game.",
 	"Mans got bad cheats. LOL!",
     "When you die with cheats smh.",
-    "Mate, you're bad at the game!"
+    "Mate, you're bad at the game!",
+	"Oops, sorry left my aimbot on."
 }
 
 TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)

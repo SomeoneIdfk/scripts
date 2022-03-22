@@ -3234,7 +3234,7 @@ TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Custom"}
 		}
 	elseif val == "Custom" then
 		shittalklib = {}
-		for i,v in pairs(string.split(library.pointers.TrollTabPlayerCM.value, ",")) do
+		for i,v in pairs(string.split(library.pointers.TrollTabPlayerCM.value, ",,")) do
 			table.insert(shittalklib, v)
 		end
 	end

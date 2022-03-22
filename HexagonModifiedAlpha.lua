@@ -3189,21 +3189,9 @@ end)
 
 local TrollTabPlayer = TrollTab:AddCategory("Player", 2)
 
-shittalklib = {
-	"L",
-	"Couldn't handle it?",
-	"Oh you're already dead?",
-	"Dead so soon?",
-	"Oof, step up your game.",
-	"Mans got bad cheats. LOL!",
-    "When you die with cheats smh.",
-    "Mate, you're bad at the game!",
-	"Oops, sorry left my aimbot on."
-}
-
-TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
+TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 	if val == true then
-		TrollTabPlayerTSLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
+		TrollTabPlayerKTLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
                 if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
 				    game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
@@ -3216,10 +3204,42 @@ TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
                 end
 			end)
 		end)
-	elseif val == false and TrollTabPlayerTSLoop then
-		TrollTabPlayerTSLoop:Disconnect()
+	elseif val == false and TrollTabPlayerKTLoop then
+		TrollTabPlayerKTLoop:Disconnect()
 	end
 end)
+TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Custom"}, "Hacker", "TrollTabPlayerMessages", function(val)
+	if val == "Hacker" then
+		shittalklib = {
+			"Couldn't handle it?",
+			"Oh you're already dead?",
+			"Dead so soon?",
+			"Oof, step up your game.",
+			"Mans got bad cheats. LOL!",
+			"When you die with cheats smh.",
+			"Oops, sorry left my kill loop on."
+		}
+	elseif val == "Player" then
+		shittalklib = {
+			"Oops, sorry left my aimbot on.",
+			"Bro how'd you die when I'm bad?",
+			"Bruv can't hit his shots."
+		}
+	elseif val == "Passive" then
+		shittalklib = {
+			"Sorry, my bad.",
+			"Nice try.",
+			"Better luck next round.",
+			"I apologize for not being bad."
+		}
+	elseif val == "Custom" then
+		shittalklib = {}
+		for i,v in pairs(string.split(library.pointers.TrollTabPlayerCM.value, ",")) do
+			table.insert(shittalklib, v)
+		end
+	end
+end)
+TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas.", "TrollTabPlayerCM")
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 

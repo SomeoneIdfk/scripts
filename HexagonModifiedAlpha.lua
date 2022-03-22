@@ -3189,18 +3189,53 @@ end)
 
 local TrollTabPlayer = TrollTab:AddCategory("Player", 2)
 
+shittalklibha = {
+	"Couldn't handle it?",
+	"Oh you're already dead?",
+	"Dead so soon?",
+	"Oof, step up your game.",
+	"Mans got bad cheats. LOL!",
+	"When you die with cheats smh.",
+	"Oops, sorry left my kill loop on."
+}
+
+shittalklibpl = {
+	"Oops, sorry left my aimbot on.",
+	"Bro how'd you die when I'm bad?",
+	"Bruv can't hit his shots."
+}
+
+shittalklibpa = {
+	"Sorry, my bad.",
+	"Nice try.",
+	"Better luck next round.",
+	"I apologize for not being bad."
+}
+
 TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 	if val == true then
 		TrollTabPlayerKTLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
                 if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
-				    game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
-					    shittalklib[math.random(0, #shittalklib)],
-					    false,
-					    "Innocent",
-					    false,
-					    true
-				    )
+					if library.pointers.TrollTabPlayerMessages.value == "Auto" then
+						local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
+
+						if temp.Killer.Value == LocalPlayer.Name then
+							if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
+								game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+							else
+								local randomnumber = math.random(0, 1)
+
+								if randomnumber == 0 then
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+								elseif randomnumber == 1 then
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+								end
+							end
+						end
+					else
+				    	game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklib[math.random(0, #shittalklib)], false, "Innocent", false, true)
+					end
                 end
 			end)
 		end)
@@ -3208,30 +3243,15 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		TrollTabPlayerKTLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Custom"}, "Hacker", "TrollTabPlayerMessages", function(val)
+TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Hacker", "TrollTabPlayerMessages", function(val)
 	if val == "Hacker" then
-		shittalklib = {
-			"Couldn't handle it?",
-			"Oh you're already dead?",
-			"Dead so soon?",
-			"Oof, step up your game.",
-			"Mans got bad cheats. LOL!",
-			"When you die with cheats smh.",
-			"Oops, sorry left my kill loop on."
-		}
+		shittalklib = shittalklibha
 	elseif val == "Player" then
-		shittalklib = {
-			"Oops, sorry left my aimbot on.",
-			"Bro how'd you die when I'm bad?",
-			"Bruv can't hit his shots."
-		}
+		shittalklib = shittalklibpl
 	elseif val == "Passive" then
-		shittalklib = {
-			"Sorry, my bad.",
-			"Nice try.",
-			"Better luck next round.",
-			"I apologize for not being bad."
-		}
+		shittalklib = shittalklibpa
+	elseif val == "Auto" then
+		shittalklib = {}
 	elseif val == "Custom" then
 		shittalklib = {}
 		for i,v in pairs(string.split(library.pointers.TrollTabPlayerCM.value, ",,")) do

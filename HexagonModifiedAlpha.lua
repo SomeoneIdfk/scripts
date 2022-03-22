@@ -3199,7 +3199,7 @@ shittalklib = {
 
 TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
 	if val == true then
-		TrollTabPlayerTSLoop = LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
+		TrollTabPlayerTSLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
 				game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 					shittalklib[math.random(0, #shittalklib)],

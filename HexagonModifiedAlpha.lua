@@ -3188,73 +3188,32 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 	end
 end)
 
-local TrollTabWeapon = TrollTab:AddCategory("Weapon", 2)
+local TrollTabPlayer = TrollTab:AddCategory("Player", 2)
 
-TrollTabWeapon:AddToggle("Inf Ammo", false, "TrollTabWeaponIA", function(val)
+shittalklib = {
+	"L",
+	"F",
+	"Couldn't handle it?",
+	"Oh you're already dead?"
+}
+
+TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
 	if val == true then
-		if WorkSpace:FindFirstChild(LocalPlayer.Name) then
-			wslp = WorkSpace:FindFirstChild(LocalPlayer.Name).EquippedTool
-		end
-
-		if IsAlive(LocalPlayer) then
-			if wslp.Value == "M4A4" or wslp.Value == "AK47" then
-				weapontype = "Primary"
-				weapon = wslp.Value
-
-				for i,v in pairs(game.ReplicatedStorage.Weapons) do
-					if tostring(v) == weapon then
-						weaponammo = v.Ammo.Value
-						print(weaponammo)
-					end
-				end
-			else
-				weapontype = "Secondary"
-				weapon = wslp.Value
-
-				for i,v in pairs(game.ReplicatedStorage.Weapons) do
-					if tostring(v) == weapon then
-						weaponammo = v.Ammo.Value
-						print(weaponammo)
-					end
-				end
-			end
-		else
-			weapontype = nil
-			weapon = nil
-		end
-		TrollTabWeaponIALoop = game:GetService("RunService").RenderStepped:Connect(function()
+		TrollTabPlayerTSLoop = LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
-				if IsAlive(LocalPlayer) then
-					print("Weapon", weapon)
-					if weapon ~= wslp.Value then
-						weapontype = "Primary"
-						weapon = wslp.Value
-
-						print(weapon)
-
-						for i,v in pairs(game.ReplicatedStorage.Weapons) do
-							if tostring(v) == weapon then
-								weaponammo = v.Ammo.Value
-								print(weaponammo)
-							end
-						end
-					end
-
-					if weapontype == "Primary" then
-						if cbClient.ammocount ~= weaponammo then
-							cbClient.ammocount = weaponammo
-						end
-					elseif weapontype == "Secondary" then
-						cbClient.ammocount2 = 1
-					end
-				end
+				game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+					shittalklib[math.random(0, #shittalklib)],
+					false,
+					"Innocent",
+					false,
+					true
+				)
 			end)
 		end)
-	elseif val == false and TrollTabWeaponIALoop then
-		TrollTabWeaponIALoop:Disconnect()
+	elseif val == false and TrollTabPlayerTSLoop then
+		TrollTabPlayerTSLoop:Disconnect()
 	end
 end)
-TrollTabWeapon:AddLabel("Doesn't work yet!")
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 

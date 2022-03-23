@@ -25,18 +25,22 @@ if not isfolder("hexagon") then
 	makefolder("hexagon")
 end
 
-if not isfile("hexagon/release.txt") then
-	local VersionWindow = library:CreateWindow(Vector2.new(200, 100), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
+if isfile("hexagon/load_version.txt") then
+    loadstring("return "..readfile("hexagon/load_version.txt"))()
+end
+
+if not isfile("hexagon/load_version.txt") then
+	local VersionWindow = library:CreateWindow(Vector2.new(100, 150), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
 
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
 
 	VersionTabOptions:AddButton("Stable", function()
-        print('1')
-        print(type(library.base.VersionWindow.Visible))
-        library.base.VersionWindow.Visible = not library.base.VersionWindow.Visible
+        writefile("load_version.txt", "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua\"))();")
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 	VersionTabOptions:AddButton("Alpha", function()
-
+        writefile("load_version.txt", "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua\"))();")
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 end

@@ -3259,7 +3259,7 @@ TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas
 		table.insert(shittalklibcu, v)
 	end
 end)
-TrollTabPlayer:AddSlider("Delay", {0, 10, 0, 1}, "TrollTabPlayerDelay")
+TrollTabPlayer:AddSlider("Delay", {0, 10, 0, 1, ""}, "TrollTabPlayerDelay")
 TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	if val == true then
 		TrollTabPlayerRHLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()

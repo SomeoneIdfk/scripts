@@ -3270,13 +3270,8 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	if val == true then
 		TrollTabPlayerRHLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				print(LocalPlayer.Name)
-                if WorkSpace:FindFirstChild(LocalPlayer.Name) then
-					print(1)
-					if WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead") then
-						print(2)
-						WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead"):Destroy()
-					end
+            	if WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead") then
+					WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead"):Destroy()
 				else
 					wait(1)
 				end

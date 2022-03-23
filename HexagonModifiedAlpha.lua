@@ -1579,14 +1579,13 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Selector", {"Stable", "Alpha"}, "Stable", "SettingsTabOptionsSelected")
+SettingsTabCategoryConfigs:AddDropdown("Selector", {"Stable", "Alpha"}, "Alpha", "SettingsTabOptionsSelected")
 SettingsTabCategoryConfigs:AddButton("Save", function()
 	if library.pointers.SettingsTabOptionsSelected.value == "Stable" then
 		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
 	elseif library.pointers.SettingsTabOptionsSelected.value == "Alpha" then
 		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
 	end
-	game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 end)
 
 local WorkSpace = game:GetService("Workspace")

@@ -26,7 +26,7 @@ if not isfolder("hexagon") then
 end
 
 if not isfile("hexagon/release.txt") then
-	local VersionWindow = library:CreateWindow(Vector2.new(300, 500), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
+	local VersionWindow = library:CreateWindow(Vector2.new(300, 300), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
 
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)

@@ -37,10 +37,10 @@ if not isfile("hexagon/load_version.txt") then
 
 	VersionTabOptions:AddButton("Stable", function()
         writefile("load_version.txt", "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua\"))();")
-        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+        --game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 	VersionTabOptions:AddButton("Alpha", function()
         writefile("load_version.txt", "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua\"))();")
-        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+        --game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 end

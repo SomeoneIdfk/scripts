@@ -1579,6 +1579,14 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
+SettingsTabCategoryConfigs:AddDropdown("Hexagon Version", {"Stable", "Alpha"}, "Stable", function(val)
+	if val == "Stable" then
+		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+	elseif val == "Alpha" then
+		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+	end
+end)
+
 local WorkSpace = game:GetService("Workspace")
 
 local ExperimentalTab = Window:CreateTab("Experimental")

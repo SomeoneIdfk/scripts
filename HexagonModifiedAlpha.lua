@@ -1579,12 +1579,11 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Hexagon Version", {"Stable", "Alpha"}, "Alpha", function(val)
-	if val == "Stable" then
-		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-	elseif val == "Alpha" then
-		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
-	end
+SettingsTabCategoryConfigs:AddButton("Stable", function()
+	writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+end)
+SettingsTabCategoryConfigs:AddButton("Alpha", function()
+	writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
 end)
 
 local WorkSpace = game:GetService("Workspace")

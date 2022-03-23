@@ -1,5 +1,6 @@
 --[[
 Made by Pawel12d#0272
+Customized by SomeoneIdfk
 --]]
 
 local Hint = Instance.new("Hint", game.CoreGui)

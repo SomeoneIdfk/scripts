@@ -33,6 +33,7 @@ if not isfile("hexagon/release.txt") then
 
 	VersionTabOptions:AddButton("Stable", function()
         print('1')
+        print(library.base.VersionWindow.Visible)
         library.base.VersionWindow.Visible = not library.base.VersionWindow.Visible
 	end)
 	VersionTabOptions:AddButton("Alpha", function()

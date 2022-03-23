@@ -1,5 +1,5 @@
 --[[
-Customized by SomeoneIdfk
+Made by SomeoneIdfk
 --]]
 
 repeat wait() until game:IsLoaded()

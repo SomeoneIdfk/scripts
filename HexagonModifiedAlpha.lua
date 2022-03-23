@@ -1579,7 +1579,7 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Hexagon Version", {"Stable", "Alpha"}, "Stable", function(val)
+SettingsTabCategoryConfigs:AddDropdown("Hexagon Version", {"Stable", "Alpha"}, "Alpha", function(val)
 	if val == "Stable" then
 		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
 	elseif val == "Alpha" then

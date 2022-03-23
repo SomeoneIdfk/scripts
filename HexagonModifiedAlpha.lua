@@ -7,7 +7,6 @@ Hint.Text = "Hexagon | Waiting for the game to load..."
 
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
-getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 
 Hint.Text = "Hexagon | Setting up environment..."
 
@@ -1641,13 +1640,23 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 	end
 end)
 
+trueorfalse9 = true
+ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTabCategoryOptionsRB", function(val)
+	if val == true then
+		if trueorfalse9 == true then
+			trueorfalse9 = false
+			wait(5)
+		end
+		
+		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
+	end
+end)
+
 ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Loop", "ExperimentalTabCategoryOptionsKMethod")
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
 	if val == true then
-		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
-
 		KillEnemiesLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if IsAlive(LocalPlayer) then
@@ -2227,7 +2236,6 @@ ExperimentalTabCategoryPlayer1:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer1Kill", function(val)
 	if val == true then
-		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
 				player1 = v
@@ -2336,7 +2344,6 @@ ExperimentalTabCategoryPlayer2:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer2Kill", function(val)
 	if val == true then
-		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
 				player2 = v
@@ -2445,7 +2452,6 @@ ExperimentalTabCategoryPlayer3:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer3Kill", function(val)
 	if val == true then
-		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 		for i,v in pairs(game.Players:GetChildren()) do
 			if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
 				player3 = v

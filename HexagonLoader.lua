@@ -33,15 +33,6 @@ if not isfile("hexagon/load_version.txt") then
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
 
-	VersionTabOptions:AddButton("Stable", function()
-		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
-	end)
-	VersionTabOptions:AddButton("Alpha", function()
-		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
-    	game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
-	end)
-
 	VersionTabOptions:AddDropdown("Selector", {"Stable", "Alpha"}, "Stable", "VersionTabOptionsSelected")
 	VersionTabOptions:AddButton("Save", function()
 		if library.pointers.VersionTabOptionsSelected.value == "Stable" then

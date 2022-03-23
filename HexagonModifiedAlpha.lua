@@ -3217,6 +3217,7 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		TrollTabPlayerKTLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
                 if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
+					wait(library.pointers.TrollTabPlayerDelay.value)
 					if library.pointers.TrollTabPlayerMessages.value == "Auto" then
 						local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
 
@@ -3251,23 +3252,29 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		TrollTabPlayerKTLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Hacker", "TrollTabPlayerMessages", function(val)
-	if val == "Hacker" then
-		shittalklib = shittalklibha
-	elseif val == "Player" then
-		shittalklib = shittalklibpl
-	elseif val == "Passive" then
-		shittalklib = shittalklibpa
-	elseif val == "Auto" then
-		shittalklib = {}
-	elseif val == "Custom" then
-		shittalklibcu = {}
-		for i,v in pairs(string.split(library.pointers.TrollTabPlayerCM.value, ",,")) do
-			table.insert(shittalklibcu, v)
-		end
+TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Hacker", "TrollTabPlayerMessages")
+TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas.", "TrollTabPlayerCM", function(val)
+	shittalklibcu = {}
+	for i,v in pairs(string.split(val, ",,")) do
+		table.insert(shittalklibcu, v)
 	end
 end)
-TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas.", "TrollTabPlayerCM")
+TrollTabPlayer:AddSlider("Delay", {0, 10, 0, 1}, "TrollTabPlayerDelay")
+TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
+	if val == true then
+		TrollTabPlayerRHLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
+			pcall(function()
+                if WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead") then
+					WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead"):Destroy()
+				else
+					wait(1)
+				end
+			end)
+		end)
+	elseif val == false and TrollTabPlayerRHLoop then
+		TrollTabPlayerRHLoop:Disconnect()
+	end
+end)
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 

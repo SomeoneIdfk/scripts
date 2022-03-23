@@ -4,7 +4,6 @@ Made by SomeoneIdfk
 
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
-getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
 
 -- Services
 local UserInputService = game:GetService("UserInputService")

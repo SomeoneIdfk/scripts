@@ -25,8 +25,9 @@ if not isfolder("hexagon") then
 	makefolder("hexagon")
 end
 
+print(1)
 if isfile("hexagon/load_version.txt") then
-    loadstring("return "..readfile("hexagon/load_version.txt"))()
+    loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
 end
 
 if not isfile("hexagon/load_version.txt") then
@@ -36,11 +37,11 @@ if not isfile("hexagon/load_version.txt") then
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
 
 	VersionTabOptions:AddButton("Stable", function()
-        writefile("load_version.txt", "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua\"))();")
+        writefile("load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
         --game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 	VersionTabOptions:AddButton("Alpha", function()
-        writefile("load_version.txt", "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua\"))();")
+        writefile("load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
         --game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 end

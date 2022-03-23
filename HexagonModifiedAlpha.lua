@@ -3234,7 +3234,15 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 							end
 						end
 					else
-				    	game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklib[math.random(0, #shittalklib)], false, "Innocent", false, true)
+						if library.pointers.TrollTabPlayerMessages.value == "Hacker" then
+				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+						elseif library.pointers.TrollTabPlayerMessages.value == "Player" then
+				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+						elseif library.pointers.TrollTabPlayerMessages.value == "Passive" then
+				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+						elseif library.pointers.TrollTabPlayerMessages.value == "Custom" then
+				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibcu[math.random(0, #shittalklibcu)], false, "Innocent", false, true)
+						end
 					end
                 end
 			end)
@@ -3253,9 +3261,9 @@ TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "
 	elseif val == "Auto" then
 		shittalklib = {}
 	elseif val == "Custom" then
-		shittalklib = {}
+		shittalklibcu = {}
 		for i,v in pairs(string.split(library.pointers.TrollTabPlayerCM.value, ",,")) do
-			table.insert(shittalklib, v)
+			table.insert(shittalklibcu, v)
 		end
 	end
 end)

@@ -32,7 +32,8 @@ if not isfile("hexagon/release.txt") then
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
 
 	VersionTabOptions:AddButton("Stable", function()
-        VersionWindow:closeWindow()
+        print('1')
+        closeWindow(VersionWindow)
 	end)
 	VersionTabOptions:AddButton("Alpha", function()
 	

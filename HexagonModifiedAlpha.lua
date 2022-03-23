@@ -3338,14 +3338,15 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		TrollTabPlayerKTLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
                 if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
-					wait(library.pointers.TrollTabPlayerDelay.value)
 					if library.pointers.TrollTabPlayerMessages.value == "Auto" then
 						local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
 
 						if temp.Killer.Value == LocalPlayer.Name then
 							if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
+								wait(library.pointers.TrollTabPlayerDelay.value)
 								game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
 							else
+								wait(library.pointers.TrollTabPlayerDelay.value)
 								local randomnumber = math.random(1, 2)
 
 								if randomnumber == 1 then
@@ -3356,6 +3357,8 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 							end
 						end
 					else
+						wait(library.pointers.TrollTabPlayerDelay.value)
+						
 						if library.pointers.TrollTabPlayerMessages.value == "Hacker" then
 				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
 						elseif library.pointers.TrollTabPlayerMessages.value == "Player" then

@@ -28,7 +28,7 @@ if isfile("hexagon/load_version.txt") then
 end
 
 if not isfile("hexagon/load_version.txt") then
-	local VersionWindow = library:CreateWindow(Vector2.new(100, 150), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
+	local VersionWindow = library:CreateWindow(Vector2.new(300, 150), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
 
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)

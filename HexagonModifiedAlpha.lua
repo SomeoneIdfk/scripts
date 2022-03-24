@@ -2215,7 +2215,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 				end
 			end
 		end
-		PlayerFollowLoop = game:GetService("RunService").Stepped:Connect(function()
+		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
@@ -2259,6 +2259,7 @@ end)
 ExperimentalTabCategoryTeleport:AddToggle("Fix Desync", false, "ExperimentalTabCategoryTeleportFD", function(val)
 	if val == true then
 		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
+			LocalPlayer.Character.Humanoid.PlatformStand = true
 			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
 				if v:IsA("BasePart") and v.CanCollide == true then
 					v.CanCollide = false
@@ -2267,6 +2268,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Fix Desync", false, "ExperimentalTabC
 		end)
 	elseif val == false and etctFDLoop then
 		etctFDLoop:Disconnect()
+		LocalPlayer.Character.Humanoid.PlatformStand = false
 	end
 end)
 

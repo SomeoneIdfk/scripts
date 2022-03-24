@@ -2570,7 +2570,7 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 				break
 			end
 		end
-		KillSpecificLoop3 = game:GetService("RunService").RenderStepped:Connect(function()
+		KillSpecificLoop3 = game:GetService("RunService").Stepped:Connect(function()
 			pcall(function()
 				if string.match(tostring(player3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
 					if player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) then

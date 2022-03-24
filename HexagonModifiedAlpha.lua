@@ -1658,7 +1658,12 @@ ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTab
 			wait(5)
 		end
 		
+		local bloodsplatter = getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood
 		getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
+	elseif val == false then
+		if bloodsplatter then
+			getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = bloodsplatter
+		end
 	end
 end)
 

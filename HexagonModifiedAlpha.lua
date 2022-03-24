@@ -2033,7 +2033,32 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		teleported = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if constanttp or KillEnemiesLoop and pausetps == false then
+				if not etctFD1Loop then
+					etctFD1Loop = game:GetService("RunService").Stepped:Connect(function()
+						if IsAlive(LocalPlayer) then
+							spawn(function()
+								pcall(function()
+									if IsAlive(LocalPlayer) and teleported2 == false and library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true then
+										local velocity = Vector3.new(0, 1, 0)
+									
+										LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
+										LocalPlayer.Character.Humanoid.PlatformStand = true
+									elseif teleported2 == true then
+										LocalPlayer.Character.Humanoid.PlatformStand = false
+									end
+								end)
+							end)
+						end
+					end)
+					etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
+						for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+							if v:IsA("BasePart") and v.CanCollide == true then
+								v.CanCollide = false
+							end
+						end
+					end)
+				end
+				if library.pointers.ExperimentalTabCategoryTeleportConstantTP.value == true or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 						for i,v in pairs(game.Players:GetChildren()) do
@@ -2056,7 +2081,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 5)
@@ -2089,7 +2114,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 5)
@@ -2113,7 +2138,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 5)
@@ -2137,7 +2162,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 50) - 25), 0, (math.random(0, 50) - 25))
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 											wait()
 										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
 											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 5)
@@ -2189,19 +2214,16 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
+		etctFD1Loop:Disconnect()
+		etctFD2Loop:Disconnect()
+		LocalPlayer.Character.Humanoid.PlatformStand = false
 		pausetps = true
 		teleportTospawnpoint()
 		pausetps = false
 	end
 end)
 
-ExperimentalTabCategoryTeleport:AddToggle("Constant Teleport", false, "ExperimentalTabCategoryTeleportConstantTP", function(val)
-	if val == true then
-		constanttp = true
-	elseif val == false and constanttp then
-		constanttp = false
-	end
-end)
+ExperimentalTabCategoryTeleport:AddToggle("Constant Teleport", false, "ExperimentalTabCategoryTeleportConstantTP")
 
 ExperimentalTabCategoryTeleport:AddDropdown("Player Follower", {"-"}, "-", "ExperimentalTabCategoryTeleportPLRFollowList")
 
@@ -2217,6 +2239,33 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end
 		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
+				if not etctFD1Loop then
+					etctFD1Loop = game:GetService("RunService").Stepped:Connect(function()
+						if IsAlive(LocalPlayer) then
+							spawn(function()
+								pcall(function()
+									if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
+										if teleported == false or teleported2 == false then
+											local velocity = Vector3.new(0, 1, 0)
+									
+											LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
+											LocalPlayer.Character.Humanoid.PlatformStand = true
+										else
+											LocalPlayer.Character.Humanoid.PlatformStand = false
+										end
+									end
+								end)
+							end)
+						end
+					end)
+					etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
+						for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+							if v:IsA("BasePart") and v.CanCollide == true then
+								v.CanCollide = false
+							end
+						end
+					end)
+				end
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
 						if IsAlive(LocalPlayer) and IsAlive(followplayer) then
@@ -2251,40 +2300,12 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end)
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
-		pausetps = true
-		teleportTospawnpoint()
-		pausetps = false
-	end
-end)
-ExperimentalTabCategoryTeleport:AddToggle("Fix Desync", false, "ExperimentalTabCategoryTeleportFD", function(val)
-	if val == true then
-		etctFD1Loop = game:GetService("RunService").Stepped:Connect(function()
-			if IsAlive(LocalPlayer) then
-				spawn(function()
-					pcall(function()
-						if teleported2 == false and library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true then
-							local velocity = Vector3.new(0, 1, 0)
-						
-							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
-							LocalPlayer.Character.Humanoid.PlatformStand = true
-						elseif teleported2 == true then
-							LocalPlayer.Character.Humanoid.PlatformStand = false
-						end
-					end)
-				end)
-			end
-		end)
-		etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
-			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-				if v:IsA("BasePart") and v.CanCollide == true then
-					v.CanCollide = false
-				end
-			end
-		end)
-	elseif val == false and etctFD1Loop and etctFD2Loop then
 		etctFD1Loop:Disconnect()
 		etctFD2Loop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
+		pausetps = true
+		teleportTospawnpoint()
+		pausetps = false
 	end
 end)
 

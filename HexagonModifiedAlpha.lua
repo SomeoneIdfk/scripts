@@ -2038,13 +2038,15 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						if IsAlive(LocalPlayer) then
 							spawn(function()
 								pcall(function()
-									if IsAlive(LocalPlayer) and teleported2 == false and library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true then
-										local velocity = Vector3.new(0, 1, 0)
+									if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
+										if teleported == false or teleported2 == false then
+											local velocity = Vector3.new(0, 1, 0)
 									
-										LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
-										LocalPlayer.Character.Humanoid.PlatformStand = true
-									elseif teleported2 == true then
-										LocalPlayer.Character.Humanoid.PlatformStand = false
+											LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
+											LocalPlayer.Character.Humanoid.PlatformStand = true
+										else
+											LocalPlayer.Character.Humanoid.PlatformStand = false
+										end
 									end
 								end)
 							end)

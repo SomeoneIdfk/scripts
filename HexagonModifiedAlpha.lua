@@ -3398,14 +3398,16 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 						if WorkSpace.KillFeed:FindFirstChild("10").Killer.Value == LocalPlayer.Name then
 							if WorkSpace.KillFeed:FindFirstChild("10").Victim.Value == tostring(player1) or WorkSpace.KillFeed:FindFirstChild("10").Victim.Value == tostring(player2) or WorkSpace.KillFeed:FindFirstChild("10").Victim.Value == tostring(player3) then
 								wait(library.pointers.TrollTabPlayerDelay.value)
-								game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+								if IsAlive(LocalPlayer) then
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+								end
 							else
 								wait(library.pointers.TrollTabPlayerDelay.value)
 								local randomnumber = math.random(1, 2)
 
-								if randomnumber == 1 then
+								if randomnumber == 1 and IsAlive(LocalPlayer) then
 									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
-								elseif randomnumber == 2 then
+								elseif randomnumber == 2 and IsAlive(LocalPlayer) then
 									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
 								end
 							end
@@ -3413,13 +3415,13 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 					else
 						wait(library.pointers.TrollTabPlayerDelay.value)
 						
-						if library.pointers.TrollTabPlayerMessages.value == "Hacker" then
+						if library.pointers.TrollTabPlayerMessages.value == "Hacker" and IsAlive(LocalPlayer) then
 				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
-						elseif library.pointers.TrollTabPlayerMessages.value == "Player" then
+						elseif library.pointers.TrollTabPlayerMessages.value == "Player" and IsAlive(LocalPlayer) then
 				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
-						elseif library.pointers.TrollTabPlayerMessages.value == "Passive" then
+						elseif library.pointers.TrollTabPlayerMessages.value == "Passive" and IsAlive(LocalPlayer) then
 				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
-						elseif library.pointers.TrollTabPlayerMessages.value == "Custom" then
+						elseif library.pointers.TrollTabPlayerMessages.value == "Custom" and IsAlive(LocalPlayer) then
 				    		game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibcu[math.random(0, #shittalklibcu)], false, "Innocent", false, true)
 						end
 					end

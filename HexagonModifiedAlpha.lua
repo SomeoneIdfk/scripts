@@ -2033,8 +2033,8 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		teleported = false
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if not etctFD1Loop then
-					etctFD1Loop = game:GetService("RunService").Stepped:Connect(function()
+				if not etctFDLoop then
+					etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
 						if IsAlive(LocalPlayer) then
 							spawn(function()
 								pcall(function()
@@ -2050,13 +2050,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 									end
 								end)
 							end)
-						end
-					end)
-					etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
-						for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-							if v:IsA("BasePart") and v.CanCollide == true then
-								v.CanCollide = false
-							end
 						end
 					end)
 				end
@@ -2216,8 +2209,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
-		etctFD1Loop:Disconnect()
-		etctFD2Loop:Disconnect()
+		etctFDLoop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
 		pausetps = true
 		teleportTospawnpoint()
@@ -2241,8 +2233,8 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end
 		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if not etctFD1Loop then
-					etctFD1Loop = game:GetService("RunService").Stepped:Connect(function()
+				if not etctFDLoop then
+					etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
 						if IsAlive(LocalPlayer) then
 							spawn(function()
 								pcall(function()
@@ -2260,13 +2252,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 							end)
 						end
 					end)
-					--etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
-						--for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-							--if v:IsA("BasePart") and v.CanCollide == true then
-								--v.CanCollide = false
-							--end
-						--end
-					--end)
 				end
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
@@ -2302,8 +2287,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end)
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
-		etctFD1Loop:Disconnect()
-		--etctFD2Loop:Disconnect()
+		etctFDLoop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
 		pausetps = true
 		teleportTospawnpoint()

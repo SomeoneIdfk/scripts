@@ -3430,7 +3430,7 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		TrollTabPlayerKTLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Hacker", "TrollTabPlayerMessages")
+TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Auto", "TrollTabPlayerMessages")
 TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas.", "TrollTabPlayerCM", function(val)
 	shittalklibcu = {}
 	for i,v in pairs(string.split(val, ",,")) do

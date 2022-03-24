@@ -3383,16 +3383,16 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 							if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
 								wait(library.pointers.TrollTabPlayerDelay.value)
 								if IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(temp.Victim.Value.." - "..shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
 								end
 							else
 								wait(library.pointers.TrollTabPlayerDelay.value)
 								local randomnumber = math.random(1, 2)
 
 								if randomnumber == 1 and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(temp.Victim.Value.." - "..shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
 								elseif randomnumber == 2 and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(temp.Victim.Value.." - "..shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
 								end
 							end
 						end

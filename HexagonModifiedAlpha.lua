@@ -3393,20 +3393,20 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 			pcall(function()
                 if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
 					if library.pointers.TrollTabPlayerMessages.value == "Auto" then
-						local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
+						--local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
 
-						if temp.Killer.Value == LocalPlayer.Name then
-							if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
+						if WorkSpace.KillFeed:FindFirstChild("10").Killer.Value == LocalPlayer.Name then
+							if WorkSpace.KillFeed:FindFirstChild("10").Victim.Value == tostring(player1) or WorkSpace.KillFeed:FindFirstChild("10").Victim.Value == tostring(player2) or WorkSpace.KillFeed:FindFirstChild("10").Victim.Value == tostring(player3) then
 								wait(library.pointers.TrollTabPlayerDelay.value)
-								game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+								game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
 							else
 								wait(library.pointers.TrollTabPlayerDelay.value)
 								local randomnumber = math.random(1, 2)
 
 								if randomnumber == 1 then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
 								elseif randomnumber == 2 then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(WorkSpace.KillFeed:FindFirstChild("10").Victim.Value.."-"..shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
 								end
 							end
 						end

@@ -2215,7 +2215,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 				end
 			end
 		end
-		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
+		PlayerFollowLoop = game:GetService("RunService").Stepped:Connect(function()
 			pcall(function()
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
@@ -2254,6 +2254,19 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		pausetps = true
 		teleportTospawnpoint()
 		pausetps = false
+	end
+end)
+ExperimentalTabCategoryTeleport:AddToggle("Fix Desync", false, "ExperimentalTabCategoryTeleportFD", function(val)
+	if val == true then
+		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
+			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if v:IsA("BasePart") and v.CanCollide == true then
+					v.CanCollide = false
+				end
+			end
+		end)
+	elseif val == false and etctFDLoop then
+		etctFDLoop:Disconnect()
 	end
 end)
 

@@ -5,17 +5,8 @@ Made by SomeoneIdfk
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
 
--- Services
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
--- Environment 
-local getrawmetatable = getrawmetatable or false
-local mousemove = mousemove or mousemoverel or mouse_move or false
-local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false
-local hookfunc = hookfunc or hookfunction or replaceclosure or false
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/library.lua"))()
 

@@ -2224,7 +2224,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 							if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 30) - 15), 0, (math.random(0, 30) - 15))
 							elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
 							elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 5)
 							end
@@ -2258,16 +2258,32 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 end)
 ExperimentalTabCategoryTeleport:AddToggle("Fix Desync", false, "ExperimentalTabCategoryTeleportFD", function(val)
 	if val == true then
-		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
-			LocalPlayer.Character.Humanoid.PlatformStand = true
+		etctFD1Loop = game:GetService("RunService").Stepped:Connect(function()
+			if IsAlive(LocalPlayer) then
+				spawn(function()
+					pcall(function()
+						if teleported2 == false and library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true then
+							local velocity = Vector3.new(0, 1, 0)
+						
+							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
+							LocalPlayer.Character.Humanoid.PlatformStand = true
+						elseif teleported2 == true then
+							LocalPlayer.Character.Humanoid.PlatformStand = false
+						end
+					end)
+				end)
+			end
+		end)
+		etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
 			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
 				if v:IsA("BasePart") and v.CanCollide == true then
 					v.CanCollide = false
 				end
 			end
 		end)
-	elseif val == false and etctFDLoop then
-		etctFDLoop:Disconnect()
+	elseif val == false and etctFD1Loop and etctFD2Loop then
+		etctFD1Loop:Disconnect()
+		etctFD2Loop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
 	end
 end)

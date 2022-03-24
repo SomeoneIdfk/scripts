@@ -2260,13 +2260,13 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 							end)
 						end
 					end)
-					etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
-						for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-							if v:IsA("BasePart") and v.CanCollide == true then
-								v.CanCollide = false
-							end
-						end
-					end)
+					--etctFD2Loop = game:GetService("RunService").Stepped:Connect(function()
+						--for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+							--if v:IsA("BasePart") and v.CanCollide == true then
+								--v.CanCollide = false
+							--end
+						--end
+					--end)
 				end
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
@@ -2303,7 +2303,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
 		etctFD1Loop:Disconnect()
-		etctFD2Loop:Disconnect()
+		--etctFD2Loop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
 		pausetps = true
 		teleportTospawnpoint()

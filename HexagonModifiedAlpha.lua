@@ -2215,13 +2215,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 				end
 			end
 		end
-		teleported3 = true
 		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
-						if IsAlive(LocalPlayer) and IsAlive(followplayer) and teleported3 == true then
-							teleported3 = false
+						if IsAlive(LocalPlayer) and IsAlive(followplayer) then
 							teleported2 = false
 							if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 30) - 15), 0, (math.random(0, 30) - 15))
@@ -2230,7 +2228,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 							elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
 								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, 5)
 							end
-							teleported3 = true
 						elseif IsAlive(LocalPlayer) then
 							if teleported2 == false then
 								pausetps = true

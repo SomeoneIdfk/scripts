@@ -2898,6 +2898,18 @@ ExperimentalTabCategoryFarm:AddToggle("Kill character", false, "ExperimentalTabC
 ExperimentalTabCategoryFarm:AddDropdown("Kill method", {"Set Health", "Team Switch"}, "Set Health", "ExperimentalTabCategoryFarmKillMethod")
 ExperimentalTabCategoryFarm:AddDropdown("Gamemode", {"Casual", "Unranked"}, "Casual", "ExperimentalTabCategoryFarmGamemode")
 ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "ExperimentalTabCategoryFarmScore")
+ExperimentalTabCategoryFarm:AddToggle("Anti-Afk", false, "ExperimentalTabcategoryFarmAntiAFK", function(val)
+	if val == true then
+		AntiAFKLoop = game:GetService("RunService").Heartbeat:Connect(function()
+			print(1)
+			for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
+				v:Disable()
+			end
+		end)
+	elseif val == false and AntiAFKLoop then
+		AntiAFKLoop:Disconnect()
+	end
+end)
 
 local SkinsTab = Window:CreateTab("Skins")
 

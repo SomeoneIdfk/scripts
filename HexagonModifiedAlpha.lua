@@ -1601,6 +1601,8 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 			pcall(function()
 				if trueorfalse10 == true then
 					if currentmap ~= WorkSpace.Map.Origin.Value then
+						currentmap = WorkSpace.Map.Origin.Value
+						wait(3)
 						Hint.Text = "Removing textures..."
 						local decalsyeeted = true
 						local g = game
@@ -1638,14 +1640,12 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 								e.Enabled = false
 							end
 						end
-	
-						currentmap = WorkSpace.Map.Origin.Value
 						Hint.Destroy()
 					else
 						wait(1)
 					end
 				else
-					wait(5)
+					wait(3)
 					trueorfalse10 = true
 				end
 			end)

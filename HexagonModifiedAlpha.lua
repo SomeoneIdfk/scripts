@@ -2058,6 +2058,12 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 											LocalPlayer.Character.Humanoid.PlatformStand = false
 										end
 									end
+
+									for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+										if v:IsA("BasePart") and v.CanCollide == true then
+											v.CanCollide = false
+										end
+									end
 								end)
 							end)
 						end
@@ -2256,6 +2262,12 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 											LocalPlayer.Character.Humanoid.PlatformStand = true
 										else
 											LocalPlayer.Character.Humanoid.PlatformStand = false
+										end
+									end
+
+									for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+										if v:IsA("BasePart") and v.CanCollide == true then
+											v.CanCollide = false
 										end
 									end
 								end)

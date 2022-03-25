@@ -1632,7 +1632,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 							elseif v:IsA("MeshPart") then
 								v.Material = "Plastic"
 								v.Reflectance = 0
-								v.TextureID = 30117799
+								v.TextureID = 1521636846
 							end
 						end
 						for i, e in pairs(l:GetChildren()) do

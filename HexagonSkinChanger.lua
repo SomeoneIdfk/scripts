@@ -500,7 +500,7 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "SettingsTabCategoryConfigsBranch")
+SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Skin Changer", "SettingsTabCategoryConfigsBranch")
 SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabCategoryConfigsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
 	if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then

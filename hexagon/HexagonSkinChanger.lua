@@ -50,7 +50,7 @@ local LocalPlayer = game.Players.LocalPlayer
 local cbClient = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
 local oldInventory = cbClient.CurrentInventory
 
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/lib/library.lua"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/lib/library_skinchanger.lua"))()
 
 local Window = library:CreateWindow(Vector2.new(500, 500), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
 

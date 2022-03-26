@@ -514,6 +514,7 @@ SettingsTabCategoryConfigs:AddButton("Save", function()
 
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
+            print(library.pointers.SettingsTabCategoryConfigsBranch.value, library.pointers.SettingsTabCategoryConfigsBuild.value)
 			if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
 				library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
 				if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then

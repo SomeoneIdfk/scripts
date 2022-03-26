@@ -15,7 +15,13 @@ if not isfolder("hexagon") then
 end
 
 if isfile("hexagon/load_version.txt") then
-    loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
+	if readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModified.lua" then
+    	loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
+	elseif readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModifiedAlpha.lua" then
+		loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
+	elseif readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonSkinChanger.lua" then
+		loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
+	end
 end
 
 if not isfile("hexagon/load_version.txt") then

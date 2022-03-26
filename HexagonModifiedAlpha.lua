@@ -3544,6 +3544,7 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 		TrollTabPlayerRHLoop:Disconnect()
 	end
 end)
+TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 
@@ -3995,6 +3996,11 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						Count.Parent = Marker
 					end
 				end
+			elseif self.Name == "PlayerChatted" and library.pointers.TrollTabPlayerCA.value == true then
+				args[2] = false
+				args[3] = "Innocent"
+				args[4] = false
+				args[5] = false
 			end
 		elseif method == "InvokeServer" then
 			if self.Name == "Moolah" then

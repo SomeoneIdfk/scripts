@@ -1583,25 +1583,29 @@ SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Chan
 SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "Build")
 SettingsTabCategoryConfigs:AddButton("Save", function()
 	if library.pointers.Branch.value == "Hexagon Modified" then
-        if library.pointers.Build.value == "Stable" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-        elseif library.pointers.Build.value == "Alpha" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
-        end
-    elseif library.pointers.Branch.value == "Skin Changer" then
-        if library.pointers.Build.value == "-" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
-        end
-    end
+		if library.pointers.Build.value == "Stable" then
+			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+		elseif library.pointers.Build.value == "Alpha" then
+			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+		end
+	elseif library.pointers.Branch.value == "Skin Changer" then
+		if library.pointers.Build.value == "-" then
+			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
+		end
+	end
 
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
 			if library.pointers.Branch.value == "Hexagon Modified" then
 				library.pointers.Build.options = {"Stable", "Alpha"}
-				library.pointers.Build:Set("Stable")
+				if library.pointers.Build.value == "-" then
+					library.pointers.Build:Set("Stable")
+				end
 			elseif library.pointers.Branch.value == "Skin Changer" then
 				library.pointers.Build.options = {"-"}
-				library.pointers.Build:Set("-")
+				if library.pointers.Build.value ~= "-" then
+					library.pointers.Build:Set("-")
+				end
 			end
 		end)
 	end)

@@ -522,10 +522,14 @@ SettingsTabCategoryConfigs:AddButton("Save", function()
 		pcall(function()
 			if library.pointers.Branch.value == "Hexagon Modified" then
 				library.pointers.Build.options = {"Stable", "Alpha"}
-				library.pointers.Build:Set("Stable")
+				if library.pointers.Build.value == "-" then
+					library.pointers.Build:Set("Stable")
+				end
 			elseif library.pointers.Branch.value == "Skin Changer" then
 				library.pointers.Build.options = {"-"}
-				library.pointers.Build:Set("-")
+				if library.pointers.Build.value ~= "-" then
+					library.pointers.Build:Set("-")
+				end
 			end
 		end)
 	end)

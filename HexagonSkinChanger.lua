@@ -511,23 +511,23 @@ SettingsTabCategoryConfigs:AddButton("Save", function()
             writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
         end
     end
+end)
 
-	game:GetService("RunService").Stepped:Connect(function()
-		pcall(function()
-            print(library.pointers.SettingsTabCategoryConfigsBranch.value, library.pointers.SettingsTabCategoryConfigsBuild.value)
-			if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
-				library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
-				if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-					library.pointers.SettingsTabCategoryConfigsBuild:Set("Stable")
-				end
-			elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
-				library.pointers.SettingsTabCategoryConfigsBuild.options = {"-"}
-				if library.pointers.SettingsTabCategoryConfigsBuild.value ~= "-" then
-					library.pointers.SettingsTabCategoryConfigsBuild:Set("-")
-				end
-			end
-		end)
-	end)
+game:GetService("RunService").Stepped:Connect(function()
+    pcall(function()
+        print(library.pointers.SettingsTabCategoryConfigsBranch.value, library.pointers.SettingsTabCategoryConfigsBuild.value)
+        if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
+            library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
+            if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
+                library.pointers.SettingsTabCategoryConfigsBuild:Set("Stable")
+            end
+        elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
+            library.pointers.SettingsTabCategoryConfigsBuild.options = {"-"}
+            if library.pointers.SettingsTabCategoryConfigsBuild.value ~= "-" then
+                library.pointers.SettingsTabCategoryConfigsBuild:Set("-")
+            end
+        end
+    end)
 end)
 
 local SettingsTabCategoryCredits = SettingsTab:AddCategory("Credits", 2)

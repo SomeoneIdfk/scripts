@@ -3193,86 +3193,93 @@ waittrueorfalse = true
 SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 	if val == true then
 		prevadd = nil
+        old_inventory = cbClient.CurrentInventory
+        trueorfalse = true
 		SkinsTabAddLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if prevadd ~= library.pointers.SkinsTabAddSelection.value then
-					prevadd = library.pointers.SkinsTabAddSelection.value
-					if waittrueorfalse == true then
-						waittrueorfalse = false
-						wait(3)
-					end
-					local InventoryLoadout = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"]
-					AllSkinsTable = {}
-					if library.pointers.SkinsTabAddSelection.value == "All" then
-						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
-									table.insert(AllSkinsTable, {v.Name.."_Stock"})
+				if prevadd ~= library.pointers.SkinsTabAddSelection.value or cbClient.CurrentInventory ~= AllSkinsTable then
+                    if trueorfalse == true then
+                        trueorfalse = false
+                        prevadd = library.pointers.SkinsTabAddSelection.value
+					    if waittrueorfalse == true then
+						    waittrueorfalse = false
+						    wait(3)
+					    end
+					    local InventoryLoadout = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"]
+					    AllSkinsTable = {}
+					    if library.pointers.SkinsTabAddSelection.value == "All" then
+						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								    if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
+									    table.insert(AllSkinsTable, {v.Name.."_Stock"})
 									
-									for i2,v2 in pairs(v:GetChildren()) do
-										if v2.Name ~= "Stock" then
-											table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-										end
-									end
-								end
-							end
-						end
+									    for i2,v2 in pairs(v:GetChildren()) do
+										    if v2.Name ~= "Stock" then
+											    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+										    end
+									    end
+								    end
+							    end
+						    end
 							
-						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								table.insert(AllSkinsTable, {v.Name.."_Stock"})
-							end
-						end
+						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								    table.insert(AllSkinsTable, {v.Name.."_Stock"})
+							    end
+						    end
 				
-						for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
-							if v:IsA("Folder") and v.Name ~= "Models" then
-								for i2,v2 in pairs(v:GetChildren()) do
-									table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-								end
-							end
-						end
-					elseif library.pointers.SkinsTabAddSelection.value == "Knives&Gloves" then
-						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
-									table.insert(AllSkinsTable, {v.Name.."_Stock"})
+						    for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
+							    if v:IsA("Folder") and v.Name ~= "Models" then
+								    for i2,v2 in pairs(v:GetChildren()) do
+									    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+								    end
+							    end
+						    end
+					    elseif library.pointers.SkinsTabAddSelection.value == "Knives&Gloves" then
+						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								    if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
+									    table.insert(AllSkinsTable, {v.Name.."_Stock"})
 									
-									for i2,v2 in pairs(v:GetChildren()) do
-										if v2.Name ~= "Stock" then
-											table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-										end
-									end
-								end
-							end
-						end
+									    for i2,v2 in pairs(v:GetChildren()) do
+										    if v2.Name ~= "Stock" then
+											    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+										    end
+									    end
+								    end
+							    end
+						    end
 							
-						for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
-							if v:IsA("Folder") and v.Name ~= "Models" then
-								for i2,v2 in pairs(v:GetChildren()) do
-									table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-								end
-							end
-						end
-					elseif library.pointers.SkinsTabAddSelection.value == "Stock Weapons" then
-						for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								table.insert(AllSkinsTable, {v.Name.."_Stock"})
-							end
-						end
-					end
+						    for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
+							    if v:IsA("Folder") and v.Name ~= "Models" then
+								    for i2,v2 in pairs(v:GetChildren()) do
+									    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
+								    end
+							    end
+						    end
+					    elseif library.pointers.SkinsTabAddSelection.value == "Stock Weapons" then
+						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+								    table.insert(AllSkinsTable, {v.Name.."_Stock"})
+							    end
+						    end
+                        end
 				
-					cbClient.CurrentInventory = AllSkinsTable
+					    cbClient.CurrentInventory = AllSkinsTable
 				
-					if InventoryLoadout.Visible == true then
-						InventoryLoadout.Visible = false
-						InventoryLoadout.Visible = true
-					end
+					    if InventoryLoadout.Visible == true then
+						    InventoryLoadout.Visible = false
+						    InventoryLoadout.Visible = true
+					    end
+                    end
 				end
 				wait(1)
+                trueorfalse = true
 			end)
 		end)
 	elseif val == false and SkinsTabAddLoop then
 		SkinsTabAddLoop:Disconnect()
+        cbClient.CurrentInventory = old_inventory
 	end
 end)
 SkinsTabAdd:AddDropdown("Additional", {"Default", "Knives&Gloves", "Stock Weapons", "All"}, "Default", "SkinsTabAddSelection")

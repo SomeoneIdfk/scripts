@@ -24,13 +24,32 @@ if not isfile("hexagon/load_version.txt") then
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
 
-	VersionTabOptions:AddDropdown("Selector", {"Stable", "Alpha"}, "Stable", "VersionTabOptionsSelected")
+	VersionTabOptions:AddDropdown("Selector", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "VersionsTabOptionsSelector")
+	VersionTabOptions:AddDropdown("Build", {"-"}, "-", "VersionTabOptionsBuild")
 	VersionTabOptions:AddButton("Save", function()
-		if library.pointers.VersionTabOptionsSelected.value == "Stable" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-		elseif library.pointers.VersionTabOptionsSelected.value == "Alpha" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+		if library.pointers.VersionTabOptionsSelector.value == "Hexagon Modified" then
+			if library.pointers.VersionTabOptionsBuild.value == "Stable" then
+				writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+			elseif library.pointers.VersionTabOptionsBuild.value == "Alpha" then
+				writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+			end
+		elseif library.pointers.VersionTabOptionsSelector.value == "Skin Changer" then
+			if library.pointers.VersionTabOptionsBuild.value == "-" then
+				writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
+			end
 		end
 		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+	end)
+
+	game:GetService("RunService").Heartbeat:Connect(function()
+		pcall(function()
+			if library.pointers.VersionTabOptionsSelector.value == "Hexagon Modified" then
+				library.pointers.VersionTabOptionsBuild.options = {"Stable", "Alpha"}
+				library.pointers.VersionTabOptionsBuild:Set("Stable")
+			elseif library.pointers.VersionTabOptionsSelector.value == "Skin Changer" then
+				library.pointers.VersionTabOptionsBuild.options = {"-"}
+				library.pointers.VersionTabOptionsBuild:Set("-")
+			end
+		end)
 	end)
 end

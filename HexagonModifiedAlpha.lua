@@ -1579,13 +1579,32 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Selector", {"Stable", "Alpha"}, "Alpha", "SettingsTabOptionsSelected")
+SettingsTabCategoryConfigs:AddDropdown("Selector", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "SettingsTabOptionsSelector")
+SettingsTabCategoryConfigs:AddDropdown("Build", {"Stable", "Alpha"}, "Alpha", "SettingsTabOptionsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
-	if library.pointers.SettingsTabOptionsSelected.value == "Stable" then
-		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-	elseif library.pointers.SettingsTabOptionsSelected.value == "Alpha" then
-		writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+	if library.pointers.SettingsTabOptionsSelector.value == "Hexagon Modified" then
+		if library.pointers.SettingsTabOptionsBuild.value == "Stable" then
+			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+		elseif library.pointers.SettingsTabOptionsBuild.value == "Alpha" then
+			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+		end
+	elseif library.pointers.SettingsTabOptionsSelector.value == "Skin Changer" then
+		if library.pointers.SettingsTabOptionsBuild.value == "-" then
+			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
+		end
 	end
+
+	game:GetService("RunService").Heartbeat:Connect(function()
+		pcall(function()
+			if library.pointers.SettingsTabOptionsSelector.value == "Hexagon Modified" then
+				library.pointers.SettingsTabOptionsBuild.options = {"Stable", "Alpha"}
+				library.pointers.SettingsTabOptionsBuild:Set("Stable")
+			elseif library.pointers.SettingsTabOptionsSelector.value == "Skin Changer" then
+				library.pointers.SettingsTabOptionsBuild.options = {"-"}
+				library.pointers.SettingsTabOptionsBuild:Set("-")
+			end
+		end)
+	end)
 end)
 
 local WorkSpace = game:GetService("Workspace")

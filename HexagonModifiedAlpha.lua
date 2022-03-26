@@ -3020,7 +3020,7 @@ SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 		prevadd = nil
 		SkinsTabAddLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if prevadd ~= library.pointers.SkinsTabAddSelection.value then
+				if prevadd ~= library.pointers.SkinsTabAddSelection.value or cbClient.CurrentInventory ~= AllSkinsTable then
 					prevadd = library.pointers.SkinsTabAddSelection.value
 					if waittrueorfalse == true then
 						waittrueorfalse = false

@@ -503,29 +503,29 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Selector", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "SettingsTabOptionsSelector")
-SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabOptionsBuild")
+SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "Branch")
+SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "Build")
 SettingsTabCategoryConfigs:AddButton("Save", function()
-	if library.pointers.SettingsTabOptionsSelector.value == "Hexagon Modified" then
-		if library.pointers.SettingsTabOptionsBuild.value == "Stable" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-		elseif library.pointers.SettingsTabOptionsBuild.value == "Alpha" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
-		end
-	elseif library.pointers.SettingsTabOptionsSelector.value == "Skin Changer" then
-		if library.pointers.SettingsTabOptionsBuild.value == "-" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
-		end
-	end
+	if library.pointers.Branch.value == "Hexagon Modified" then
+        if library.pointers.Build.value == "Stable" then
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+        elseif library.pointers.Build.value == "Alpha" then
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+        end
+    elseif library.pointers.Branch.value == "Skin Changer" then
+        if library.pointers.Build.value == "-" then
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
+        end
+    end
 
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
-			if library.pointers.SettingsTabOptionsSelector.value == "Hexagon Modified" then
-				library.pointers.SettingsTabOptionsBuild.options = {"Stable", "Alpha"}
-				library.pointers.SettingsTabOptionsBuild:Set("Stable")
-			elseif library.pointers.SettingsTabOptionsSelector.value == "Skin Changer" then
-				library.pointers.SettingsTabOptionsBuild.options = {"-"}
-				library.pointers.SettingsTabOptionsBuild:Set("-")
+			if library.pointers.Branch.value == "Hexagon Modified" then
+				library.pointers.Build.options = {"Stable", "Alpha"}
+				library.pointers.Build:Set("Stable")
+			elseif library.pointers.Branch.value == "Skin Changer" then
+				library.pointers.Build.options = {"-"}
+				library.pointers.Build:Set("-")
 			end
 		end)
 	end)

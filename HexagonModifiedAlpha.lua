@@ -1579,32 +1579,32 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "Branch")
-SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "Build")
+SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "SettingsTabCategoryConfigsBranch")
+SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabCategoryConfigsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
-	if library.pointers.Branch.value == "Hexagon Modified" then
-		if library.pointers.Build.value == "Stable" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
-		elseif library.pointers.Build.value == "Alpha" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
-		end
-	elseif library.pointers.Branch.value == "Skin Changer" then
-		if library.pointers.Build.value == "-" then
-			writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
-		end
-	end
+	if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
+        if library.pointers.SettingsTabCategoryConfigsBuild.value == "Stable" then
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+        elseif library.pointers.SettingsTabCategoryConfigsBuild.value == "Alpha" then
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+        end
+    elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
+        if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
+        end
+    end
 
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
-			if library.pointers.Branch.value == "Hexagon Modified" then
-				library.pointers.Build.options = {"Stable", "Alpha"}
-				if library.pointers.Build.value == "-" then
-					library.pointers.Build:Set("Stable")
+			if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
+				library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
+				if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
+					library.pointers.SettingsTabCategoryConfigsBuild:Set("Stable")
 				end
-			elseif library.pointers.Branch.value == "Skin Changer" then
-				library.pointers.Build.options = {"-"}
-				if library.pointers.Build.value ~= "-" then
-					library.pointers.Build:Set("-")
+			elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
+				library.pointers.SettingsTabCategoryConfigsBuild.options = {"-"}
+				if library.pointers.SettingsTabCategoryConfigsBuild.value ~= "-" then
+					library.pointers.SettingsTabCategoryConfigsBuild:Set("-")
 				end
 			end
 		end)
@@ -3200,10 +3200,9 @@ waittrueorfalse = true
 SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 	if val == true then
 		prevadd = nil
-		old_inventory = cbClient.CurrentInventory
 		SkinsTabAddLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if prevadd ~= library.pointers.SkinsTabAddSelection.value or cbClient.CurrentInventory ~= AllSkinsTable then
+				if prevadd ~= library.pointers.SkinsTabAddSelection.value then
 					prevadd = library.pointers.SkinsTabAddSelection.value
 					if waittrueorfalse == true then
 						waittrueorfalse = false
@@ -3281,11 +3280,6 @@ SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 		end)
 	elseif val == false and SkinsTabAddLoop then
 		SkinsTabAddLoop:Disconnect()
-		old_inventory = cbClient.CurrentInventory
-		if InventoryLoadout.Visible == true then
-			InventoryLoadout.Visible = false
-			InventoryLoadout.Visible = true
-		end
 	end
 end)
 SkinsTabAdd:AddDropdown("Additional", {"Default", "Knives&Gloves", "Stock Weapons", "All"}, "Default", "SkinsTabAddSelection")

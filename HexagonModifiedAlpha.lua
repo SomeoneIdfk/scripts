@@ -2957,6 +2957,19 @@ SkinsTabRifles:AddToggle("Enable", false, "SkinsTabRiflesEnabled", function(val)
 		end)
 	elseif val == false and SkinsTabRiflesLoop then
 		SkinsTabRiflesLoop:Disconnect()
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = "Stock"
 	end
 end)
 SkinsTabRifles:AddDropdown("Galil", {"Stock", "Hardware", "Hardware 2", "Toxicity", "Frosted", "Worn"}, "Stock", "SkinsTabRiflesGalil")
@@ -3003,6 +3016,16 @@ SkinsTabHeavy:AddToggle("Enable", false, "SkinsTabHeavyEnabled", function(val)
 		end)
 	elseif val == false and SkinsTabHeavyLoop then
 		SkinsTabHeavyLoop:Disconnect()
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = "Stock"
 	end
 end)
 SkinsTabHeavy:AddDropdown("Nova", {"Stock", "Terraformer", "Tiger", "Black Ice", "Sharkesh", "Paradise", "Starry Night", "Cookie", "Tricked", "Defective", "Oath"}, "Stock", "SkinsTabHeavyNova")
@@ -3018,6 +3041,7 @@ waittrueorfalse = true
 SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 	if val == true then
 		prevadd = nil
+		old_inventory = cbClient.CurrentInventory
 		SkinsTabAddLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if prevadd ~= library.pointers.SkinsTabAddSelection.value or cbClient.CurrentInventory ~= AllSkinsTable then
@@ -3098,6 +3122,11 @@ SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 		end)
 	elseif val == false and SkinsTabAddLoop then
 		SkinsTabAddLoop:Disconnect()
+		old_inventory = cbClient.CurrentInventory
+		if InventoryLoadout.Visible == true then
+			InventoryLoadout.Visible = false
+			InventoryLoadout.Visible = true
+		end
 	end
 end)
 SkinsTabAdd:AddDropdown("Additional", {"Default", "Knives&Gloves", "Stock Weapons", "All"}, "Default", "SkinsTabAddSelection")
@@ -3145,6 +3174,16 @@ SkinsTabSMGs:AddToggle("Enable", false, "SkinsTabSMGsEnabled", function(val)
 		end)
 	elseif val == false and SkinsTabSMGsLoop then
 		SkinsTabSMGsLoop:Disconnect()
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = "Stock"
 	end
 end)
 SkinsTabSMGs:AddDropdown("MP9", {"Stock", "Velvita", "Blueroyal", "Decked Halls", "Cookie Man", "Wilderness", "Vaporwave", "Cob Web", "SnowTime", "Control"}, "Stock", "SkinsTabSMGsMP9")
@@ -3200,6 +3239,21 @@ SkinsTabPistols:AddToggle("Enable", false, "SkinsTabPistolsEnabled", function(va
 		end)
 	elseif val == false and SkinsTabPistolsLoop then
 		SkinsTabPistolsLoop:Disconnect()
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = "Stock"
+		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = "Stock"
 	end
 end)
 SkinsTabPistols:AddDropdown("Glock-18", {"Stock", "Desert Camo", "Day Dreamer", "Wetland", "Anubis", "Midnight Tiger", "Scapter", "Gravestomper", "Tarnish", "Rush", "Angler", "Spacedust", "Money Maker", "RSL", "White Sauce", "Biotrip", "Underwater", "Hallows"}, "Stock", "SkinsTabPistolsGlock")

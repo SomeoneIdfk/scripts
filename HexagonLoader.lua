@@ -43,10 +43,13 @@ if not isfile("hexagon/load_version.txt") then
 
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
+			print(1)
 			if library.pointers.VersionTabOptionsSelector.value == "Hexagon Modified" then
+				print(2)
 				library.pointers.VersionTabOptionsBuild.options = {"Stable", "Alpha"}
 				library.pointers.VersionTabOptionsBuild:Set("Stable")
 			elseif library.pointers.VersionTabOptionsSelector.value == "Skin Changer" then
+				print(3)
 				library.pointers.VersionTabOptionsBuild.options = {"-"}
 				library.pointers.VersionTabOptionsBuild:Set("-")
 			end

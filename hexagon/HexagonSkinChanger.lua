@@ -505,13 +505,13 @@ SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabCategory
 SettingsTabCategoryConfigs:AddButton("Save", function()
 	if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
         if library.pointers.SettingsTabCategoryConfigsBuild.value == "Stable" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModified.lua")
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModified.lua")
         elseif library.pointers.SettingsTabCategoryConfigsBuild.value == "Alpha" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonModifiedAlpha.lua")
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModifiedAlpha.lua")
         end
     elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
         if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonSkinChanger.lua")
+            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonSkinChanger.lua")
         end
     end
 end)

@@ -485,7 +485,7 @@ SettingsTabCategoryConfigs:AddButton("Refresh", function()
 
 	for i,v in pairs(listfiles("hexagon/skin_changer/configs")) do
 		if v:sub(-4) == ".cfg" then
-			table.insert(cfgs, v:sub(29, -5))
+			table.insert(cfgs, v:sub(30, -5))
 		end
 	end
 	

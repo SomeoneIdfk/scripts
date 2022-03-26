@@ -504,7 +504,7 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 end)
 
 SettingsTabCategoryConfigs:AddDropdown("Selector", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "SettingsTabOptionsSelector")
-SettingsTabCategoryConfigs:AddDropdown("Build", {"Stable", "Alpha"}, "Alpha", "SettingsTabOptionsBuild")
+SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabOptionsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
 	if library.pointers.SettingsTabOptionsSelector.value == "Hexagon Modified" then
 		if library.pointers.SettingsTabOptionsBuild.value == "Stable" then

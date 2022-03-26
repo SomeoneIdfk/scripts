@@ -518,7 +518,7 @@ SettingsTabCategoryConfigs:AddButton("Save", function()
 		end
 	end
 
-	game:GetService("RunService").Heartbeat:Connect(function()
+	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
 			if library.pointers.SettingsTabOptionsSelector.value == "Hexagon Modified" then
 				library.pointers.SettingsTabOptionsBuild.options = {"Stable", "Alpha"}

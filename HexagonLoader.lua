@@ -19,7 +19,7 @@ if isfile("hexagon/load_version.txt") then
 end
 
 if not isfile("hexagon/load_version.txt") then
-	local VersionWindow = library:CreateWindow(Vector2.new(235, 200), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
+	local VersionWindow = library:CreateWindow(Vector2.new(300, 300), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
 
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
@@ -41,7 +41,7 @@ if not isfile("hexagon/load_version.txt") then
 		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 
-	game:GetService("RunService").Heartbeat:Connect(function()
+	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
 			if library.pointers.VersionTabOptionsSelector.value == "Hexagon Modified" then
 				library.pointers.VersionTabOptionsBuild.options = {"Stable", "Alpha"}

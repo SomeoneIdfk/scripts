@@ -2065,32 +2065,30 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 			end
 		end
 		teleported = false
+		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
+			pcall(function()
+				if IsAlive(LocalPlayer) then
+					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
+						if teleported == false or teleported2 == false then
+							local velocity = Vector3.new(0, 1, 0)
+						
+							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
+							LocalPlayer.Character.Humanoid.PlatformStand = true
+						else
+							LocalPlayer.Character.Humanoid.PlatformStand = false
+						end
+					end
+
+					for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+						if v:IsA("BasePart") and v.CanCollide == true then
+							v.CanCollide = false
+						end
+					end
+				end
+			end)
+		end)
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if not etctFDLoop then
-					etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
-						pcall(function()
-							if IsAlive(LocalPlayer) then
-								if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
-									if teleported == false or teleported2 == false then
-										local velocity = Vector3.new(0, 1, 0)
-									
-										LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
-										LocalPlayer.Character.Humanoid.PlatformStand = true
-									else
-										LocalPlayer.Character.Humanoid.PlatformStand = false
-									end
-								end
-
-								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == true then
-										v.CanCollide = false
-									end
-								end
-							end
-						end)
-					end)
-				end
 				if library.pointers.ExperimentalTabCategoryTeleportConstantTP.value == true or KillEnemiesLoop and pausetps == false then
 					playerlisttest = {}
 					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
@@ -2269,32 +2267,30 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 				end
 			end
 		end
+		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
+			pcall(function()
+				if IsAlive(LocalPlayer) then
+					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
+						if teleported == false or teleported2 == false then
+							local velocity = Vector3.new(0, 1, 0)
+						
+							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
+							LocalPlayer.Character.Humanoid.PlatformStand = true
+						else
+							LocalPlayer.Character.Humanoid.PlatformStand = false
+						end
+					end
+
+					for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+						if v:IsA("BasePart") and v.CanCollide == true then
+							v.CanCollide = false
+						end
+					end
+				end
+			end)
+		end)
 		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if not etctFDLoop then
-					etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
-						pcall(function()
-							if IsAlive(LocalPlayer) then
-								if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
-									if teleported == false or teleported2 == false then
-										local velocity = Vector3.new(0, 1, 0)
-									
-										LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
-										LocalPlayer.Character.Humanoid.PlatformStand = true
-									else
-										LocalPlayer.Character.Humanoid.PlatformStand = false
-									end
-								end
-
-								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == true then
-										v.CanCollide = false
-									end
-								end
-							end
-						end)
-					end)
-				end
 				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
 					if pausetps == false then
 						if IsAlive(LocalPlayer) and IsAlive(followplayer) then

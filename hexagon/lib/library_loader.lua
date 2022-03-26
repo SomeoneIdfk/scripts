@@ -155,8 +155,8 @@ local library = {
 	windows = {},
 	pointers = {},
 	settings = {
-		guiname = "Skin Changer",
-		title = "Skin Changer [SomeoneIdfk Edition]",
+		guiname = "Loader",
+		title = "Hexagon Loader",
 		logo = "rbxassetid://1521636846", -- "http://www.roblox.com/asset/?id=1521636846",
 		footer = "SomeoneIdfk Made it -_-",
 		modal = true,

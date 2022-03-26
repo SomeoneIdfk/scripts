@@ -23,9 +23,7 @@ if not isfile("hexagon/load_version.txt") then
 
 	local VersionTab = VersionWindow:CreateTab("Version")
 	local VersionTabOptions = VersionTab:AddCategory("Options", 1)
-
-	VersionTabOptions:AddDropdown("Selector", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "VersionsTabOptionsSelector")
-	VersionTabOptions:AddDropdown("Build", {"-"}, "-", "VersionTabOptionsBuild")
+	VersionTabOptions:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "Branch")
 	VersionTabOptions:AddButton("Save", function()
 		if library.pointers.VersionTabOptionsSelector.value == "Hexagon Modified" then
 			if library.pointers.VersionTabOptionsBuild.value == "Stable" then
@@ -40,18 +38,20 @@ if not isfile("hexagon/load_version.txt") then
 		end
 		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
+	local VersionTabOptions2 = VersionTab:AddCategory("", 2)
+	VersionTabOptions2:AddDropdown("Build", {"-"}, "-", "Build")
 
 	game:GetService("RunService").Stepped:Connect(function()
 		pcall(function()
 			print(1)
-			if library.pointers.VersionTabOptionsSelector.value == "Hexagon Modified" then
+			if library.pointers.Branch.value == "Hexagon Modified" then
 				print(2)
-				library.pointers.VersionTabOptionsBuild.options = {"Stable", "Alpha"}
-				library.pointers.VersionTabOptionsBuild:Set("Stable")
-			elseif library.pointers.VersionTabOptionsSelector.value == "Skin Changer" then
+				library.pointers.Build.options = {"Stable", "Alpha"}
+				library.pointers.Build:Set("Stable")
+			elseif library.pointers.Branch.value == "Skin Changer" then
 				print(3)
-				library.pointers.VersionTabOptionsBuild.options = {"-"}
-				library.pointers.VersionTabOptionsBuild:Set("-")
+				library.pointers.Build.options = {"-"}
+				library.pointers.Build:Set("-")
 			end
 		end)
 	end)

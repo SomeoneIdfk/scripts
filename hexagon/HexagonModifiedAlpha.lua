@@ -1698,7 +1698,7 @@ ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTab
 end)
 
 ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
-ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop", "Loop+"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
+ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Once+", "Loop", "Loop+"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
 	if val == true then
@@ -1725,6 +1725,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 											}
 										
 										if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 										elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 											while v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) do
@@ -1756,6 +1760,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										}
 								
 									if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 									elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 										while v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) do
@@ -1790,6 +1798,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 				
 										if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 										elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 											while v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) do
 												game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -1820,6 +1832,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										}
 			
 									if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 									elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 										while v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) do
@@ -1854,6 +1870,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 
 										if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 										elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 											while v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) do
 												game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -1884,6 +1904,10 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										}
 
 									if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 									elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 										while v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) do
@@ -2425,6 +2449,10 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
 									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2455,6 +2483,10 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
 									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2484,6 +2516,10 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
@@ -2554,6 +2590,10 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 							
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
 									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2584,6 +2624,10 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 	
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
 									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2613,6 +2657,10 @@ ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) do
@@ -2683,6 +2731,10 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 							
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do
 									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2713,6 +2765,10 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 	
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do
 									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
@@ -2742,6 +2798,10 @@ ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTa
 								}
 
 							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once+" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
 							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
 								while player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) do

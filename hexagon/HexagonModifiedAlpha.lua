@@ -2075,14 +2075,13 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						
 							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
 							LocalPlayer.Character.Humanoid.PlatformStand = true
+							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+								if v:IsA("BasePart") and v.CanCollide == true then
+									v.CanCollide = false
+								end
+							end
 						else
 							LocalPlayer.Character.Humanoid.PlatformStand = false
-						end
-					end
-
-					for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-						if v:IsA("BasePart") and v.CanCollide == true then
-							v.CanCollide = false
 						end
 					end
 				end
@@ -2129,6 +2128,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 							teleported = true
 							teleportTospawnpoint()
 							pausetps = false
+							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+								if v:IsA("BasePart") and v.CanCollide == false then
+									v.CanCollide = true
+								end
+							end
 						end
 					end
 				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) and pausetps == false then
@@ -2211,7 +2215,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 							teleportTospawnpoint()
 							pausetps = false
 							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-								if v:IsA("BasePart") and v.CanCollide == true then
+								if v:IsA("BasePart") and v.CanCollide == false then
 									v.CanCollide = true
 								end
 							end
@@ -2258,7 +2262,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == false then
 			etctFDLoop:Disconnect()
 			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-				if v:IsA("BasePart") and v.CanCollide == true then
+				if v:IsA("BasePart") and v.CanCollide == false then
 					v.CanCollide = true
 				end
 			end
@@ -2289,14 +2293,14 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 						
 							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
 							LocalPlayer.Character.Humanoid.PlatformStand = true
+
+							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+								if v:IsA("BasePart") and v.CanCollide == true then
+									v.CanCollide = false
+								end
+							end
 						elseif teleported == true or teleported2 == true then
 							LocalPlayer.Character.Humanoid.PlatformStand = false
-						end
-					end
-
-					for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-						if v:IsA("BasePart") and v.CanCollide == true then
-							v.CanCollide = false
 						end
 					end
 				end
@@ -2322,7 +2326,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 								teleportTospawnpoint()
 								pausetps = false
 								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == true then
+									if v:IsA("BasePart") and v.CanCollide == false then
 										v.CanCollide = true
 									end
 								end
@@ -2350,7 +2354,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		if library.pointers.ExperimentalTabCategoryTeleportTeleport.value == false then
 			etctFDLoop:Disconnect()
 			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-				if v:IsA("BasePart") and v.CanCollide == true then
+				if v:IsA("BasePart") and v.CanCollide == false then
 					v.CanCollide = true
 				end
 			end

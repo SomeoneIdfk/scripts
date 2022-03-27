@@ -1697,7 +1697,7 @@ ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTab
 	end
 end)
 
-ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "Random"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
+ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop", "Loop+"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
@@ -1911,10 +1911,6 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 end)
 
 ExperimentalTabCategoryOptions:AddDropdown("Gamemode", {"Teams", "FFA"}, "Teams", "ExperimentalTabCategoryOptionsGamemode")
-
-ExperimentalTabCategoryOptions:AddButton("oof", function()
-	writefile("hexagon/weapons.txt", TableToNames(Weapons))
-end)
 
 ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "ExperimentalTabCategoryOptionsRefresh", function(val)
 	if val == true then
@@ -2255,14 +2251,16 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
-		etctFDLoop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
 		pausetps = true
 		teleportTospawnpoint()
 		pausetps = false
-		for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-			if v:IsA("BasePart") and v.CanCollide == true then
-				v.CanCollide = true
+		if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == false then
+			etctFDLoop:Disconnect()
+			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if v:IsA("BasePart") and v.CanCollide == true then
+					v.CanCollide = true
+				end
 			end
 		end
 	end
@@ -2345,14 +2343,16 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end)
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
-		etctFDLoop:Disconnect()
 		LocalPlayer.Character.Humanoid.PlatformStand = false
 		pausetps = true
 		teleportTospawnpoint()
 		pausetps = false
-		for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-			if v:IsA("BasePart") and v.CanCollide == true then
-				v.CanCollide = true
+		if library.pointers.ExperimentalTabCategoryTeleportTeleport.value == false then
+			etctFDLoop:Disconnect()
+			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+				if v:IsA("BasePart") and v.CanCollide == true then
+					v.CanCollide = true
+				end
 			end
 		end
 	end
@@ -2386,6 +2386,8 @@ ExperimentalTabCategoryCredits:AddLabel("Sex Offender#2997")
 local ExperimentalTabCategoryPlayer1 = ExperimentalTab:AddCategory("Player 1", 2)
 
 ExperimentalTabCategoryPlayer1:AddDropdown("Players", {"-"}, "-", "ExperimentalTabCategoryPlayer1Players")
+
+oof = {}; for i,v in pairs(game.ReplicatedStorage.Weapons:GetChildren()) do if v:FindFirstChild("Model") then table.insert(oof, v.Name) end end
 
 ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer1Kill", function(val)
 	if val == true then
@@ -2474,37 +2476,6 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								[10] = false,
 								[11] = Vector3.new(0,0,0),
 								[12] = 16868,
-								[13] = Vector3.new(0, 0, 0)
-								}
-
-							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-									wait()
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop+" then
-								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
-									wait()
-								end
-							end
-						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Random" then
-							local random_number = math.random(1, #Weapons)
-							local Arguments = {
-								[1] = player3.Character.Head,
-								[2] = player3.Character.Head.CFrame.p,
-								[3] = Weapons[random_number],
-								[4] = math.rad(1,100000),
-								[5] = Weapons[random_number],
-								[8] = 8,
-								[9] = false,
-								[10] = false,
-								[11] = Vector3.new(0,0,0),
-								[12] = math.rad(1,100000),
 								[13] = Vector3.new(0, 0, 0)
 								}
 

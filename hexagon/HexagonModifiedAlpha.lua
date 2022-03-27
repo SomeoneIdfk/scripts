@@ -1697,7 +1697,7 @@ ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTab
 	end
 end)
 
-ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
+ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "Random"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop", "Loop+"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
@@ -2470,6 +2470,36 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								[10] = false,
 								[11] = Vector3.new(0,0,0),
 								[12] = 16868,
+								[13] = Vector3.new(0, 0, 0)
+								}
+
+							if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
+								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									wait()
+								end
+							elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop+" then
+								while player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) do
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+									wait()
+								end
+							end
+						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Random" then
+							local Arguments = {
+								[1] = player3.Character.Head,
+								[2] = player3.Character.Head.CFrame.p,
+								[3] = Weapons[math.random(1, #Weapons)],
+								[4] = math.rad(1,100000),
+								[5] = LocalPlayer.Character.Gun,
+								[8] = 8,
+								[9] = false,
+								[10] = false,
+								[11] = Vector3.new(0,0,0),
+								[12] = math.rad(1,100000),
 								[13] = Vector3.new(0, 0, 0)
 								}
 

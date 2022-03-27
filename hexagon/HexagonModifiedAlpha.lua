@@ -3481,7 +3481,7 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		last_started = nil
 		TrollTabPlayerKTLoop = game:GetService("RunService").Stepped:Connect(function()
 			pcall(function()
-				if library.pointers.TrollTabPlayerMessages.value == "Auto" and last_started == library.pointers.TrollTabPlayerMessages.value then
+				if library.pointers.TrollTabPlayerMessages.value == "Auto" and last_started ~= library.pointers.TrollTabPlayerMessages.value then
 					last_started = library.pointers.TrollTabPlayerMessages.value
 
 					if AutoTrashTalkLoop then
@@ -3544,6 +3544,14 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 		end)
 	elseif val == false and TrollTabPlayerKTLoop then
 		TrollTabPlayerKTLoop:Disconnect()
+
+		if AutoTrashTalkLoop then
+			AutoTrashTalkLoop:Disconnect()
+		end
+
+		if OtherTrashTalkLoop then
+			OtherTrashTalkLoop:Disconnect()
+		end
 	end
 end)
 TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Auto", "TrollTabPlayerMessages")

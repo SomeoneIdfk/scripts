@@ -1912,6 +1912,10 @@ end)
 
 ExperimentalTabCategoryOptions:AddDropdown("Gamemode", {"Teams", "FFA"}, "Teams", "ExperimentalTabCategoryOptionsGamemode")
 
+ExperimentalTabCategoryOptions:AddButton("oof", function()
+	writefile("hexagon/weapons.txt", TableToNames(Weapons))
+end)
+
 ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "ExperimentalTabCategoryOptionsRefresh", function(val)
 	if val == true then
 		trueorfalse3 = true
@@ -2489,12 +2493,13 @@ ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTa
 								end
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Random" then
+							local random_number = math.random(1, #Weapons)
 							local Arguments = {
 								[1] = player3.Character.Head,
 								[2] = player3.Character.Head.CFrame.p,
-								[3] = Weapons[math.random(1, #Weapons)],
+								[3] = Weapons[random_number],
 								[4] = math.rad(1,100000),
-								[5] = LocalPlayer.Character.Gun,
+								[5] = Weapons[random_number],
 								[8] = 8,
 								[9] = false,
 								[10] = false,

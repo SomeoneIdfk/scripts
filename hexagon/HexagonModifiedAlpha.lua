@@ -1689,6 +1689,7 @@ ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTab
 				end
 
 				getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
+				wait(1)
 			end)
 		end)
 	elseif val == false and BloodSplatterLoop then
@@ -2209,6 +2210,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 							teleported = true
 							teleportTospawnpoint()
 							pausetps = false
+							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+								if v:IsA("BasePart") and v.CanCollide == true then
+									v.CanCollide = true
+								end
+							end
 						end
 					end
 				
@@ -2250,6 +2256,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		pausetps = true
 		teleportTospawnpoint()
 		pausetps = false
+		for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+			if v:IsA("BasePart") and v.CanCollide == true then
+				v.CanCollide = true
+			end
+		end
 	end
 end)
 
@@ -2276,7 +2287,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 						
 							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
 							LocalPlayer.Character.Humanoid.PlatformStand = true
-						else
+						elseif teleported == true or teleported2 == true then
 							LocalPlayer.Character.Humanoid.PlatformStand = false
 						end
 					end
@@ -2308,6 +2319,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 								teleported2 = true
 								teleportTospawnpoint()
 								pausetps = false
+								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+									if v:IsA("BasePart") and v.CanCollide == true then
+										v.CanCollide = true
+									end
+								end
 							end
 						end
 					end
@@ -2330,6 +2346,11 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		pausetps = true
 		teleportTospawnpoint()
 		pausetps = false
+		for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+			if v:IsA("BasePart") and v.CanCollide == true then
+				v.CanCollide = true
+			end
+		end
 	end
 end)
 
@@ -3494,6 +3515,7 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 
 					AutoTrashTalkLoop = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10").Victim:GetPropertyChangedSignal("Value"):Connect(function()
 						local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
+						print(LocalPlayer.Name)
 						if temp.Killer.Value == LocalPlayer.Name then
 							if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
 								wait(library.pointers.TrollTabPlayerDelay.value)

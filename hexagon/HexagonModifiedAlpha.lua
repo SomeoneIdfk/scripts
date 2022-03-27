@@ -3584,25 +3584,26 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 					end
 
 					AutoTrashTalkLoop = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10").Victim:GetPropertyChangedSignal("Value"):Connect(function()
-						local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
-						print(LocalPlayer.Name)
-						if temp.Killer.Value == LocalPlayer.Name then
-							if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
-								wait(library.pointers.TrollTabPlayerDelay.value)
-								if IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
-								end
-							else
-								wait(library.pointers.TrollTabPlayerDelay.value)
-								local randomnumber = math.random(1, 2)
-
-								if randomnumber == 1 and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
-								elseif randomnumber == 2 and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+						pcall(function()
+							local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
+							if temp.Killer.Value == LocalPlayer.Name then
+								if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
+									wait(library.pointers.TrollTabPlayerDelay.value)
+									if IsAlive(LocalPlayer) then
+										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+									end
+								else
+									wait(library.pointers.TrollTabPlayerDelay.value)
+									local randomnumber = math.random(1, 2)
+	
+									if randomnumber == 1 and IsAlive(LocalPlayer) then
+										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+									elseif randomnumber == 2 and IsAlive(LocalPlayer) then
+										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+									end
 								end
 							end
-						end
+						end)
 					end)
 				elseif last_started ~= library.pointers.TrollTabPlayerMessages.value then
 					last_started = library.pointers.TrollTabPlayerMessages.value

@@ -1621,11 +1621,13 @@ ExperimentalTabCategoryOptions:AddDropdown("Texture Remove Method", {"Legacy", "
 ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"ExperimentalTabCategoryOptionsTR", function(val)
 	if val == true then
 		currentmap = nil
+		trmethod = nil
 		TextureRemoverLoop = game:GetService("RunService").Stepped:Connect(function()
 			pcall(function()
 				if trueorfalse10 == true then
-					if currentmap ~= WorkSpace.Map.Origin.Value then
+					if currentmap ~= WorkSpace.Map.Origin.Value or trmethod ~= library.pointers.ExperimentalTabCategoryOptionsTRM.value then
 						currentmap = WorkSpace.Map.Origin.Value
+						trmethod = library.pointers.ExperimentalTabCategoryOptionsTRM.value
 						wait(3)
 						Hint.Text = "Removing textures..."
 

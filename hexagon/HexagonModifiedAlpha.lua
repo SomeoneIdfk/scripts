@@ -1673,7 +1673,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 								end
 							end
 						elseif library.pointers.ExperimentalTabCategoryOptionsTRM.value == "New" then
-							local decalsyeeted = true -- Leaving this on makes games look shitty but the fps goes up by at least 20.
+							local decalsyeeted = true
 							local g = game
 							local w = g.Workspace
 							local l = g.Lighting
@@ -1719,7 +1719,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 								end
 							end
 							TRMAddedLoop = w.DescendantAdded:Connect(function(v)
-								wait()--prevent errors and shit
+								wait()
 								if v:IsA("BasePart") and not v:IsA("MeshPart") then
 									v.Material = "Plastic"
 									v.Reflectance = 0

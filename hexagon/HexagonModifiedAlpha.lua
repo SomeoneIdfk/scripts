@@ -3541,7 +3541,6 @@ ExperimentalTabCategoryFarm:AddSlider("Minimum score", {0, 15, 4, 1, ""}, "Exper
 ExperimentalTabCategoryFarm:AddToggle("Anti-Afk", false, "ExperimentalTabcategoryFarmAntiAFK", function(val)
 	if val == true then
 		AntiAFKLoop = game:GetService("RunService").Heartbeat:Connect(function()
-			print(1)
 			for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
 				v:Disable()
 			end

@@ -1617,7 +1617,7 @@ local ExperimentalTab = Window:CreateTab("Experimental")
 
 local ExperimentalTabCategoryOptions = ExperimentalTab:AddCategory("Options", 1)
 
-ExperimentalTabCategoryOptions:AddDropdown("Texture Remove Method", {"Legacy", "New"}, "New", "ExperimentalTabCategoryOptionsTRM")
+ExperimentalTabCategoryOptions:AddDropdown("Texture Remove Method", {"Legacy", "New"}, "Legacy", "ExperimentalTabCategoryOptionsTRM")
 ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"ExperimentalTabCategoryOptionsTR", function(val)
 	if val == true then
 		currentmap = nil

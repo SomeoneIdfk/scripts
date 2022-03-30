@@ -4055,14 +4055,16 @@ TrollTabMap:AddToggle("Walk on water", false, "TrollTabMapWOW", function(val)
 					if currentmap2 == "de_seaside" then
 						originalkillers = WorkSpace:FindFirstChild("Map"):FindFirstChild("Killers")
 						clonedkillers = originalkillers:Clone()
+						clonedkillers.RoofKiller:Destroy()
 
 						clonedkillers.Parent = originalkillers.Parent
 						clonedkillers.WaterKiller.Transparency = 1
 						clonedkillers.WaterKiller.CanCollide = true
 						clonedkillers.WaterKiller.Name = "WaterBox"
 
-						clonedkillers.RoofKiller:Destroy()
 						originalkillers:Destroy()
+					else
+						WorkSpace:FindFirstChild("Map"):FindFirstChild("Killers"):Destroy()
 					end
 				else
 					wait(1)

@@ -1631,6 +1631,10 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 						wait(3)
 						Hint.Text = "Removing textures..."
 
+						if TRMAddedLoop then
+							TRMAddedLoop:Disconnect()
+						end
+
 						if library.pointers.ExperimentalTabCategoryOptionsTRM.value == "Legacy" then
 							local decalsyeeted = true
 							local g = game
@@ -1714,7 +1718,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 									e.Enabled = false
 								end
 							end
-							w.DescendantAdded:Connect(function(v)
+							TRMAddedLoop = w.DescendantAdded:Connect(function(v)
 								wait()--prevent errors and shit
 								if v:IsA("BasePart") and not v:IsA("MeshPart") then
 									v.Material = "Plastic"
@@ -1754,6 +1758,9 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 		end)
 	elseif val == false and TextureRemoverLoop then
 		TextureRemoverLoop:Disconnect()
+		if TRMAddedLoop then
+			TRMAddedLoop:Disconnect()
+		end
 	end
 end)
 

@@ -87,67 +87,128 @@ local function TableToNames(tbl, alt)
 end
 
 --GUI
+
+game:GetService("RunService").Heartbeat:Connect(function()
+	pcall(function()
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value ~= library.pointers.SkinsTabRiflesGalil.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = library.pointers.SkinsTabRiflesGalil.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value ~= library.pointers.SkinsTabRiflesAK47.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = library.pointers.SkinsTabRiflesAK47.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value ~= library.pointers.SkinsTabRiflesSG.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = library.pointers.SkinsTabRiflesSG.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value ~= library.pointers.SkinsTabRiflesM4A4.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = library.pointers.SkinsTabRiflesM4A4.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value ~= library.pointers.SkinsTabRiflesAUG.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = library.pointers.SkinsTabRiflesAUG.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value ~= library.pointers.SkinsTabRiflesFamas.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = library.pointers.SkinsTabRiflesFamas.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value ~= library.pointers.SkinsTabRiflesM4A1.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = library.pointers.SkinsTabRiflesM4A1.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value ~= library.pointers.SkinsTabHeavyMAG7.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = library.pointers.SkinsTabHeavyMAG7.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value ~= library.pointers.SkinsTabHeavySawedOff.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = library.pointers.SkinsTabHeavySawedOff.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value ~= library.pointers.SkinsTabSMGsMP9.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = library.pointers.SkinsTabSMGsMP9.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value ~= library.pointers.SkinsTabSMGsMAC10.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = library.pointers.SkinsTabSMGsMAC10.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value ~= library.pointers.SkinsTabSMGsMP7.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value ~= library.pointers.SkinstabSMGsMP7.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value ~= library.pointers.SkinsTabPistolsGlock.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = library.pointers.SkinsTabPistolsGlock.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value ~= library.pointers.SkinsTabPistolsTec9.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = library.pointers.SkinsTabPistolsTec9.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value ~= library.pointers.SkinsTabPistolsP2000.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = library.pointers.SkinsTabPistolsP2000.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value ~= library.pointers.SkinsTabPistolsFiveSeven.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = library.pointers.SkinsTabPistolsFiveSeven.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value ~= library.pointers.SkinsTabPistolsUSP.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = library.pointers.SkinsTabPistolsUSP.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
+		end
+		if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value then
+			game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
+			game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
+		end
+	end)
+end)
+
 local SkinsTab = Window:CreateTab("Skins")
 
 local SkinsTabRifles = SkinsTab:AddCategory("Rifles", 1)
 
-SkinsTabRifles:AddToggle("Enable", false, "SkinsTabRiflesEnabled", function(val)
-	if val == true then
-		SkinsTabRiflesLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value ~= library.pointers.SkinsTabRiflesGalil.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = library.pointers.SkinsTabRiflesGalil.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value ~= library.pointers.SkinsTabRiflesAK47.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = library.pointers.SkinsTabRiflesAK47.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value ~= library.pointers.SkinsTabRiflesSG.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = library.pointers.SkinsTabRiflesSG.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value ~= library.pointers.SkinsTabRiflesM4A4.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = library.pointers.SkinsTabRiflesM4A4.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value ~= library.pointers.SkinsTabRiflesAUG.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = library.pointers.SkinsTabRiflesAUG.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value ~= library.pointers.SkinsTabRiflesFamas.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = library.pointers.SkinsTabRiflesFamas.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value ~= library.pointers.SkinsTabRiflesM4A1.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = library.pointers.SkinsTabRiflesM4A1.value
-				end
-				wait(1)
-			end)
-		end)
-	elseif val == false and SkinsTabRiflesLoop then
-		SkinsTabRiflesLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = "Stock"
-	end
-end)
 SkinsTabRifles:AddDropdown("Galil", {"Stock", "Hardware", "Hardware 2", "Toxicity", "Frosted", "Worn"}, "Stock", "SkinsTabRiflesGalil")
 SkinsTabRifles:AddDropdown("Ak-47", {"Stock", "Hallows", "Ace", "Code Orange", "Clown", "Variant Camo", "Eve", "VAV", "Quantum", "Hypersonic", "Mean Green", "Bloodboom", "Scapter", "Skin Committee", "Patch", "Outlaws", "Gifted", "Ugly Sweater", "Secret Santa", "Precision", "Outrunner", "Godess", "Maker", "Ghost", "Glo", "Survivor", "Shooting Star", "Halo", "Inversion", "Plated", "Quicktime", "Yltude", "Jester", "Scythe", "Neonline", "Galaxy Corpse"}, "Stock", "SkinsTabRiflesAK47")
 SkinsTabRifles:AddDropdown("Scout", {"Stock", "Xmas", "Coffin Biter", "Railgun", "Hellborn", "Hot Cocoa", "Theory", "Pulse", "Monstruo", "Flowing Mists", "Neon Regulation", "Posh", "Darkness"}, "Stock", "SkinsTabRiflesScout")
@@ -161,49 +222,6 @@ SkinsTabRifles:AddDropdown("M4A1", {"Stock", "Toucan", "Animatic", "Desert Camo"
 
 local SkinsTabHeavy = SkinsTab:AddCategory("Heavy", 1)
 
-SkinsTabHeavy:AddToggle("Enable", false, "SkinsTabHeavyEnabled", function(val)
-	if val == true then
-		SkinsTabHeavyLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value ~= library.pointers.SkinsTabHeavyMAG7.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = library.pointers.SkinsTabHeavyMAG7.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value ~= library.pointers.SkinsTabHeavySawedOff.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = library.pointers.SkinsTabHeavySawedOff.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
-				end
-				wait(1)
-			end)
-		end)
-	elseif val == false and SkinsTabHeavyLoop then
-		SkinsTabHeavyLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = "Stock"
-	end
-end)
 SkinsTabHeavy:AddDropdown("Nova", {"Stock", "Terraformer", "Tiger", "Black Ice", "Sharkesh", "Paradise", "Starry Night", "Cookie", "Tricked", "Defective", "Oath"}, "Stock", "SkinsTabHeavyNova")
 SkinsTabHeavy:AddDropdown("XM1014", {"Stock", "Red", "Spectrum", "Artic", "Atomic", "Campfire", "Predator", "MK11", "Endless Night"}, "Stock", "SkinsTabHeavyXM")
 SkinsTabHeavy:AddDropdown("MAG-7", {"Stock", "Molten", "Striped", "Frosty", "Outbreak", "Bombshell", "C4UTION"}, "Stock", "SkinsTabHeavyMAG7")
@@ -223,49 +241,6 @@ SkinsTabCategoryCredits:AddLabel("Sex Offender#2997")
 
 local SkinsTabSMGs = SkinsTab:AddCategory("SMGs", 2)
 
-SkinsTabSMGs:AddToggle("Enable", false, "SkinsTabSMGsEnabled", function(val)
-	if val == true then
-		SkinsTabSMGsLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value ~= library.pointers.SkinsTabSMGsMP9.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = library.pointers.SkinsTabSMGsMP9.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value ~= library.pointers.SkinsTabSMGsMAC10.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = library.pointers.SkinsTabSMGsMAC10.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value ~= library.pointers.SkinsTabSMGsMP7.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value ~= library.pointers.SkinstabSMGsMP7.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
-				end
-				wait(1)
-			end)
-		end)
-	elseif val == false and SkinsTabSMGsLoop then
-		SkinsTabSMGsLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = "Stock"
-	end
-end)
 SkinsTabSMGs:AddDropdown("MP9", {"Stock", "Velvita", "Blueroyal", "Decked Halls", "Cookie Man", "Wilderness", "Vaporwave", "Cob Web", "SnowTime", "Control"}, "Stock", "SkinsTabSMGsMP9")
 SkinsTabSMGs:AddDropdown("MAC-10", {"Stock", "Pimpin", "Wetland", "Turbo", "Golden Rings", "Skeleboney", "Artists Intent", "Toxic", "Blaze", "Scythe", "Devil"}, "Stock", "SkinsTabSMGsMAC10")
 SkinsTabSMGs:AddDropdown("MP5", {"Stock", "Sunshot", "Calaxian", "Goo", "Holiday", "Silent Ops", "Industrial", "Reindeer", "Cogged", "Trauma"}, "Stock", "SkinsTabSMGsMP7")
@@ -275,67 +250,6 @@ SkinsTabSMGs:AddDropdown("Thompson", {"Stock", "Festive", "Shattered", "Oblivion
 
 local SkinsTabPistols = SkinsTab:AddCategory("Pistols", 2)
 
-SkinsTabPistols:AddToggle("Enable", false, "SkinsTabPistolsEnabled", function(val)
-	if val == true then
-		SkinsTabPistolsLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value ~= library.pointers.SkinsTabPistolsGlock.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = library.pointers.SkinsTabPistolsGlock.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value ~= library.pointers.SkinsTabPistolsTec9.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = library.pointers.SkinsTabPistolsTec9.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value ~= library.pointers.SkinsTabPistolsP2000.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = library.pointers.SkinsTabPistolsP2000.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value ~= library.pointers.SkinsTabPistolsFiveSeven.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = library.pointers.SkinsTabPistolsFiveSeven.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value ~= library.pointers.SkinsTabPistolsUSP.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = library.pointers.SkinsTabPistolsUSP.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
-				end
-				wait(1)
-			end)
-		end)
-	elseif val == false and SkinsTabPistolsLoop then
-		SkinsTabPistolsLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = "Stock"
-	end
-end)
 SkinsTabPistols:AddDropdown("Glock-18", {"Stock", "Desert Camo", "Day Dreamer", "Wetland", "Anubis", "Midnight Tiger", "Scapter", "Gravestomper", "Tarnish", "Rush", "Angler", "Spacedust", "Money Maker", "RSL", "White Sauce", "Biotrip", "Underwater", "Hallows"}, "Stock", "SkinsTabPistolsGlock")
 SkinsTabPistols:AddDropdown("Dual Berettas", {"Stock", "Floral", "Xmas", "Neon web", "Hexline", "Carbonized", "Old Fashioned", "Dusty Manor"}, "Stock", "SkinsTabPistolsDualBerettas")
 SkinsTabPistols:AddDropdown("P250", {"Stock", "Bomber", "Green Web", "TC250", "Amber", "Frosted", "Solstice", "Equinox", "Goldish", "Shark", "Midnight"}, "Stock", "SkinsTabPistolsP250")

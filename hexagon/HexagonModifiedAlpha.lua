@@ -2317,7 +2317,7 @@ end)
 
 function teleportTospawnpoint()
 	wait()
-	if IsAlive(LocalPlayer) then
+	if IsAlive(LocalPlayer) and library.pointers.ExperimentalTabCategoryTeleportAfterTeleport.value == "Spawnpoint" then
 		if game:GetService('Players').LocalPlayer.Status.Team.Value == "T" then
 			for i,v in pairs(WorkSpace.Map.TSpawns:GetChildren()) do
 				lastspawnpoint = v
@@ -2337,6 +2337,8 @@ function teleportTospawnpoint()
 end
 
 local ExperimentalTabCategoryTeleport = ExperimentalTab:AddCategory("Teleport", 1)
+
+ExperimentalTabCategoryTeleport:AddDropdown("After teleport", {"Spawnpoint", "Nothing"}, "Spawnpoint", "ExperimentalTabCategoryTeleportAfterTeleport")
 
 ExperimentalTabCategoryTeleport:AddDropdown("Teleport Method", {"Players", "Bomb Sites"}, "Players", "ExperimentalTabCategoryTeleportTeleportOptions")
 

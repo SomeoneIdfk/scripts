@@ -2307,6 +2307,35 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 	end
 end)
 
+ExperimentalTabCategoryOptions:AddMultiDropdown("Anti-Aim Resolver", {"Pitch", "Roll", "Animation"}, {}, "ExperimentalTabCategoryOptionsAntiAimResolver")
+ExperimentalTabCategoryOptions:AddToggle("Anti Anti-Aim", false, "ExperimentalTabCategoryOptionsAAM", function(val)
+	if val == true then
+		AAMLoop = game:GetService("RunService").Stepped:Connect(function()
+			pcall(function()
+				for i,v in pairs(game.Players:GetPlayers()) do
+					if v.Character and v.Character:FindFirstChild("Humanoid") and v.Character:FindFirstChild("Humanoid").Health > 0 and v.Team ~= "TTT" and v ~= LocalPlayer then
+						if library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value == "Pitch" then
+							v.Character.UpperTorso.Waist.C0 = CFAngles(0, 0, 0)      
+							v.Character.LowerTorso.Root.C0 = CFAngles(0,0,0)
+							v.Character.Head.Neck.C0 = CFrame.new(0,1,0) * CFAngles(0, 0, 0) 
+						end
+						if library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value == "Roll" then
+							v.Character.Humanoid.MaxSlopeAngle = 0 
+						end
+						if library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value == "Animation" then
+							for i2,Animation in pairs(v.Character.Humanoid:GetPlayingAnimationTracks()) do
+								Animation:Stop()
+							end
+						end
+					end
+				end
+			end)
+		end)
+	if val == false and AAMLoop then
+		AAMLoop:Disconnect()
+	end
+end)
+
 function teleportTospawnpoint()
 	wait()
 	if IsAlive(LocalPlayer) then

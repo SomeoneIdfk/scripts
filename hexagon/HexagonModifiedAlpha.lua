@@ -2314,15 +2314,15 @@ ExperimentalTabCategoryOptions:AddToggle("Anti Anti-Aim", false, "ExperimentalTa
 			pcall(function()
 				for i,v in pairs(game.Players:GetPlayers()) do
 					if v.Character and v.Character:FindFirstChild("Humanoid") and v.Character:FindFirstChild("Humanoid").Health > 0 and v.Team ~= "TTT" and v ~= LocalPlayer then
-						if library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value == "Pitch" then
+						if table.find(library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value, "Pitch") then
 							v.Character.UpperTorso.Waist.C0 = CFAngles(0, 0, 0)      
 							v.Character.LowerTorso.Root.C0 = CFAngles(0,0,0)
 							v.Character.Head.Neck.C0 = CFrame.new(0,1,0) * CFAngles(0, 0, 0) 
 						end
-						if library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value == "Roll" then
+						if table.find(library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value, "Roll") then
 							v.Character.Humanoid.MaxSlopeAngle = 0 
 						end
-						if library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value == "Animation" then
+						if table.find(library.pointers.ExperimentalTabCategoryOptionsAntiAimResolver.value, "Animation") then
 							for i2,Animation in pairs(v.Character.Humanoid:GetPlayingAnimationTracks()) do
 								Animation:Stop()
 							end

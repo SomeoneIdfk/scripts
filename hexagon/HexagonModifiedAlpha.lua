@@ -200,6 +200,8 @@ end
 local function PlantC4()
 	pcall(function()
 	if IsAlive(LocalPlayer) and workspace.Map.Gamemode.Value == "defusal" and workspace.Status.Preparation.Value == false and not planting then 
+		pausetps = true
+		wait()
 		planting = true
 		local pos = LocalPlayer.Character.HumanoidRootPart.CFrame 
 		workspace.CurrentCamera.CameraType = "Fixed"
@@ -211,6 +213,7 @@ local function PlantC4()
 		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
 		game.Workspace.CurrentCamera.CameraType = "Custom"
 		planting = false
+		pausetps = false
 	end
 	end)
 end
@@ -218,6 +221,8 @@ end
 local function DefuseC4()
 	pcall(function()
 	if IsAlive(LocalPlayer) and workspace.Map.Gamemode.Value == "defusal" and not defusing and workspace:FindFirstChild("C4") then 
+		pausetps = true
+		wait()
 		defusing = true
 		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
 		local pos = LocalPlayer.Character.HumanoidRootPart.CFrame 
@@ -238,6 +243,7 @@ local function DefuseC4()
 		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
 		game.Workspace.CurrentCamera.CameraType = "Custom"
 		defusing = false
+		pausetps = false
 	end
 	end)
 end
@@ -2366,6 +2372,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		teleported = false
 		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
 			pcall(function()
+                local var = var or true
 				if IsAlive(LocalPlayer) then
 					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
 						if teleported == false or teleported2 == false then
@@ -2588,9 +2595,10 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end
 		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
 			pcall(function()
+                local var = var or true
 				if IsAlive(LocalPlayer) then
 					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
-						if teleported == false or teleported2 == false and GetTeam(v) ~= "TTT" then
+						if teleported == false or teleported2 == false then
 							local var = true
 							local velocity = Vector3.new(0, 1, 0)
 						
@@ -4223,6 +4231,28 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	end
 end)
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
+TrollTabPlayer:AddToggle("Bloxsense Godmode", false, "TrollTabPlayerGM", function(val)
+    if val == true then
+        local ReplicatedStorage = game:GetService("ReplicatedStorage");
+        local ApplyGun = ReplicatedStorage.Events.ApplyGun;
+        ApplyGun:FireServer({
+            Model = ReplicatedStorage.Hostage.Hostage,
+            Name = "USP"
+        }, game.Players.LocalPlayer);
+        GMLoop = LocalPlayer.CharacterAdded:Connect(function()
+            pcall(function()
+                local ReplicatedStorage = game:GetService("ReplicatedStorage");
+                local ApplyGun = ReplicatedStorage.Events.ApplyGun;
+                ApplyGun:FireServer({
+                    Model = ReplicatedStorage.Hostage.Hostage,
+                    Name = "USP"
+                }, game.Players.LocalPlayer);
+            end)
+        end)
+    elseif val == false and GMLoop then
+        GMLoop:Disconnect()
+    end
+end)
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 

@@ -2331,7 +2331,7 @@ ExperimentalTabCategoryOptions:AddToggle("Anti Anti-Aim", false, "ExperimentalTa
 				end
 			end)
 		end)
-	if val == false and AAMLoop then
+	elseif val == false and AAMLoop then
 		AAMLoop:Disconnect()
 	end
 end)
@@ -2617,7 +2617,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 			pcall(function()
 				if IsAlive(LocalPlayer) then
 					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
-						f teleported == false or teleported2 == false and GetTeam(v) ~= "TTT" then
+						if teleported == false or teleported2 == false and GetTeam(v) ~= "TTT" then
 							local var = true
 							local velocity = Vector3.new(0, 1, 0)
 						

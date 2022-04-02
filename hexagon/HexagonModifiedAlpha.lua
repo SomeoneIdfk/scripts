@@ -1718,32 +1718,6 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 									e.Enabled = false
 								end
 							end
-							--TRMAddedLoop = w.DescendantAdded:Connect(function(v)
-							--	wait()
-							--	if v:IsA("BasePart") and not v:IsA("MeshPart") then
-							--		v.Material = "Plastic"
-							--		v.Reflectance = 0
-							--	elseif v:IsA("Decal") or v:IsA("Texture") and decalsyeeted then
-							--		v.Transparency = 1
-							--	elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-							--		v.Lifetime = NumberRange.new(0)
-							--	elseif v:IsA("Explosion") then
-							--		v.BlastPressure = 1
-							--		v.BlastRadius = 1
-							--	elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
-							--		v.Enabled = false
-							--	elseif v:IsA("MeshPart") and decalsyeeted then
-							--		v.Material = "Plastic"
-							--		v.Reflectance = 0
-							--		v.TextureID = 10385902758728957
-							--	elseif v:IsA("SpecialMesh") and decalsyeeted then
-							--		v.TextureId=0
-							--	elseif v:IsA("ShirtGraphic") and decalsyeeted then
-							--		v.ShirtGraphic=0
-							--	elseif (v:IsA("Shirt") or v:IsA("Pants")) and decalsyeeted then
-							--		v[v.ClassName.."Template"]=0
-							--	end
-							--end)
 						end
 						
 						Hint.Destroy()
@@ -1758,9 +1732,6 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 		end)
 	elseif val == false and TextureRemoverLoop then
 		TextureRemoverLoop:Disconnect()
-		if TRMAddedLoop then
-			TRMAddedLoop:Disconnect()
-		end
 	end
 end)
 

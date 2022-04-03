@@ -1,4 +1,4 @@
-WeaponSkins = {
+{
     ["AK47"] = {
         "Precision",
         "Quantum",

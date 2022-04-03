@@ -4817,17 +4817,21 @@ for i,v in pairs({"CT", "T"}) do
 	end)
 end
 
-local weapon_skins = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/weapon_skins.lua", true))()
-for i,v in pairs(TableToNames(weapon_skins)) do
-	local temp = {"Stock"}
-	for i2,v2 in pairs(weapon_skins[v]) do
-		table.insert(temp, v2)
-	end
+writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins.cfg"))
 
-	if v == "AK47" then
-		library.pointers.SkinsTabRiflesAK47.options = temp
-	end
-end
+local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
+
+table.foreach(weapon_skins, function(i,v)
+    local temp = {"Stock"}
+    table.foreach(v, function(i2,v2)
+        table.insert(temp, v2)
+    end)
+
+    if i == "AK47" then
+        library.pointers.SkinsTabRiflesAK47.options = temp
+        library.pointers.SkinsTabRiflesAK47:Set("Stock")
+    end
+end)
 
 if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfile("hexagon/autoload.txt")) then
 	local a,b = pcall(function()

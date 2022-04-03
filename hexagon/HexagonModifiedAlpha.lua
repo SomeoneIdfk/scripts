@@ -3640,7 +3640,7 @@ SkinsTabRifles:AddToggle("Enable", false, "SkinsTabRiflesEnabled", function(val)
 	end
 end)
 SkinsTabRifles:AddDropdown("Galil", {"Stock", "Hardware", "Hardware 2", "Toxicity", "Frosted", "Worn"}, "Stock", "SkinsTabRiflesGalil")
-SkinsTabRifles:AddDropdown("Ak-47", {"Stock", "Hallows", "Ace", "Code Orange", "Clown", "Variant Camo", "Eve", "VAV", "Quantum", "Hypersonic", "Mean Green", "Bloodboom", "Scapter", "Skin Committee", "Patch", "Outlaws", "Gifted", "Ugly Sweater", "Secret Santa", "Precision", "Outrunner", "Godess", "Maker", "Ghost", "Glo", "Survivor", "Shooting Star", "Halo", "Inversion", "Plated", "Quicktime", "Yltude", "Jester", "Scythe", "Neonline", "Galaxy Corpse"}, "Stock", "SkinsTabRiflesAK47")
+SkinsTabRifles:AddDropdown("Ak-47", {"Stock"}, "Stock", "SkinsTabRiflesAK47")
 SkinsTabRifles:AddDropdown("Scout", {"Stock", "Xmas", "Coffin Biter", "Railgun", "Hellborn", "Hot Cocoa", "Theory", "Pulse", "Monstruo", "Flowing Mists", "Neon Regulation", "Posh", "Darkness"}, "Stock", "SkinsTabRiflesScout")
 SkinsTabRifles:AddDropdown("SG 553", {"Stock", "Yltude", "Knighthood", "Variant Camo", "Magma", "DropX", "Dummy", "Kitty Cat", "Drop-Out", "Control"}, "Stock", "SkinsTabRiflesSG")
 SkinsTabRifles:AddDropdown("AWP", {"Stock", "Grepkin", "Instinct", "Nerf", "JTF2", "Difference", "Weeb", "Pink Vision", "Desert Camo", "Bloodborne", "Lunar", "Scapter", "Coffin Biter", "Pear Tree", "Northern Lights", "Racer", "Forever", "Blastech", "Abaddon", "Retroactive", "Pinkie", "Autumness", "Venomus", "Hika", "Silence", "Kumanjayi", "Dragon", "Illusion", "Regina", "Quicktime", "Toxic Nitro", "Darkness", "Oriental", "Grim"}, "Stock", "SkinsTabRiflesAWP")
@@ -4815,6 +4815,18 @@ for i,v in pairs({"CT", "T"}) do
 			end
 		end
 	end)
+end
+
+local weapon_skins = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/weapon_skins.lua", true))()
+for i,v in pairs(TableToNames(weapon_skins)) do
+	local temp = {"Stock"}
+	for i2,v2 in pairs(weapon_skins[v]) do
+		table.insert(temp, v2)
+	end
+
+	if v == "AK47" then
+		library.pointers.SkinsTabRiflesAK47.options = temp
+	end
 end
 
 if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfile("hexagon/autoload.txt")) then

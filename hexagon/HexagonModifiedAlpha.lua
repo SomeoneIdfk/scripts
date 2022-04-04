@@ -3641,8 +3641,8 @@ SkinsTabRifles:AddToggle("Enable", false, "SkinsTabRiflesEnabled", function(val)
 end)
 SkinsTabRifles:AddDropdown("Galil", {"Stock"}, "Stock", "SkinsTabRiflesGalil")
 SkinsTabRifles:AddDropdown("Ak-47", {"Stock"}, "Stock", "SkinsTabRiflesAK47")
-SkinsTabRifles:AddDropdown("Scout", {"Stock", "Xmas", "Coffin Biter", "Railgun", "Hellborn", "Hot Cocoa", "Theory", "Pulse", "Monstruo", "Flowing Mists", "Neon Regulation", "Posh", "Darkness"}, "Stock", "SkinsTabRiflesScout")
-SkinsTabRifles:AddDropdown("SG 553", {"Stock", "Yltude", "Knighthood", "Variant Camo", "Magma", "DropX", "Dummy", "Kitty Cat", "Drop-Out", "Control"}, "Stock", "SkinsTabRiflesSG")
+SkinsTabRifles:AddDropdown("Scout", {"Stock"}, "Stock", "SkinsTabRiflesScout")
+SkinsTabRifles:AddDropdown("SG 553", {"Stock"}, "Stock", "SkinsTabRiflesSG")
 SkinsTabRifles:AddDropdown("AWP", {"Stock"}, "Stock", "SkinsTabRiflesAWP")
 SkinsTabRifles:AddDropdown("G3SG1", {"Stock"}, "Stock", "SkinsTabRiflesG3SG1")
 SkinsTabRifles:AddDropdown("M4A4", {"Stock"}, "Stock", "SkinsTabRiflesM4A4")
@@ -3696,9 +3696,9 @@ SkinsTabHeavy:AddToggle("Enable", false, "SkinsTabHeavyEnabled", function(val)
 	end
 end)
 SkinsTabHeavy:AddDropdown("Nova", {"Stock"}, "Stock", "SkinsTabHeavyNova")
-SkinsTabHeavy:AddDropdown("XM1014", {"Stock", "Red", "Spectrum", "Artic", "Atomic", "Campfire", "Predator", "MK11", "Endless Night"}, "Stock", "SkinsTabHeavyXM")
+SkinsTabHeavy:AddDropdown("XM1014", {"Stock"}, "Stock", "SkinsTabHeavyXM")
 SkinsTabHeavy:AddDropdown("MAG-7", {"Stock"}, "Stock", "SkinsTabHeavyMAG7")
-SkinsTabHeavy:AddDropdown("Sawed Off", {"Stock", "Spooky", "Colorbloom", "Casino", "Opal", "Executioner", "Sullys Blacklight"}, "Stock", "SkinsTabHeavySawedOff")
+SkinsTabHeavy:AddDropdown("Sawed Off", {"Stock"}, "Stock", "SkinsTabHeavySawedOff")
 SkinsTabHeavy:AddDropdown("M249", {"Stock"}, "Stock", "SkinsTabHeavyM249")
 SkinsTabHeavy:AddDropdown("MG42", {"Stock"}, "Stock", "SkinsTabHeavyNegev")
 
@@ -3760,7 +3760,7 @@ end)
 SkinsTabSMGs:AddDropdown("MP9", {"Stock"}, "Stock", "SkinsTabSMGsMP9")
 SkinsTabSMGs:AddDropdown("MAC-10", {"Stock"}, "Stock", "SkinsTabSMGsMAC10")
 SkinsTabSMGs:AddDropdown("MP5", {"Stock"}, "Stock", "SkinsTabSMGsMP7")
-SkinsTabSMGs:AddDropdown("UMP-45", {"Stock", "Militia Camo", "Magma", "Redline", "Death Grip", "Molten", "Gum Drop", "Orbit"}, "Stock", "SkinsTabSMGsUMP")
+SkinsTabSMGs:AddDropdown("UMP-45", {"Stock"}, "Stock", "SkinsTabSMGsUMP")
 SkinsTabSMGs:AddDropdown("P90", {"Stock"}, "Stock", "SkinsTabSMGsP90")
 SkinsTabSMGs:AddDropdown("Thompson", {"Stock"}, "Stock", "SkinsTabSMGsBizon")
 
@@ -3830,13 +3830,13 @@ end)
 SkinsTabPistols:AddDropdown("Glock-18", {"Stock"}, "Stock", "SkinsTabPistolsGlock")
 SkinsTabPistols:AddDropdown("Dual Berettas", {"Stock"}, "Stock", "SkinsTabPistolsDualBerettas")
 SkinsTabPistols:AddDropdown("P250", {"Stock"}, "Stock", "SkinsTabPistolsP250")
-SkinsTabPistols:AddDropdown("TEC-9", {"Stock", "Gift Wrapped", "Ironline", "Skintech", "Stocking Stuffer", "Samurai", "Phol", "Charger", "Performer", "Seasoned"}, "Stock", "SkinsTabPistolsTec9")
+SkinsTabPistols:AddDropdown("TEC-9", {"Stock"}, "Stock", "SkinsTabPistolsTec9")
 SkinsTabPistols:AddDropdown("Deagle", {"Stock"}, "Stock", "SkinsTabPistolsDesertEagle")
 SkinsTabPistols:AddDropdown("PX4", {"Stock"}, "Stock", "SkinsTabPistolsP2000")
 SkinsTabPistols:AddDropdown("Five-seveN", {"Stock"}, "Stock", "SkinsTabPistolsFiveSeven")
-SkinsTabPistols:AddDropdown("USP-S", {"Stock", "Skull", "Yellowbelly", "Crimson", "Jade Dream", "Racing", "Frostbite", "Nighttown", "Paradise", "Dizzy", "Kraken", "Worlds Away", "Unseen", "Holiday", "Survivor"}, "Stock", "SkinsTabPistolsUSP")
+SkinsTabPistols:AddDropdown("USP-S", {"Stock"}, "Stock", "SkinsTabPistolsUSP")
 SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock"}, "Stock", "SkinsTabPistolsCZ")
-SkinsTabPistols:AddDropdown("44 Magnum", {"Stock", "Violet", "Hunter", "Spades", "Exquisite", "TG"}, "Stock", "SkinsTabPistolsR8")
+SkinsTabPistols:AddDropdown("44 Magnum", {"Stock"}, "Stock", "SkinsTabPistolsR8")
 
 local SkinsTabAdd = SkinsTab:AddCategory("Additional", 2)
 
@@ -4875,6 +4875,22 @@ table.foreach(weapon_skins, function(i,v)
 		library.pointers.SkinsTabPistolsP250.options = temp
 	elseif i == "P90" then
 		library.pointers.SkinsTabSMGsP90.options = temp
+	elseif i == "R8" then
+		library.pointers.SkinsTabPistolsR8.options = temp
+	elseif i == "SG" then
+		library.pointers.SkinsTabRiflesSG.options = temp
+	elseif i == "SawedOff" then
+		library.pointers.SkinsTabHeavySawedOff.options = temp
+	elseif i == "Scout" then
+		library.pointers.SkinsTabRiflesScout.options = temp
+	elseif i == "Tec9" then
+		library.pointers.SkinsTabPistolsTec9.options = temp
+	elseif i == "UMP" then
+		library.pointers.SkinsTabSMGsUMP.options = temp
+	elseif i == "USP" then
+		library.pointers.SkinsTabPistolsUSP.options = temp
+	elseif i == "XM" then
+		library.pointers.SkinsTabHeavyXM.options = temp
     end
 end)
 

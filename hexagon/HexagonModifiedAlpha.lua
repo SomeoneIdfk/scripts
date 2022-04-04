@@ -4233,23 +4233,23 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	end
 end)
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
-TrollTabPlayer:AddDropdown("Godmode method", {"Bloxsense Godmode", "Inf HP", "FE God"}, "Bloxsense Godmode", "TrollTabPlayerGM")
+TrollTabPlayer:AddDropdown("Godmode method", {"Bloxsense Godmode", "Inf HP", "FE God"}, "Bloxsense Godmode", "TrollTabPlayerGMM")
 TrollTabPlayer:AddToggle("Bloxsense Godmode", false, "TrollTabPlayerGM", function(val)
     if val == true then
 		if IsAlive(LocalPlayer) then
-			if library.pointers.TrollTabPlayerGM.value == "Bloxsense Godmode" then
+			if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
         		local ReplicatedStorage = game:GetService("ReplicatedStorage");
         		local ApplyGun = ReplicatedStorage.Events.ApplyGun;
         		ApplyGun:FireServer({
             		Model = ReplicatedStorage.Hostage.Hostage,
             		Name = "USP"
         		}, game.Players.LocalPlayer);
-			elseif library.pointers.TrollTabPlayerGM.value == "Inf HP" then
+			elseif library.pointers.TrollTabPlayerGMM.value == "Inf HP" then
 				game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
 				LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
 					LocalPlayer.Character.Humanoid.Health = 100
 				end)
-			elseif library.pointers.TrollTabPlayerGM.value == "FE God" then
+			elseif library.pointers.TrollTabPlayerGMM.value == "FE God" then
 				LocalPlayer.Character.Humanoid.Parent = nil
 				Instance.new("Humanoid", LocalPlayer.Character)
 			end
@@ -4257,19 +4257,19 @@ TrollTabPlayer:AddToggle("Bloxsense Godmode", false, "TrollTabPlayerGM", functio
         GMLoop = LocalPlayer.CharacterAdded:Connect(function()
             pcall(function()
                 if IsAlive(LocalPlayer) then
-					if library.pointers.TrollTabPlayerGM.value == "Bloxsense Godmode" then
+					if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
 						local ReplicatedStorage = game:GetService("ReplicatedStorage");
 						local ApplyGun = ReplicatedStorage.Events.ApplyGun;
 						ApplyGun:FireServer({
 							Model = ReplicatedStorage.Hostage.Hostage,
 							Name = "USP"
 						}, game.Players.LocalPlayer);
-					elseif library.pointers.TrollTabPlayerGM.value == "Inf HP" then
+					elseif library.pointers.TrollTabPlayerGMM.value == "Inf HP" then
 						game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
 						LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
 							LocalPlayer.Character.Humanoid.Health = 100
 						end)
-					elseif library.pointers.TrollTabPlayerGM.value == "FE God" then
+					elseif library.pointers.TrollTabPlayerGMM.value == "FE God" then
 						LocalPlayer.Character.Humanoid.Parent = nil
 						Instance.new("Humanoid", LocalPlayer.Character)
 					end

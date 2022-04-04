@@ -3645,7 +3645,7 @@ SkinsTabRifles:AddDropdown("Scout", {"Stock", "Xmas", "Coffin Biter", "Railgun",
 SkinsTabRifles:AddDropdown("SG 553", {"Stock", "Yltude", "Knighthood", "Variant Camo", "Magma", "DropX", "Dummy", "Kitty Cat", "Drop-Out", "Control"}, "Stock", "SkinsTabRiflesSG")
 SkinsTabRifles:AddDropdown("AWP", {"Stock"}, "Stock", "SkinsTabRiflesAWP")
 SkinsTabRifles:AddDropdown("G3SG1", {"Stock"}, "Stock", "SkinsTabRiflesG3SG1")
-SkinsTabRifles:AddDropdown("M4A4", {"Stock", "Devil", "Pinkvision", "Desert Camo", "BOT[S]", "Precision", "Candyskull", "Scapter", "Toy Soldier", "Endline", "Pondside", "Ice Cap", "Pinkie", "Racer", "Stardust", "King", "Flashy Ride", "RayTrack", "Mistletoe", "Delinquent", "Quicktime", "Jester", "Darkness"}, "Stock", "SkinsTabRiflesM4A4")
+SkinsTabRifles:AddDropdown("M4A4", {"Stock"}, "Stock", "SkinsTabRiflesM4A4")
 SkinsTabRifles:AddDropdown("AUG", {"Stock"}, "Stock", "SkinsTabRiflesAUG")
 SkinsTabRifles:AddDropdown("Famas F1", {"Stock"}, "Stock", "SkinsTabRiflesFamas")
 SkinsTabRifles:AddDropdown("M4A1", {"Stock"}, "Stock", "SkinsTabRiflesM4A1")
@@ -3695,12 +3695,12 @@ SkinsTabHeavy:AddToggle("Enable", false, "SkinsTabHeavyEnabled", function(val)
 		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = "Stock"
 	end
 end)
-SkinsTabHeavy:AddDropdown("Nova", {"Stock", "Terraformer", "Tiger", "Black Ice", "Sharkesh", "Paradise", "Starry Night", "Cookie", "Tricked", "Defective", "Oath"}, "Stock", "SkinsTabHeavyNova")
+SkinsTabHeavy:AddDropdown("Nova", {"Stock"}, "Stock", "SkinsTabHeavyNova")
 SkinsTabHeavy:AddDropdown("XM1014", {"Stock", "Red", "Spectrum", "Artic", "Atomic", "Campfire", "Predator", "MK11", "Endless Night"}, "Stock", "SkinsTabHeavyXM")
-SkinsTabHeavy:AddDropdown("MAG-7", {"Stock", "Molten", "Striped", "Frosty", "Outbreak", "Bombshell", "C4UTION"}, "Stock", "SkinsTabHeavyMAG7")
+SkinsTabHeavy:AddDropdown("MAG-7", {"Stock"}, "Stock", "SkinsTabHeavyMAG7")
 SkinsTabHeavy:AddDropdown("Sawed Off", {"Stock", "Spooky", "Colorbloom", "Casino", "Opal", "Executioner", "Sullys Blacklight"}, "Stock", "SkinsTabHeavySawedOff")
 SkinsTabHeavy:AddDropdown("M249", {"Stock"}, "Stock", "SkinsTabHeavyM249")
-SkinsTabHeavy:AddDropdown("MG42", {"Stock", "Winterfell", "Default", "Quazar", "Midnightbones", "Wetland", "Striped"}, "Stock", "SkinsTabHeavyNegev")
+SkinsTabHeavy:AddDropdown("MG42", {"Stock"}, "Stock", "SkinsTabHeavyNegev")
 
 local SkinsTabCategoryCredits = SkinsTab:AddCategory("Credits", 1)
 
@@ -3757,11 +3757,11 @@ SkinsTabSMGs:AddToggle("Enable", false, "SkinsTabSMGsEnabled", function(val)
 		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = "Stock"
 	end
 end)
-SkinsTabSMGs:AddDropdown("MP9", {"Stock", "Velvita", "Blueroyal", "Decked Halls", "Cookie Man", "Wilderness", "Vaporwave", "Cob Web", "SnowTime", "Control"}, "Stock", "SkinsTabSMGsMP9")
-SkinsTabSMGs:AddDropdown("MAC-10", {"Stock", "Pimpin", "Wetland", "Turbo", "Golden Rings", "Skeleboney", "Artists Intent", "Toxic", "Blaze", "Scythe", "Devil"}, "Stock", "SkinsTabSMGsMAC10")
-SkinsTabSMGs:AddDropdown("MP5", {"Stock", "Sunshot", "Calaxian", "Goo", "Holiday", "Silent Ops", "Industrial", "Reindeer", "Cogged", "Trauma"}, "Stock", "SkinsTabSMGsMP7")
+SkinsTabSMGs:AddDropdown("MP9", {"Stock"}, "Stock", "SkinsTabSMGsMP9")
+SkinsTabSMGs:AddDropdown("MAC-10", {"Stock"}, "Stock", "SkinsTabSMGsMAC10")
+SkinsTabSMGs:AddDropdown("MP5", {"Stock"}, "Stock", "SkinsTabSMGsMP7")
 SkinsTabSMGs:AddDropdown("UMP-45", {"Stock", "Militia Camo", "Magma", "Redline", "Death Grip", "Molten", "Gum Drop", "Orbit"}, "Stock", "SkinsTabSMGsUMP")
-SkinsTabSMGs:AddDropdown("P90", {"Stock", "Skulls", "Redcopy", "Demon Within", "P-Chan", "Krampus", "Pine", "Elegant", "Northern Lights", "Argus", "Curse"}, "Stock", "SkinsTabSMGsP90")
+SkinsTabSMGs:AddDropdown("P90", {"Stock"}, "Stock", "SkinsTabSMGsP90")
 SkinsTabSMGs:AddDropdown("Thompson", {"Stock"}, "Stock", "SkinsTabSMGsBizon")
 
 local SkinsTabPistols = SkinsTab:AddCategory("Pistols", 2)
@@ -3829,10 +3829,10 @@ SkinsTabPistols:AddToggle("Enable", false, "SkinsTabPistolsEnabled", function(va
 end)
 SkinsTabPistols:AddDropdown("Glock-18", {"Stock"}, "Stock", "SkinsTabPistolsGlock")
 SkinsTabPistols:AddDropdown("Dual Berettas", {"Stock"}, "Stock", "SkinsTabPistolsDualBerettas")
-SkinsTabPistols:AddDropdown("P250", {"Stock", "Bomber", "Green Web", "TC250", "Amber", "Frosted", "Solstice", "Equinox", "Goldish", "Shark", "Midnight"}, "Stock", "SkinsTabPistolsP250")
+SkinsTabPistols:AddDropdown("P250", {"Stock"}, "Stock", "SkinsTabPistolsP250")
 SkinsTabPistols:AddDropdown("TEC-9", {"Stock", "Gift Wrapped", "Ironline", "Skintech", "Stocking Stuffer", "Samurai", "Phol", "Charger", "Performer", "Seasoned"}, "Stock", "SkinsTabPistolsTec9")
 SkinsTabPistols:AddDropdown("Deagle", {"Stock"}, "Stock", "SkinsTabPistolsDesertEagle")
-SkinsTabPistols:AddDropdown("PX4", {"Stock", "Comet", "Golden Age", "Apathy", "Candycorn", "Lunar", "Ruby", "Camo Dipped", "Dark Beast", "Pinkie", "Silence"}, "Stock", "SkinsTabPistolsP2000")
+SkinsTabPistols:AddDropdown("PX4", {"Stock"}, "Stock", "SkinsTabPistolsP2000")
 SkinsTabPistols:AddDropdown("Five-seveN", {"Stock"}, "Stock", "SkinsTabPistolsFiveSeven")
 SkinsTabPistols:AddDropdown("USP-S", {"Stock", "Skull", "Yellowbelly", "Crimson", "Jade Dream", "Racing", "Frostbite", "Nighttown", "Paradise", "Dizzy", "Kraken", "Worlds Away", "Unseen", "Holiday", "Survivor"}, "Stock", "SkinsTabPistolsUSP")
 SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock"}, "Stock", "SkinsTabPistolsCZ")
@@ -4829,46 +4829,52 @@ table.foreach(weapon_skins, function(i,v)
 
     if i == "AK47" then
         library.pointers.SkinsTabRiflesAK47.options = temp
-        library.pointers.SkinsTabRiflesAK47:Set("Stock")
 	elseif i == "AUG" then
 		library.pointers.SkinsTabRiflesAUG.options = temp
-		library.pointers.SkinsTabRiflesAUG:Set("Stock")
 	elseif i == "AWP" then
 		library.pointers.SkinsTabRiflesAWP.options = temp
-		library.pointers.SkinsTabRiflesAWP:Set("Stock")
 	elseif i == "Bizon" then
 		library.pointers.SkinsTabSMGsBizon.options = temp
-		library.pointers.SkinsTabSMGsBizon:Set("Stock")
 	elseif i == "CZ" then
 		library.pointers.SkinsTabPistolsCZ.options = temp
-		library.pointers.SkinsTabPistolsCZ:Set("Stock")
 	elseif i == "DesertEagle" then
 		library.pointers.SkinsTabPistolsDesertEagle.options = temp
-		library.pointers.SkinsTabPistolsDesertEagle:Set("Stock")
 	elseif i == "DualBerettas" then
 		library.pointers.SkinsTabPistolsDualBerettas.options = temp
-		library.pointers.SkinsTabPistolsDualBerettas:Set("Stock")
 	elseif i == "Famas" then
 		library.pointers.SkinsTabRiflesFamas.options = temp
-		library.pointers.SkinsTabRiflesFamas:Set("Stock")
 	elseif i == "FiveSeven" then
 		library.pointers.SkinsTabPistolsFiveSeven.options = temp
-		library.pointers.SkinsTabPistolsFiveSeven:Set("Stock")
 	elseif i == "G3SG1" then
 		library.pointers.SkinsTabRiflesG3SG1.options = temp
-		library.pointers.SkinsTabRiflesG3SG1:Set("Stock")
 	elseif i == "Galil" then
 		library.pointers.SkinsTabRiflesGalil.options = temp
-		library.pointers.SkinsTabRiflesGalil:Set("Stock")
 	elseif i == "Glock" then
 		library.pointers.SkinsTabPistolsGlock.options = temp
-		library.pointers.SkinsTabPistolsGlock:Set("Stock")
 	elseif i == "M249" then
-		library.pointers.SkinsTabRiflesM249.options = temp
-		library.pointers.SkinsTabRiflesM249:Set("Stock")
+		library.pointers.SkinsTabHeavyM249.options = temp
 	elseif i == "M4A1" then
 		library.pointers.SkinsTabRiflesM4A1.options = temp
-		library.pointers.SkinsTabRiflesM4A1:Set("Stock")
+	elseif i == "M4A4" then
+		library.pointers.SkinsTabRiflesM4A4.options = temp
+	elseif i == "MAC10" then
+		library.pointers.SkinsTabSMGsMAC10.options = temp
+	elseif i == "MAG7" then
+		library.pointers.SkinsTabHeavyMAG7.options = temp
+	elseif i == "MP7" then
+		library.pointers.SkinsTabSMGsMP7.options = temp
+	elseif i == "MP9" then
+		library.pointers.SkinsTabSMGsMP9.options = temp
+	elseif i == "Negev" then
+		library.pointers.SkinsTabHeavyNegev.options = temp
+	elseif i == "Nova" then
+		library.pointers.SkinsTabHeavyNova.options = temp
+	elseif i == "P2000" then
+		library.pointers.SkinsTabPistolsP2000.options = temp
+	elseif i == "P250" then
+		library.pointers.SkinsTabPistolsP250.options = temp
+	elseif i == "P90" then
+		library.pointers.SkinsTabSMGsP90.options = temp
     end
 end)
 

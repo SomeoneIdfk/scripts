@@ -511,6 +511,83 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 	return oldNamecall(self, unpack(args))
 end))     
 
+writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins.cfg"))
+
+local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
+
+table.foreach(weapon_skins, function(i,v)
+    local temp = {"Stock"}
+    table.foreach(v, function(i2,v2)
+        table.insert(temp, v2)
+    end)
+
+    if i == "AK47" then
+        library.pointers.SkinsTabRiflesAK47.options = temp
+	elseif i == "AUG" then
+		library.pointers.SkinsTabRiflesAUG.options = temp
+	elseif i == "AWP" then
+		library.pointers.SkinsTabRiflesAWP.options = temp
+	elseif i == "Bizon" then
+		library.pointers.SkinsTabSMGsBizon.options = temp
+	elseif i == "CZ" then
+		library.pointers.SkinsTabPistolsCZ.options = temp
+	elseif i == "DesertEagle" then
+		library.pointers.SkinsTabPistolsDesertEagle.options = temp
+	elseif i == "DualBerettas" then
+		library.pointers.SkinsTabPistolsDualBerettas.options = temp
+	elseif i == "Famas" then
+		library.pointers.SkinsTabRiflesFamas.options = temp
+	elseif i == "FiveSeven" then
+		library.pointers.SkinsTabPistolsFiveSeven.options = temp
+	elseif i == "G3SG1" then
+		library.pointers.SkinsTabRiflesG3SG1.options = temp
+	elseif i == "Galil" then
+		library.pointers.SkinsTabRiflesGalil.options = temp
+	elseif i == "Glock" then
+		library.pointers.SkinsTabPistolsGlock.options = temp
+	elseif i == "M249" then
+		library.pointers.SkinsTabHeavyM249.options = temp
+	elseif i == "M4A1" then
+		library.pointers.SkinsTabRiflesM4A1.options = temp
+	elseif i == "M4A4" then
+		library.pointers.SkinsTabRiflesM4A4.options = temp
+	elseif i == "MAC10" then
+		library.pointers.SkinsTabSMGsMAC10.options = temp
+	elseif i == "MAG7" then
+		library.pointers.SkinsTabHeavyMAG7.options = temp
+	elseif i == "MP7" then
+		library.pointers.SkinsTabSMGsMP7.options = temp
+	elseif i == "MP9" then
+		library.pointers.SkinsTabSMGsMP9.options = temp
+	elseif i == "Negev" then
+		library.pointers.SkinsTabHeavyNegev.options = temp
+	elseif i == "Nova" then
+		library.pointers.SkinsTabHeavyNova.options = temp
+	elseif i == "P2000" then
+		library.pointers.SkinsTabPistolsP2000.options = temp
+	elseif i == "P250" then
+		library.pointers.SkinsTabPistolsP250.options = temp
+	elseif i == "P90" then
+		library.pointers.SkinsTabSMGsP90.options = temp
+	elseif i == "R8" then
+		library.pointers.SkinsTabPistolsR8.options = temp
+	elseif i == "SG" then
+		library.pointers.SkinsTabRiflesSG.options = temp
+	elseif i == "SawedOff" then
+		library.pointers.SkinsTabHeavySawedOff.options = temp
+	elseif i == "Scout" then
+		library.pointers.SkinsTabRiflesScout.options = temp
+	elseif i == "Tec9" then
+		library.pointers.SkinsTabPistolsTec9.options = temp
+	elseif i == "UMP" then
+		library.pointers.SkinsTabSMGsUMP.options = temp
+	elseif i == "USP" then
+		library.pointers.SkinsTabPistolsUSP.options = temp
+	elseif i == "XM" then
+		library.pointers.SkinsTabHeavyXM.options = temp
+    end
+end)
+
 if readfile("hexagon/skin_changer/autoload.txt") ~= "" and isfile("hexagon/skin_changer/configs/"..readfile("hexagon/skin_changer/autoload.txt")) then
 	local a,b = pcall(function()
 		cfg = loadstring("return "..readfile("hexagon/skin_changer/configs/"..readfile("hexagon/skin_changer/autoload.txt")))()

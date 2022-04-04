@@ -4260,7 +4260,6 @@ TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
 		end
         GMLoop = LocalPlayer.CharacterAdded:Connect(function()
             pcall(function()
-                wait(0.5)
 				if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
 					local ReplicatedStorage = game:GetService("ReplicatedStorage");
 					local ApplyGun = ReplicatedStorage.Events.ApplyGun;
@@ -4269,11 +4268,13 @@ TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
 						Name = "USP"
 					}, game.Players.LocalPlayer);
 				elseif library.pointers.TrollTabPlayerGMM.value == "Inf HP" then
+					wait(0.5)
 					game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
 					LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
 						LocalPlayer.Character.Humanoid.Health = 100
 					end)
 				elseif library.pointers.TrollTabPlayerGMM.value == "FE God" then
+					wait(0.5)
 					LocalPlayer.Character.Humanoid.Parent = nil
 					Instance.new("Humanoid", LocalPlayer.Character)
 				end

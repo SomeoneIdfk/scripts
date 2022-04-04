@@ -1604,7 +1604,7 @@ end)
 game:GetService("RunService").Stepped:Connect(function()
 	pcall(function()
 		if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
-			library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
+			library.pointers.SettingsTabCategoryConfigsBuild.options = {"Alpha", "Stable"}
 			if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
 				library.pointers.SettingsTabCategoryConfigsBuild:Set("Alpha")
 			end
@@ -4256,6 +4256,7 @@ TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
 		end
         GMLoop = LocalPlayer.CharacterAdded:Connect(function()
             pcall(function()
+                wait(0.5)
 				if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
 					local ReplicatedStorage = game:GetService("ReplicatedStorage");
 					local ApplyGun = ReplicatedStorage.Events.ApplyGun;

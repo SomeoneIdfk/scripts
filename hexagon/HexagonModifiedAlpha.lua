@@ -4234,7 +4234,7 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 end)
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
 TrollTabPlayer:AddDropdown("Godmode method", {"Bloxsense Godmode", "Inf HP", "FE God"}, "Bloxsense Godmode", "TrollTabPlayerGMM")
-TrollTabPlayer:AddToggle("Bloxsense Godmode", false, "TrollTabPlayerGM", function(val)
+TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
     if val == true then
 		if IsAlive(LocalPlayer) then
 			if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
@@ -4256,23 +4256,21 @@ TrollTabPlayer:AddToggle("Bloxsense Godmode", false, "TrollTabPlayerGM", functio
 		end
         GMLoop = LocalPlayer.CharacterAdded:Connect(function()
             pcall(function()
-                if IsAlive(LocalPlayer) then
-					if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
-						local ReplicatedStorage = game:GetService("ReplicatedStorage");
-						local ApplyGun = ReplicatedStorage.Events.ApplyGun;
-						ApplyGun:FireServer({
-							Model = ReplicatedStorage.Hostage.Hostage,
-							Name = "USP"
-						}, game.Players.LocalPlayer);
-					elseif library.pointers.TrollTabPlayerGMM.value == "Inf HP" then
-						game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
-						LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-							LocalPlayer.Character.Humanoid.Health = 100
-						end)
-					elseif library.pointers.TrollTabPlayerGMM.value == "FE God" then
-						LocalPlayer.Character.Humanoid.Parent = nil
-						Instance.new("Humanoid", LocalPlayer.Character)
-					end
+				if library.pointers.TrollTabPlayerGMM.value == "Bloxsense Godmode" then
+					local ReplicatedStorage = game:GetService("ReplicatedStorage");
+					local ApplyGun = ReplicatedStorage.Events.ApplyGun;
+					ApplyGun:FireServer({
+						Model = ReplicatedStorage.Hostage.Hostage,
+						Name = "USP"
+					}, game.Players.LocalPlayer);
+				elseif library.pointers.TrollTabPlayerGMM.value == "Inf HP" then
+					game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
+					LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+						LocalPlayer.Character.Humanoid.Health = 100
+					end)
+				elseif library.pointers.TrollTabPlayerGMM.value == "FE God" then
+					LocalPlayer.Character.Humanoid.Parent = nil
+					Instance.new("Humanoid", LocalPlayer.Character)
 				end
             end)
         end)

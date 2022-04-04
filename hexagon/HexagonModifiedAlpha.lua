@@ -1127,6 +1127,18 @@ MiscellaneousTabCategoryMain:AddButton("Crash Server", function()
 	end
 end)
 
+MiscellaneousTabCategoryMain:AddButton("Inf HP", function() pcall(function()
+	game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
+	LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+		LocalPlayer.Character.Humanoid.Health = 100
+	end)
+end) end)
+
+MiscellaneousTabCategoryMain:AddButton("FE God", function() pcall(function()
+	LocalPlayer.Character.Humanoid.Parent = nil
+	Instance.new("Humanoid", LocalPlayer.Character)
+end) end)
+
 MiscellaneousTabCategoryMain:AddButton("Invisibility [dont defuse]", function() pcall(function()
 	local oldpos = LocalPlayer.Character.HumanoidRootPart.CFrame
 	LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(9999,9999,9999)
@@ -4107,7 +4119,11 @@ shittalklibha = {
 shittalklibpl = {
 	"Oops, sorry left my aimbot on.",
 	"Bro how'd you die when I'm bad?",
-	"Bruv can't hit his shots."
+	"Bruv can't hit his shots.",
+    "I guess people just aren't good at this.",
+    "People just don't get it.",
+    "It's not like I'm a cheater.",
+    "It's very simple."
 }
 
 shittalklibpa = {
@@ -4140,16 +4156,16 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 								if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
 									wait(library.pointers.TrollTabPlayerDelay.value)
 									if IsAlive(LocalPlayer) then
-										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(1, #shittalklibha)], false, "Innocent", false, true)
 									end
 								else
 									wait(library.pointers.TrollTabPlayerDelay.value)
 									local randomnumber = math.random(1, 2)
 	
 									if randomnumber == 1 and IsAlive(LocalPlayer) then
-										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(1, #shittalklibpl)], false, "Innocent", false, true)
 									elseif randomnumber == 2 and IsAlive(LocalPlayer) then
-										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(1, #shittalklibpa)], false, "Innocent", false, true)
 									end
 								end
 							end
@@ -4171,13 +4187,13 @@ TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
 							if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
 								wait(library.pointers.TrollTabPlayerDelay.value)
 								if library.pointers.TrollTabPlayerMessages.value == "Hacker" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(0, #shittalklibha)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(1, #shittalklibha)], false, "Innocent", false, true)
 								elseif library.pointers.TrollTabPlayerMessages.value == "Player" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(0, #shittalklibpl)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(1, #shittalklibpl)], false, "Innocent", false, true)
 								elseif library.pointers.TrollTabPlayerMessages.value == "Passive" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(0, #shittalklibpa)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(1, #shittalklibpa)], false, "Innocent", false, true)
 								elseif library.pointers.TrollTabPlayerMessages.value == "Custom" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibcu[math.random(0, #shittalklibcu)], false, "Innocent", false, true)
+									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibcu[math.random(1, #shittalklibcu)], false, "Innocent", false, true)
 								end
 							end
 						end)

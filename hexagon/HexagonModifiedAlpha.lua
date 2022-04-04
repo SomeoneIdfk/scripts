@@ -1127,18 +1127,6 @@ MiscellaneousTabCategoryMain:AddButton("Crash Server", function()
 	end
 end)
 
-MiscellaneousTabCategoryMain:AddButton("Inf HP", function() pcall(function()
-	game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
-	LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-		LocalPlayer.Character.Humanoid.Health = 100
-	end)
-end) end)
-
-MiscellaneousTabCategoryMain:AddButton("FE God", function() pcall(function()
-	LocalPlayer.Character.Humanoid.Parent = nil
-	Instance.new("Humanoid", LocalPlayer.Character)
-end) end)
-
 MiscellaneousTabCategoryMain:AddButton("Invisibility [dont defuse]", function() pcall(function()
 	local oldpos = LocalPlayer.Character.HumanoidRootPart.CFrame
 	LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(9999,9999,9999)

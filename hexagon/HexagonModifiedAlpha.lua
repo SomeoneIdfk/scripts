@@ -1606,7 +1606,7 @@ game:GetService("RunService").Stepped:Connect(function()
 		if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
 			library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
 			if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-				library.pointers.SettingsTabCategoryConfigsBuild:Set("Stable")
+				library.pointers.SettingsTabCategoryConfigsBuild:Set("Alpha")
 			end
 		elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
 			library.pointers.SettingsTabCategoryConfigsBuild.options = {"-"}
@@ -4233,22 +4233,47 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	end
 end)
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
+TrollTabPlayer:AddDropdown("Godmode method", {"Bloxsense Godmode", "Inf HP", "FE God"}, "Bloxsense Godmode", "TrollTabPlayerGM")
 TrollTabPlayer:AddToggle("Bloxsense Godmode", false, "TrollTabPlayerGM", function(val)
     if val == true then
-        local ReplicatedStorage = game:GetService("ReplicatedStorage");
-        local ApplyGun = ReplicatedStorage.Events.ApplyGun;
-        ApplyGun:FireServer({
-            Model = ReplicatedStorage.Hostage.Hostage,
-            Name = "USP"
-        }, game.Players.LocalPlayer);
+		if IsAlive(LocalPlayer) then
+			if library.pointers.TrollTabPlayerGM.value == "Bloxsense Godmode" then
+        		local ReplicatedStorage = game:GetService("ReplicatedStorage");
+        		local ApplyGun = ReplicatedStorage.Events.ApplyGun;
+        		ApplyGun:FireServer({
+            		Model = ReplicatedStorage.Hostage.Hostage,
+            		Name = "USP"
+        		}, game.Players.LocalPlayer);
+			elseif library.pointers.TrollTabPlayerGM.value == "Inf HP" then
+				game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
+				LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+					LocalPlayer.Character.Humanoid.Health = 100
+				end)
+			elseif library.pointers.TrollTabPlayerGM.value == "FE God" then
+				LocalPlayer.Character.Humanoid.Parent = nil
+				Instance.new("Humanoid", LocalPlayer.Character)
+			end
+		end
         GMLoop = LocalPlayer.CharacterAdded:Connect(function()
             pcall(function()
-                local ReplicatedStorage = game:GetService("ReplicatedStorage");
-                local ApplyGun = ReplicatedStorage.Events.ApplyGun;
-                ApplyGun:FireServer({
-                    Model = ReplicatedStorage.Hostage.Hostage,
-                    Name = "USP"
-                }, game.Players.LocalPlayer);
+                if IsAlive(LocalPlayer) then
+					if library.pointers.TrollTabPlayerGM.value == "Bloxsense Godmode" then
+						local ReplicatedStorage = game:GetService("ReplicatedStorage");
+						local ApplyGun = ReplicatedStorage.Events.ApplyGun;
+						ApplyGun:FireServer({
+							Model = ReplicatedStorage.Hostage.Hostage,
+							Name = "USP"
+						}, game.Players.LocalPlayer);
+					elseif library.pointers.TrollTabPlayerGM.value == "Inf HP" then
+						game.ReplicatedStorage.Events.FallDamage:FireServer(0/0)
+						LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+							LocalPlayer.Character.Humanoid.Health = 100
+						end)
+					elseif library.pointers.TrollTabPlayerGM.value == "FE God" then
+						LocalPlayer.Character.Humanoid.Parent = nil
+						Instance.new("Humanoid", LocalPlayer.Character)
+					end
+				end
             end)
         end)
     elseif val == false and GMLoop then

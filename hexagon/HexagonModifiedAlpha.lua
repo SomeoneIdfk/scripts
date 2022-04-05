@@ -4256,7 +4256,7 @@ TrollTabPlayer:AddToggle("Fuck", false, "TrollTabPlayerFuck", function(val)
 
 						local Arguments = {
 							[1] = NewBacktrackPart.PlayerName.Character.Head,
-							[2] = NewBacktrackPart.PlayerName.Character.Head.CFrame.p,
+							[2] = NewBacktrackPart.CFrame.p,
 							[3] = LocalPlayer.Character.EquippedTool.Value,
 							[4] = 500,
 							[5] = LocalPlayer.Character.Gun,

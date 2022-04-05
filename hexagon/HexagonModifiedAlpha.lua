@@ -4256,7 +4256,7 @@ TrollTabPlayer:AddToggle("Fuck", false, "TrollTabPlayerFuck", function(val)
 
 						local Arguments = {
 							[1] = NewBacktrackPart,
-							[2] = NewBacktrackPart.Position,
+							[2] = NewBacktrackPart.CFrame.p,
 							[3] = LocalPlayer.Character.EquippedTool.Value,
 							[4] = 500,
 							[5] = LocalPlayer.Character.Gun,
@@ -4273,7 +4273,7 @@ TrollTabPlayer:AddToggle("Fuck", false, "TrollTabPlayerFuck", function(val)
 				end
 			--end)
 		--end)
-	elseif val == false and ttpfuck then
+	elseif val == false then
 		--ttpfuck:Disconnect()
 	end
 end)

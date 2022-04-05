@@ -4116,104 +4116,53 @@ shittalklibha = {
 	"Oops, sorry left my kill loop on."
 }
 
-shittalklibpl = {
+shittalklibnc = {
 	"Oops, sorry left my aimbot on.",
 	"Bro how'd you die when I'm bad?",
 	"Bruv can't hit his shots.",
     "I guess people just aren't good at this.",
     "People just don't get it.",
     "It's not like I'm a cheater.",
-    "It's very simple."
-}
-
-shittalklibpa = {
+    "It's very simple.",
 	"Sorry, my bad.",
 	"Nice try.",
 	"Better luck next round.",
 	"I apologize for not being bad."
 }
 
-TrollTabPlayer:AddToggle("Kill Talk", false, "TrollTabPlayerKT", function(val)
+TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
 	if val == true then
-		last_started = nil
-		TrollTabPlayerKTLoop = game:GetService("RunService").Stepped:Connect(function()
+		TrollTabPlayerTSLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
-				if library.pointers.TrollTabPlayerMessages.value == "Auto" and last_started ~= library.pointers.TrollTabPlayerMessages.value then
-					last_started = library.pointers.TrollTabPlayerMessages.value
-
-					if AutoTrashTalkLoop then
-						AutoTrashTalkLoop:Disconnect()
+                if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
+					if library.pointers.TrollTabPlayerDelay.value ~= 0 then
+						wait(library.pointers.TrollTabPlayerDelay.value)
 					end
-
-					if OtherTrashTalkLoop then
-						OtherTrashTalkLoop:Disconnect()
+					if library.pointers.TrollTabPlayerMessages.value == "Default" and IsAlive(LocalPlayer) then
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							shittalklibnc[math.random(0, #shittalklibnc)],
+							false,
+							"Innocent",
+							false,
+							true
+						)
+					elseif library.pointers.TrollTabPlayerMessages.value == "Custom" and IsAlive(LocalPlayer) then
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							shittalklibcu[math.random(0, #shittalklibcu)],
+							false,
+							"Innocent",
+							false,
+							true
+						)
 					end
-
-					AutoTrashTalkLoop = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10").Victim:GetPropertyChangedSignal("Value"):Connect(function()
-						pcall(function()
-							local temp = WorkSpace:FindFirstChild("KillFeed"):FindFirstChild("10")
-							if temp.Killer.Value == LocalPlayer.Name then
-								if temp.Victim.Value == tostring(player1) or temp.Victim.Value == tostring(player2) or temp.Victim.Value == tostring(player3) then
-									wait(library.pointers.TrollTabPlayerDelay.value)
-									if IsAlive(LocalPlayer) then
-										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(1, #shittalklibha)], false, "Innocent", false, true)
-									end
-								else
-									wait(library.pointers.TrollTabPlayerDelay.value)
-									local randomnumber = math.random(1, 2)
-	
-									if randomnumber == 1 and IsAlive(LocalPlayer) then
-										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(1, #shittalklibpl)], false, "Innocent", false, true)
-									elseif randomnumber == 2 and IsAlive(LocalPlayer) then
-										game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(1, #shittalklibpa)], false, "Innocent", false, true)
-									end
-								end
-							end
-						end)
-					end)
-				elseif last_started ~= library.pointers.TrollTabPlayerMessages.value then
-					last_started = library.pointers.TrollTabPlayerMessages.value
-
-					if AutoTrashTalkLoop then
-						AutoTrashTalkLoop:Disconnect()
-					end
-
-					if OtherTrashTalkLoop then
-						OtherTrashTalkLoop:Disconnect()
-					end
-
-					OtherTrashTalkLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
-						pcall(function()
-							if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
-								wait(library.pointers.TrollTabPlayerDelay.value)
-								if library.pointers.TrollTabPlayerMessages.value == "Hacker" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibha[math.random(1, #shittalklibha)], false, "Innocent", false, true)
-								elseif library.pointers.TrollTabPlayerMessages.value == "Player" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpl[math.random(1, #shittalklibpl)], false, "Innocent", false, true)
-								elseif library.pointers.TrollTabPlayerMessages.value == "Passive" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibpa[math.random(1, #shittalklibpa)], false, "Innocent", false, true)
-								elseif library.pointers.TrollTabPlayerMessages.value == "Custom" and IsAlive(LocalPlayer) then
-									game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(shittalklibcu[math.random(1, #shittalklibcu)], false, "Innocent", false, true)
-								end
-							end
-						end)
-					end)
                 end
 			end)
 		end)
-	elseif val == false and TrollTabPlayerKTLoop then
-		TrollTabPlayerKTLoop:Disconnect()
-
-		if AutoTrashTalkLoop then
-			AutoTrashTalkLoop:Disconnect()
-		end
-
-		if OtherTrashTalkLoop then
-			OtherTrashTalkLoop:Disconnect()
-		end
+	elseif val == false and TrollTabPlayerTSLoop then
+		TrollTabPlayerTSLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddDropdown("Messages", {"Hacker", "Player", "Passive", "Auto", "Custom"}, "Auto", "TrollTabPlayerMessages")
+TrollTabPlayer:AddDropdown("Messages", {"Default", "Custom"}, "Default", "TrollTabPlayerMessages")
 TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas.", "TrollTabPlayerCM", function(val)
 	shittalklibcu = {}
 	for i,v in pairs(string.split(val, ",,")) do

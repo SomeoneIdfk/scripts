@@ -1349,7 +1349,7 @@ MiscellaneousTabCategoryBacktrack:AddToggle("Enabled", false, "MiscellaneousTabC
 		Backtracking = RunService.RenderStepped:Connect(function()
 			if IsAlive(LocalPlayer) then
 				for i,v in pairs(game.Players:GetPlayers()) do
-					if IsAlive(v) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+					if IsAlive(v) and GetTeam(v) ~= GetTeam(LocalPlayer) and GetTeam(v) ~= "TTT" then
 						local NewBacktrackPart = Instance.new("Part")
 						NewBacktrackPart.Name = v.Name
 						NewBacktrackPart.Anchored = true
@@ -4232,6 +4232,50 @@ TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
     elseif val == false and GMLoop then
         GMLoop:Disconnect()
     end
+end)
+TrollTabPlayer:AddToggle("Fuck", false, "TrollTabPlayerFuck", function(val)
+	if val == true then
+		--ttpfuck = game:GetService("RunService").RenderStepped:Connect(function()
+			--pcall(function()
+				for i,v in pairs(game.Players:GetPlayers()) do
+					if v ~= LocalPlayer and GetTeam(v) ~= "TTT" and GetTeam(v) ~= GetTeam(LocalPlayer) then
+						local NewBacktrackPart = Instance.new("Part")
+						NewBacktrackPart.Name = v.Name
+						NewBacktrackPart.Anchored = true
+						NewBacktrackPart.CanCollide = false
+						NewBacktrackPart.Transparency = library.pointers.MiscellaneousTabCategoryBacktrackTransparency.value
+						NewBacktrackPart.Color = library.pointers.MiscellaneousTabCategoryBacktrackColor.value
+						NewBacktrackPart.Size = v.Character.Head.Size
+						NewBacktrackPart.CFrame = v.Character.Head.CFrame
+						NewBacktrackPart.Parent = HexagonFolder
+						
+						local BacktrackTag = Instance.new("ObjectValue")
+						BacktrackTag.Parent = NewBacktrackPart
+						BacktrackTag.Name = "PlayerName"
+						BacktrackTag.Value = v
+
+						local Arguments = {
+							[1] = NewBacktrackPart,
+							[2] = NewBacktrackPart.Position,
+							[3] = LocalPlayer.Character.EquippedTool.Value,
+							[4] = 500,
+							[5] = LocalPlayer.Character.Gun,
+							[8] = 100, 
+							[9] = false,
+							[10] = false,
+							[11] = Vector3.new(),
+							[12] = 500,
+							[13] = Vector3.new()
+							}
+
+						game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+					end
+				end
+			--end)
+		--end)
+	elseif val == false and ttpfuck then
+		--ttpfuck:Disconnect()
+	end
 end)
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)

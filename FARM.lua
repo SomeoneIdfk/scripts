@@ -110,6 +110,12 @@ local function win_check()
 end
 
 print('[FARM] Loaded auto-team.')
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
+        v:Disable()
+    end
+end)
 print('[FARM] Loaded anti-afk.')
 
 function Serverhop()

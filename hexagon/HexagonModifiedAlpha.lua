@@ -1740,23 +1740,40 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 		TextureRemoverLoop:Disconnect()
 	end
 end)
+ExperimentalTabCategoryOptions:AddMultiDropdown("Anti Lagg Options", {"Blood", "Mags"}, {"-"}, "ExperimentalTabCategoryOptionsALO")
+ExperimentalTabCategoryOptions:AddToggle("Anti Lagg", "", "ExperimentalTabCategoryOptionsAL", function(val)
+    local last;
+    if val == true then
+        if library.pointers.ExperimentalTabCategoryOptionsALO.value ~= last then
+		    local last = library.pointers.ExperimentalTabCategoryOptionsALO.value
+            BloodSplatterLoop:Disconnect()
+            DroppedMagsLoop:Disconnect()
 
-trueorfalse9 = true
-ExperimentalTabCategoryOptions:AddToggle("Remove Blood", false, "ExperimentalTabCategoryOptionsRB", function(val)
-	if val == true then
-		BloodSplatterLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if trueorfalse9 == true then
-					trueorfalse9 = false
-					wait(5)
-				end
 
-				getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
-				wait(1)
-			end)
-		end)
-	elseif val == false and BloodSplatterLoop then
-		BloodSplatterLoop:Disconnect()
+            if table.find(library.pointers.ExperimentalTabCategoryOptionsALO.value, "Blood") then
+                BloodSplatterLoop = game:GetService("RunService").RenderStepped:Connect(function()
+                    pcall(function()
+                        getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end
+                        wait(1)
+                    end)
+                end)
+            end
+
+            if table.find(library.pointers.ExperimentalTabCategoryOptionsALO.value, "Mags") then
+                DroppedMagsLoop = game:GetService("RunService").RenderStepped:Connect(function()
+                    pcall(function()
+                        for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
+                            if v.Name == "MagDrop" then
+                                v:Destroy()
+                            end
+                        end
+                    end)
+                end)
+            end
+        end
+	elseif val == false then
+        BloodSplatterLoop:Disconnect()
+        DroppedMagsLoop:Disconnect()
 	end
 end)
 
@@ -3752,6 +3769,30 @@ end)
 
 local TrollTabMap = TrollTab:AddCategory("Map")
 
+TrollTabMap:AddSlider("Drop Rate", {1, 50, 1, 1, ""}, "TrollTabMapDropRate")
+TrollTabMap:AddToggle("Drop Mags", false,  "TrollTabMapDropMags", function(val)
+    if val == true then
+        TrollTabDropMagLoop = game:GetService("RunService").RenderStepped:Connect(function()
+            pcall(function()
+                if IsAlive(LocalPlayer) then
+                    game:GetService("RunService").RenderStepped:Wait()
+                    game:GetService("RunService").RenderStepped:Wait()
+                    for i = 1,library.pointers.TrollTabMapDropRate.value,1 do
+                        local ohInstance1 = LocalPlayer.Character.Gun.Mag
+                        game:GetService("ReplicatedStorage").Events.DropMag:FireServer(ohInstance1)
+                        for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
+                            if v.Name == "MagDrop" then
+                                v:Destroy()
+                            end
+                        end
+                    end
+                end
+            end)
+        end)
+    elseif val == false and TrollTabDropMagLoop then
+        TrollTabDropMagLoop:Disconnect()
+    end
+end)
 TrollTabMap:AddToggle("Remove Preparation", false, "TrollTabMapRP", function(val)
 	if val == true then
 		TrollTabMapRPLoop = WorkSpace:FindFirstChild("Status"):FindFirstChild("Preparation"):GetPropertyChangedSignal("Value"):Connect(function()

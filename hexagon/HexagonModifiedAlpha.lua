@@ -3949,7 +3949,7 @@ end)
 
 local TrollTabMap = TrollTab:AddCategory("Map")
 
-TrollTabMap:AddSlider("Drop Rate", {1, 50, 1, 1, ""}, "TrollTabMapDropRate")
+TrollTabMap:AddSlider("Drop Rate", {1, 10, 1, 1, ""}, "TrollTabMapDropRate")
 TrollTabMap:AddToggle("Drop Mags", false,  "TrollTabMapDropMags", function(val)
     if val == true then
         TrollTabDropMagLoop = game:GetService("RunService").RenderStepped:Connect(function()

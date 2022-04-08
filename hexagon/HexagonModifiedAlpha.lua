@@ -1788,9 +1788,9 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										local Arguments = {
 											[1] = v.Character.Head,
 											[2] = v.Character.Head.Position,
-											[3] = LocalPlayer.Character.EquippedTool.Value,
+											[3] = "M4A1",
 											[4] = 500,
-											[5] = LocalPlayer.Character.Gun,
+											[5] = game.ReplicatedStorage.Weapons.M4A1.Model,
 											[8] = 100, 
 											[9] = false,
 											[10] = false,

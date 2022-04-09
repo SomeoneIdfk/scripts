@@ -127,7 +127,7 @@ local nocw_m = {}
 local curVel = 16
 local isBhopping = false
 
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/esp.lua"))()
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pawel12d/hexagon/main/scripts/ESP.lua"))()
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/lib/library_alpha.lua"))()
 
 local Window = library:CreateWindow(Vector2.new(500, 500), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
@@ -3856,7 +3856,7 @@ hookfunc(getrenv().xpcall, function() end)
 local mt = getrawmetatable(game)
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
 local COL3RGB = Color3.fromRGB
-local MainUIColor = COL3RGB(255, 0, 0)
+local MainUIColor = COL3RGB(128, 0, 163)
 local createNewMessage = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage
 
 if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
@@ -3970,20 +3970,24 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat and library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
 				if args[2] == LocalPlayer then
                     return args[1]
-                elseif args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true then
+                elseif args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false then
                     if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer then
                         if IsAlive(args[2]) == false then
                             ChatScript.moveOldMessages()
-                            ChatScript.createNewMessage(args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
+                            ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
+                            return args[1]
+                        else
                             return args[1]
                         end
                     end
                 end
             elseif self.Name == "Filter" then
-                if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true then
+                if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false then
                     if IsAlive(args[2]) == false then
                         ChatScript.moveOldMessages()
-                        ChatScript.createNewMessage(args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
+                        ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
+                        return args[1]
+                    else
                         return args[1]
                     end
                 end

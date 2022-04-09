@@ -1158,7 +1158,7 @@ MiscellaneousTabCategoryMain:AddToggle("Anti Vote Kick", false, "MiscellaneousTa
 MiscellaneousTabCategoryMain:AddToggle("Anti Spectators", false, "MiscellaneousTabCategoryMainAntiSpectators")
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Reset Character", false, "MiscellaneousTabCategoryMainUnlockResetCharacter", function(val)
-	game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
+	--game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
 end)
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Shop While Alive", false, "MiscellaneousTabCategoryMainUnlockShopWhileAlive")
@@ -3454,6 +3454,7 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	end
 end)
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
+TrollTabPlayer:AddToggle("Alive Chat", false, "TrollTabPlayerAC")
 TrollTabPlayer:AddDropdown("Godmode method", {"Bloxsense Godmode", "Inf HP", "FE God"}, "Bloxsense Godmode", "TrollTabPlayerGMM")
 TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
     if val == true then
@@ -3853,6 +3854,9 @@ hookfunc(getrenv().xpcall, function() end)
 --print(library, LocalPlayer, IsAlive, SilentRagebot, SilentLegitbot, isBhopping, JumpBug, cbClient)
 
 local mt = getrawmetatable(game)
+local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
+local COL3RGB = Color3.fromRGB
+local MainUIColor = COL3RGB(255, 0, 0)
 local createNewMessage = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage
 
 if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
@@ -3964,7 +3968,25 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 			elseif self.Name == "Hugh" then
 				return wait(99e99)
 			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat and library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
-				return args[1]
+				if args[2] == LocalPlayer then
+                    return args[1]
+                elseif args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true then
+                    if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer then
+                        if IsAlive(args[2]) == false then
+                            ChatScript.moveOldMessages()
+                            ChatScript.createNewMessage(args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
+                            return args[1]
+                        end
+                    end
+                end
+            elseif self.Name == "Filter" then
+                if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true then
+                    if IsAlive(args[2]) == false then
+                        ChatScript.moveOldMessages()
+                        ChatScript.createNewMessage(args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
+                        return args[1]
+                    end
+                end
 			end
 		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
 			if library.pointers.MiscellaneousTabCategoryGunModsWallbang.value == true then
@@ -4030,10 +4052,6 @@ oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client)._
 end))
 
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
-	if library.pointers.MiscellaneousTabCategoryMainNNSDontTalk.value == true and plr ~= game.Players.LocalPlayer.Name then
-		msg = "Daddy~"
-	end
-	
 	return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 end
 

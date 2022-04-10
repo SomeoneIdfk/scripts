@@ -1158,7 +1158,7 @@ MiscellaneousTabCategoryMain:AddToggle("Anti Vote Kick", false, "MiscellaneousTa
 MiscellaneousTabCategoryMain:AddToggle("Anti Spectators", false, "MiscellaneousTabCategoryMainAntiSpectators")
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Reset Character", false, "MiscellaneousTabCategoryMainUnlockResetCharacter", function(val)
-	--game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
+	game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
 end)
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Shop While Alive", false, "MiscellaneousTabCategoryMainUnlockShopWhileAlive")

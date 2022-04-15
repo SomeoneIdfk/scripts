@@ -1158,7 +1158,7 @@ MiscellaneousTabCategoryMain:AddToggle("Anti Vote Kick", false, "MiscellaneousTa
 MiscellaneousTabCategoryMain:AddToggle("Anti Spectators", false, "MiscellaneousTabCategoryMainAntiSpectators")
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Reset Character", false, "MiscellaneousTabCategoryMainUnlockResetCharacter", function(val)
-	game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
+	--game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
 end)
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Shop While Alive", false, "MiscellaneousTabCategoryMainUnlockShopWhileAlive")
@@ -1663,7 +1663,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 					if currentmap ~= WorkSpace.Map.Origin.Value or trmethod ~= library.pointers.ExperimentalTabCategoryOptionsTRM.value then
 						currentmap = WorkSpace.Map.Origin.Value
 						trmethod = library.pointers.ExperimentalTabCategoryOptionsTRM.value
-						wait(3)
+						wait(1)
 						Hint.Text = "Removing textures..."
 
 						if library.pointers.ExperimentalTabCategoryOptionsTRM.value == "Legacy" then
@@ -1978,18 +1978,20 @@ ExperimentalTabCategoryOptions:AddDropdown("Gamemode", {"Teams", "FFA"}, "Teams"
 ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "ExperimentalTabCategoryOptionsRefresh", function(val)
 	if val == true then
 		trueorfalse3 = true
-		RefreshLoop = game:GetService("RunService").RenderStepped:Connect(function()
+		RefreshLoop = game:GetService("RunService").Heartbeat:Connect(function()
 			pcall(function()
 				if trueorfalse3 == true then
 					trueorfalse3 = false
 
 					local playerlistkillall = {"-"}
 					local playerlistfollow = {"-"}
+					local playerlistram = {"-"}
 					player1f = false
 					player2f = false
 					player3f = false
 					playerfollowf = false
 					playertroll = false
+					playerram = false
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v ~= LocalPlayer then
 							if IsAlive(v) then
@@ -2016,6 +2018,10 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 								playertroll = true
 							end
 
+							if tostring(v) == library.pointers.TrollTabPlayerRAMP.value then
+								playerram = true
+							end
+
 							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 								if GetTeam(v) ~= GetTeam(LocalPlayer) then
 									playerlistkillall[v] = v
@@ -2023,11 +2029,20 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
 								playerlistkillall[v] = v
 							end
+							
+							playerlistram[v] = v
 						end
 					end
 
 					if prev_players ~= playerlistfollow then
 						local prev_players = playerlistfollow
+
+						if playerram == true then
+							library.pointers.TrollTabPlayerRAMP.options = playerlistram
+						else
+							library.pointers.TrollTabPlayerRAMP:Set("-")
+							library.pointers.TrollTabPlayerRAMP.options = playerlistram
+						end
 
 						if playertroll == true then
 							library.pointers.TrollTabGrenadeSP.options = playerlistfollow
@@ -2102,6 +2117,18 @@ ExperimentalTabCategoryOptions:AddToggle("Anti Anti-Aim", false, "ExperimentalTa
 		end)
 	elseif val == false and AAMLoop then
 		AAMLoop:Disconnect()
+	end
+end)
+
+ExperimentalTabCategoryOptions:AddToggle("Break Stormy Ragebot", false, "ExperimentalTabCategoryOptionsBreakStormyRagebot", function(val)
+	if val == true then
+		BreakStormyRagebotLoop = LocalPlayer.CharacterAdded:Connect(function()
+			pcall(function()
+				LocalPlayer.Character.UpperTorso.Waist:Destroy()
+			end)
+		end)
+	elseif val == false and BreakStormyRagebotLoop then
+		BreakStormyRagebotLoop:Disconnect()
 	end
 end)
 
@@ -3120,6 +3147,144 @@ SkinsTabPistols:AddDropdown("USP-S", {"Stock"}, "Stock", "SkinsTabPistolsUSP")
 SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock"}, "Stock", "SkinsTabPistolsCZ")
 SkinsTabPistols:AddDropdown("44 Magnum", {"Stock"}, "Stock", "SkinsTabPistolsR8")
 
+local SkinsTabKnife = SkinsTab:AddCategory("Knife", 2)
+
+local Viewmodels = game:GetService("ReplicatedStorage").Viewmodels
+local HexFolModels = Instance.new("Folder", HexagonFolder)
+HexFolModels.Name = "Models"
+for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildren()) do
+	local Clone = Model:Clone()
+	Clone.Parent = HexFolModels
+end
+
+local function knifeChange(knife, replace)
+	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(knife) then
+		if HexFolModels:FindFirstChild(replace) then
+			game.ReplicatedStorage.Viewmodels[knife]:Destroy()
+			wait()
+			local Model1 = Instance.new("Model", game.ReplicatedStorage.Viewmodels)
+			local Clone = HexFolModels[replace]:Clone()
+			Clone.Parent = Model1
+			Model = game.ReplicatedStorage.Viewmodels.Model
+			for _, Child in pairs(Model:GetChildren()) do
+				Child.Parent = Model.Parent
+			end
+			Model:Destroy()
+			game.ReplicatedStorage.Viewmodels[replace].Name = knife
+
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
+end
+
+local function knifeSkinsList(knife, list)
+	local temp = {}
+	table.foreach(list, function(i, v)
+		if i == knife then
+			table.foreach(v, function(i2, v2)
+				table.insert(temp, v2)
+			end)
+		end
+	end)
+
+	return temp
+end
+
+SkinsTabKnife:AddToggle("Enabled", false, "SkinsTabKnifeEnabled", function(val)
+	if val == true then
+		lastknife = nil
+		SkinsTabKnifeLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if lastknife == nil or lastknife ~= library.pointers.SkinsTabKnifeKnife.value then
+					lastknife = library.pointers.SkinsTabKnifeKnife.value
+
+					if library.pointers.SkinsTabKnifeKnife.value == "Default" then
+						knifeChange("v_T Knife", "v_T Knife")
+						knifeChange("v_CT Knife", "v_CT Knife")
+					else
+						knifeChange("v_T Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+						knifeChange("v_CT Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+					end
+
+					local knife_skins = loadstring("return "..readfile("hexagon/knife_skins.cfg"))()
+
+					if library.pointers.SkinsTabKnifeKnife.value == "Karambit" then
+						local skins = knifeSkinsList("Karambit", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Bayonet" then
+						local skins = knifeSkinsList("Bayonet", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Bearded Axe" then
+						local skins = knifeSkinsList("Bearded Axe", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Butterfly Knife" then
+						local skins = knifeSkinsList("Butterfly Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Cleaver" then
+						local skins = knifeSkinsList("Cleaver", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Falchion Knife" then
+						local skins = knifeSkinsList("Falchion Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Gut Knife" then
+						local skins = knifeSkinsList("Gut Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Huntsman Knife" then
+						local skins = knifeSkinsList("Huntsman Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Sickle" then
+						local skins = knifeSkinsList("Sickle", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					else
+						library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
+						library.pointers.SkinsTabKnifeSkin:Set("Stock")
+					end
+				end
+			end)
+		end)
+	elseif val == false and SkinsTabKnifeLoop then
+		SkinsTabKnifeLoop:Disconnect()
+
+		library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
+		library.pointers.SkinsTabKnifeSkin:Set("Stock")
+		knifeChange("v_T Knife", "v_T Knife")
+		knifeChange("v_CT Knife", "v_CT Knife")
+	end
+end)
+SkinsTabKnife:AddDropdown("Knife", {"Default", "Banana", "Bayonet", "Bearded Axe", "Butterfly Knife", "Cleaver", "Crowbar", "Falchion Knife", "Flip Knife", "Gut Knife", "Huntsman Knife", "Karambit", "Sickle"}, "Default", "SkinsTabKnifeKnife")
+SkinsTabKnife:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabKnifeSkin")
+
 local SkinsTabAdd = SkinsTab:AddCategory("Additional", 2)
 
 waittrueorfalse = true
@@ -3565,6 +3730,45 @@ TrollTabPlayer:AddToggle("Godmode", false, "TrollTabPlayerGM", function(val)
         GMLoop:Disconnect()
     end
 end)
+TrollTabPlayer:AddLabel("RAM Doesn't really work yet, W.I.P.")
+TrollTabPlayer:AddToggle("Repeat After Me", false, "TrollTabPlayerRAM")
+TrollTabPlayer:AddDropdown("RAM Options", {"Everyone", "Teammates", "Enemies", "Specific", "Alive", "Dead"}, "Everyone", "TrollTabPlayerRAMO")
+TrollTabPlayer:AddDropdown("RAM Players", {"-"}, "-", "TrollTabPlayerRAMP")
+
+writefile("hexagon/weapon_ammo.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_ammo.cfg"))
+
+local weapon_ammo = loadstring("return "..readfile("hexagon/weapon_ammo.cfg"))()
+
+TrollTabPlayer:AddToggle("Infinite Ammo", false, "TrollTabPlayerIA", function(val)
+	if val == true then
+		IALoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				table.foreach(weapon_ammo, function(i, v)
+					if LocalPlayer.Character.EquippedTool.Value == i then
+						if v["type"] == "primary" then
+							if table.find(library.pointers.TrollTabPlayerAO.value, "Mag") then
+								cbClient.ammocount = v["clip"]
+							end
+							if table.find(library.pointers.TrollTabPlayerAO.value, "Reserve") then
+								cbClient.primarystored = v["ammo"]
+							end
+						elseif v["type"] == "secondary" then
+							if table.find(library.pointers.TrollTabPlayerAO.value, "Mag") then
+								cbClient.ammocount2 = v["clip"]
+							end
+							if table.find(library.pointers.TrollTabPlayerAO.value, "Reserve") then
+								cbClient.secondarystored = v["ammo"]
+							end
+						end
+					end
+				end)
+			end)
+		end)
+	elseif val == false and IALoop then
+		IALoop:Disconnect()
+	end
+end)
+TrollTabPlayer:AddMultiDropdown("Ammo Options", {"Mag", "Reserve"}, {""}, "TrollTabPlayerAO")
 
 local TrollTabCategoryCredits = TrollTab:AddCategory("Credits", 2)
 
@@ -3612,76 +3816,100 @@ game.Players.LocalPlayer.Status.Kills.Changed:Connect(function(val)
 	end
 end)
 
+local function MapSkin(Gun, Skin)
+	local SkinData = game:GetService("ReplicatedStorage").Skins:FindFirstChild(Gun):FindFirstChild(Skin)
+	if not SkinData:FindFirstChild("Animated") then      
+		for _,Data in pairs(SkinData:GetChildren()) do      
+			local Obj = workspace.CurrentCamera.Arms:FindFirstChild(Data.Name)      
+			if Obj ~= nil and Obj.Transparency ~= 1 then      
+				if Obj:FindFirstChild("Mesh") then      
+					Obj.Mesh.TextureId = Data.Value      
+				elseif not Obj:FindFirstChild("Mesh") then      
+					Obj.TextureID = Data.Value      
+				end      
+			end      
+		end   
+	end      
+end    
+
 workspace.CurrentCamera.ChildAdded:Connect(function(new)
 	if library.pointers.MiscellaneousTabCategoryGunModsInfiniteAmmo.value == true then
-		cbClient.ammocount = 999999 -- primary ammo
-		cbClient.primarystored = 999999 -- primary stored
-		cbClient.ammocount2 = 999999 -- secondary ammo
-		cbClient.secondarystored = 999999 -- secondary stored
+		cbClient.ammocount = 999999
+		cbClient.primarystored = 999999
+		cbClient.ammocount2 = 999999
+		cbClient.secondarystored = 999999
 	end
+
+	local gunname = cbClient.gun ~= "none" and library.pointers.SkinsTabKnifeEnabled.value and cbClient.gun:FindFirstChild("Melee") and library.pointers.SkinsTabKnifeKnife.value 
+	if library.pointers.SkinsTabKnifeEnabled.value and gunname ~= nil and game:GetService("ReplicatedStorage").Skins:FindFirstChild(gunname) then      
+		if library.pointers.SkinsTabKnifeSkin.value ~= "Stock" then      
+			MapSkin(gunname, library.pointers.SkinsTabKnifeSkin.value)
+		end      
+	end 
+
 	spawn(function()
-	if new.Name == "Arms" and new:IsA("Model") and library.pointers.VisualsTabCategoryViewmodelColorsEnabled.value == true then
-		for i,v in pairs(new:GetChildren()) do
-			if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
-				local RightArm = v:FindFirstChild("Right Arm") or nil
-				local LeftArm = v:FindFirstChild("Left Arm") or nil
+		if new.Name == "Arms" and new:IsA("Model") and library.pointers.VisualsTabCategoryViewmodelColorsEnabled.value == true then
+			for i,v in pairs(new:GetChildren()) do
+				if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
+					local RightArm = v:FindFirstChild("Right Arm") or nil
+					local LeftArm = v:FindFirstChild("Left Arm") or nil
+						
+					local RightGlove = (RightArm and (RightArm:FindFirstChild("Glove") or RightArm:FindFirstChild("RGlove"))) or nil
+					local LeftGlove = (LeftArm and (LeftArm:FindFirstChild("Glove") or LeftArm:FindFirstChild("LGlove"))) or nil
+						
+					local RightSleeve = RightArm and RightArm:FindFirstChild("Sleeve") or nil
+					local LeftSleeve = LeftArm and LeftArm:FindFirstChild("Sleeve") or nil
 					
-				local RightGlove = (RightArm and (RightArm:FindFirstChild("Glove") or RightArm:FindFirstChild("RGlove"))) or nil
-				local LeftGlove = (LeftArm and (LeftArm:FindFirstChild("Glove") or LeftArm:FindFirstChild("LGlove"))) or nil
+					if library.pointers.VisualsTabCategoryViewmodelColorsArms.value == true then
+						if RightArm ~= nil then
+							RightArm.Mesh.TextureId = ""
+							RightArm.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsArmsTransparency.value
+							RightArm.Color = library.pointers.VisualsTabCategoryViewmodelColorsArmsColor.value
+						end
+						if LeftArm ~= nil then
+							LeftArm.Mesh.TextureId = ""
+							LeftArm.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsArmsTransparency.value
+							LeftArm.Color = library.pointers.VisualsTabCategoryViewmodelColorsArmsColor.value
+						end
+					end
 					
-				local RightSleeve = RightArm and RightArm:FindFirstChild("Sleeve") or nil
-				local LeftSleeve = LeftArm and LeftArm:FindFirstChild("Sleeve") or nil
-				
-				if library.pointers.VisualsTabCategoryViewmodelColorsArms.value == true then
-					if RightArm ~= nil then
-						RightArm.Mesh.TextureId = ""
-						RightArm.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsArmsTransparency.value
-						RightArm.Color = library.pointers.VisualsTabCategoryViewmodelColorsArmsColor.value
+					if library.pointers.VisualsTabCategoryViewmodelColorsGloves.value == true then
+						if RightGlove ~= nil then
+							RightGlove.Mesh.TextureId = ""
+							RightGlove.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsGlovesTransparency.value
+							RightGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
+						end
+						if LeftGlove ~= nil then
+							LeftGlove.Mesh.TextureId = ""
+							LeftGlove.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsGlovesTransparency.value
+							LeftGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
+						end
 					end
-					if LeftArm ~= nil then
-						LeftArm.Mesh.TextureId = ""
-						LeftArm.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsArmsTransparency.value
-						LeftArm.Color = library.pointers.VisualsTabCategoryViewmodelColorsArmsColor.value
-					end
-				end
-				
-				if library.pointers.VisualsTabCategoryViewmodelColorsGloves.value == true then
-					if RightGlove ~= nil then
-						RightGlove.Mesh.TextureId = ""
-						RightGlove.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsGlovesTransparency.value
-						RightGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
-					end
-					if LeftGlove ~= nil then
-						LeftGlove.Mesh.TextureId = ""
-						LeftGlove.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsGlovesTransparency.value
-						LeftGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
-					end
-				end
 
-				if library.pointers.VisualsTabCategoryViewmodelColorsSleeves.value == true then
-					if RightSleeve ~= nil then
-						RightSleeve.Mesh.TextureId = ""
-						RightSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
-						RightSleeve.Color = library.pointers.VisualsTabCategoryViewmodelColorsSleevesColor.value
-						RightSleeve.Material = "ForceField"
+					if library.pointers.VisualsTabCategoryViewmodelColorsSleeves.value == true then
+						if RightSleeve ~= nil then
+							RightSleeve.Mesh.TextureId = ""
+							RightSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
+							RightSleeve.Color = library.pointers.VisualsTabCategoryViewmodelColorsSleevesColor.value
+							RightSleeve.Material = "ForceField"
+						end
+						if LeftSleeve ~= nil then
+							LeftSleeve.Mesh.TextureId = ""
+							LeftSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
+							LeftSleeve.Color = library.pointers.VisualsTabCategoryViewmodelColorsSleevesColor.value
+							LeftSleeve.Material = "ForceField"
+						end
 					end
-					if LeftSleeve ~= nil then
-						LeftSleeve.Mesh.TextureId = ""
-						LeftSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
-						LeftSleeve.Color = library.pointers.VisualsTabCategoryViewmodelColorsSleevesColor.value
-						LeftSleeve.Material = "ForceField"
-					end
-				end
-			elseif library.pointers.VisualsTabCategoryViewmodelColorsWeapons.value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
-				if v:IsA("MeshPart") then v.TextureID = "" end
-				if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
+				elseif library.pointers.VisualsTabCategoryViewmodelColorsWeapons.value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
+					if v:IsA("MeshPart") then v.TextureID = "" end
+					if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
 
-				v.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsTransparency.value
-				v.Color = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsColor.value
-				v.Material = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsMaterial.value
+					v.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsTransparency.value
+					v.Color = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsColor.value
+					v.Material = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsMaterial.value
+				end
 			end
 		end
-	end
 	end)
 end)
 
@@ -3916,10 +4144,195 @@ hookfunc(getrenv().xpcall, function() end)
 
 --print(library, LocalPlayer, IsAlive, SilentRagebot, SilentLegitbot, isBhopping, JumpBug, cbClient)
 
+local ignoreMessageList = {
+	"Fall back!",
+	"Cheer!",
+	"Affirmative.",
+	"Negative.",
+	"Thanks.",
+	"Enemy spotted!",
+	"Need backup!",
+	"You take the point.",
+	"Sector clear.",
+	"I'm in position.",
+	"Go!",
+	"Fall back!",
+	"Stick together team.",
+	"Hold this position.",
+	"Follow me.",
+	"Nice!"
+}
+
+function sayMessage(mess, plr)
+	if not table.find(ignoreMessageList, mess) then
+		if library.pointers.TrollTabPlayerRAMO.value == "Specific" then
+			if plr.Name == library.pointers.TrollTabPlayerRAMP.value then
+				if GetTeam(LocalPlayer) ~= "Spectator" then
+					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							false,
+							false
+						)
+					else
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							true,
+							false
+						)
+					end
+				end
+			end
+		end
+	end
+end
+
+function OldsayMessage(mess, plr)
+	if plr.Name ~= LocalPlayer.Name then
+		local var = table.foreach(ignoreMessageList, function(k, v)
+			if mess == v then
+				return false
+			end
+		end)
+		if var ~= false then
+			if library.pointers.TrollTabPlayerRAMO.value == "Everyone" then
+				if GetTeam(LocalPlayer) ~= "Spectator" then
+					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							false,
+							true
+						)
+					else
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							true,
+							true
+						)
+					end
+				end
+			elseif library.pointers.TrollTabPlayerRAMO.value == "Specific" then
+				if plr.Name == library.pointers.TrollTabPlayerRAMP.value then
+					if GetTeam(LocalPlayer) ~= "Spectator" then
+						if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+								"<"..plr.Name.."> "..mess,
+								false,
+								"Innocent",
+								false,
+								true
+							)
+						else
+							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+								"<"..plr.Name.."> "..mess,
+								false,
+								"Innocent",
+								true,
+								true
+							)
+						end
+					end
+				end
+			elseif library.pointers.TrollTabPlayerRAMO.value == "Teammates" then
+				if GetTeam(LocalPlayer) ~= "Spectator" and GetTeam(LocalPlayer) == GetTeam(plr) then
+					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							false,
+							true
+						)
+					else
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							true,
+							true
+						)
+					end
+				end
+			elseif library.pointers.TrollTabPlayerRAMO.value == "Enemies" then
+				if GetTeam(LocalPlayer) ~= "Spectator" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
+					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							false,
+							true
+						)
+					else
+						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+							"<"..plr.Name.."> "..mess,
+							false,
+							"Innocent",
+							true,
+							true
+						)
+					end
+				end
+			elseif library.pointers.TrollTabPlayerRAMO.value == "Alive" then
+				if IsAlive(plr) then
+					if GetTeam(LocalPlayer) ~= "Spectator" then
+						if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+								"<"..plr.Name.."> "..mess,
+								false,
+								"Innocent",
+								false,
+								true
+							)
+						else
+							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+								"<"..plr.Name.."> "..mess,
+								false,
+								"Innocent",
+								true,
+								true
+							)
+						end
+					end
+				end
+			elseif library.pointers.TrollTabPlayerRAMO.value == "Dead" then
+				if not IsAlive(plr) then
+					if GetTeam(LocalPlayer) ~= "Spectator" then
+						if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
+							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+								"<"..plr.Name.."> "..mess,
+								false,
+								"Innocent",
+								false,
+								true
+							)
+						else
+							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+								"<"..plr.Name.."> "..mess,
+								false,
+								"Innocent",
+								true,
+								true
+							)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 local mt = getrawmetatable(game)
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
-local COL3RGB = Color3.fromRGB
-local MainUIColor = COL3RGB(128, 0, 163)
+local AliveChatColor = Color3.fromRGB(0, 0, 0)
 local createNewMessage = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage
 
 if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
@@ -4036,29 +4449,32 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				return wait(99e99)
 			elseif self.Name == "Hugh" then
 				return wait(99e99)
-			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat and library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
+			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
 				if args[2] == LocalPlayer then
-                    return args[1]
-                elseif args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false then
-                    if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer then
-                        if IsAlive(args[2]) == false then
-                            ChatScript.moveOldMessages()
-                            ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
-                            return args[1]
-                        else
-                            return args[1]
-                        end
-                    end
-                end
-            elseif self.Name == "Filter" then
-                if IsAlive(LocalPlayer) and args[2] ~= LocalPlayer and library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false then
-                    if IsAlive(args[2]) == false then
-                        ChatScript.moveOldMessages()
-                        ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], MainUIColor, Color3.new(1,1,1), 0.01, nil)
-                        return args[1]
-                    else
-                        return args[1]
-                    end
+					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
+                    	return args[1]
+					end
+                elseif args[2] ~= LocalPlayer then
+					if library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false then
+						if IsAlive(LocalPlayer) then
+							if not IsAlive(args[2]) then
+								ChatScript.moveOldMessages()
+                            	ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], AliveChatColor, Color3.new(1,1,1), 0.01, nil)
+							end
+						end
+					end
+                    
+					if library.pointers.TrollTabPlayerRAM.value == true then
+						sayMessage(args[1], args[2])
+					end
+
+					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
+						if IsAlive(LocalPlayer) and IsAlive(args[2]) then
+                    		return args[1]
+						elseif not IsAlive(LocalPlayer) and IsAlive(args[2]) then
+							return args[1]
+						end
+					end
                 end
 			end
 		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
@@ -4098,8 +4514,8 @@ oldNewIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client
     return oldNewIndex(self, idx, val)
 end))
 
-oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client).__index, newcclosure(function(self, idx)
-	if idx == "Value" then
+oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client).__index, newcclosure(function(self, key)
+	if key == "Value" then
 		if self.Name == "Auto" and library.pointers.MiscellaneousTabCategoryGunModsFullAuto.value == true then
 			return true
 		elseif self.Name == "FireRate" and library.pointers.MiscellaneousTabCategoryGunModsRapidFire.value == true then
@@ -4121,7 +4537,7 @@ oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client)._
 		end
 	end
 
-    return oldIndex(self, idx)
+    return oldIndex(self, key)
 end))
 
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
@@ -4157,6 +4573,8 @@ end
 writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins.cfg"))
 
 local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
+
+writefile("hexagon/knife_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/knife_skins.cfg"))
 
 table.foreach(weapon_skins, function(i,v)
     local temp = {"Stock"}

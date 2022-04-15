@@ -3296,16 +3296,24 @@ SkinsTabGlove:AddToggle("Enable", false, "SkinsTabGloveEnable", function(val)
 
 					if library.pointers.SkinsTabGloveGlove.value == "Sports Glove" then
 						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Pumpkin", "CottonTail", "RSL", "Skulls", "Weeb", "Royal", "Majesty", "Hallows", "Hazard", "Calamity", "Twitch", "Dead Prey"}
-						library.pointers.SkinsTabGloveSkin:Set("Stock")
+						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
+							library.pointers.SkinsTabGloveSkin:Set("Stock")
+						end
 					elseif library.pointers.SkinsTabGloveGlove.value == "Strapped Glove" then
 						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Cob Web", "Kringle", "Molten", "Wisk", "Grim", "Racer", "Drop-Out"}
-						library.pointers.SkinsTabGloveSkin:Set("Stock")
+						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
+							library.pointers.SkinsTabGloveSkin:Set("Stock")
+						end
 					elseif library.pointers.SkinsTabGloveGlove.value == "Handwraps" then
 						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Mummy", "Toxic Nitro", "Green Hex", "Purple Hex", "Orange Hex", "Spector Hex", "Phantom Hex", "Microbes", "Wetland", "Guts", "Wraps", "MMA", "Ghoul Hex"}
-						library.pointers.SkinsTabGloveSkin:Set("Stock")
+						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
+							library.pointers.SkinsTabGloveSkin:Set("Stock")
+						end
 					elseif library.pointers.SkinsTabGloveGlove.value == "Fingerless Glove" then
 						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Kimura", "Spookiness", "Patch", "Digital", "Scapter", "Crystal"}
-						library.pointers.SkinsTabGloveSkin:Set("Stock")
+						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
+							library.pointers.SkinsTabGloveSkin:Set("Stock")
+						end
 					else
 						library.pointers.SkinsTabGloveSkin.options = {"Stock"}
 						library.pointers.SkinsTabGloveSkin:Set("Stock")
@@ -3340,57 +3348,7 @@ SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
 					    end
 					    local InventoryLoadout = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"]
 					    AllSkinsTable = {}
-					    if library.pointers.SkinsTabAddSelection.value == "All" then
-						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								    if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
-									    table.insert(AllSkinsTable, {v.Name.."_Stock"})
-									
-									    for i2,v2 in pairs(v:GetChildren()) do
-										    if v2.Name ~= "Stock" then
-											    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-										    end
-									    end
-								    end
-							    end
-						    end
-							
-						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								    table.insert(AllSkinsTable, {v.Name.."_Stock"})
-							    end
-						    end
-				
-						    for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
-							    if v:IsA("Folder") and v.Name ~= "Models" then
-								    for i2,v2 in pairs(v:GetChildren()) do
-									    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-								    end
-							    end
-						    end
-					    elseif library.pointers.SkinsTabAddSelection.value == "Knives&Gloves" then
-						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-								    if v.Name == "Gut Knife" or v.Name == "Bayonet" or v.Name == "Butterfly Knife" or v.Name == "Falchion Knife" or v.Name == "Karambit" or v.Name == "Huntsman Knife" or v.Name == "Cleaver" or v.Name == "Sickle" or v.Name == "Beared Axe" then
-									    table.insert(AllSkinsTable, {v.Name.."_Stock"})
-									
-									    for i2,v2 in pairs(v:GetChildren()) do
-										    if v2.Name ~= "Stock" then
-											    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-										    end
-									    end
-								    end
-							    end
-						    end
-							
-						    for i,v in pairs(game.ReplicatedStorage.Gloves:GetChildren()) do
-							    if v:IsA("Folder") and v.Name ~= "Models" then
-								    for i2,v2 in pairs(v:GetChildren()) do
-									    table.insert(AllSkinsTable, {v.Name.."_"..v2.Name})
-								    end
-							    end
-						    end
-					    elseif library.pointers.SkinsTabAddSelection.value == "Stock Weapons" then
+					    if library.pointers.SkinsTabAddSelection.value == "Stock Weapons" then
 						    for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
 							    if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
 								    table.insert(AllSkinsTable, {v.Name.."_Stock"})
@@ -3415,7 +3373,7 @@ SkinsTabAdd:AddToggle("Enable", false, "SkinsTabAddEnabled", function(val)
         cbClient.CurrentInventory = old_inventory
 	end
 end)
-SkinsTabAdd:AddDropdown("Additional", {"Default", "Knives&Gloves", "Stock Weapons", "All"}, "Default", "SkinsTabAddSelection")
+SkinsTabAdd:AddDropdown("Additional", {"Default", "Stock Weapons"}, "Default", "SkinsTabAddSelection")
 
 local TrollTab = Window:CreateTab("Troll")
 

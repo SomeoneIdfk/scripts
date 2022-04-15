@@ -3011,6 +3011,143 @@ SkinsTabHeavy:AddDropdown("Sawed Off", {"Stock"}, "Stock", "SkinsTabHeavySawedOf
 SkinsTabHeavy:AddDropdown("M249", {"Stock"}, "Stock", "SkinsTabHeavyM249")
 SkinsTabHeavy:AddDropdown("MG42", {"Stock"}, "Stock", "SkinsTabHeavyNegev")
 
+local SkinsTabKnife = SkinsTab:AddCategory("Knife", 1)
+
+local HexFolModels = Instance.new("Folder", HexagonFolder)
+HexFolModels.Name = "Models"
+for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildren()) do
+	local Clone = Model:Clone()
+	Clone.Parent = HexFolModels
+end
+
+local function knifeChange(knife, replace)
+	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(knife) then
+		if HexFolModels:FindFirstChild(replace) then
+			game.ReplicatedStorage.Viewmodels[knife]:Destroy()
+			wait()
+			local Model1 = Instance.new("Model", game.ReplicatedStorage.Viewmodels)
+			local Clone = HexFolModels[replace]:Clone()
+			Clone.Parent = Model1
+			Model = game.ReplicatedStorage.Viewmodels.Model
+			for _, Child in pairs(Model:GetChildren()) do
+				Child.Parent = Model.Parent
+			end
+			Model:Destroy()
+			game.ReplicatedStorage.Viewmodels[replace].Name = knife
+
+			return true
+		else
+			return false
+		end
+	else
+		return false
+	end
+end
+
+local function knifeSkinsList(knife, list)
+	local temp = {}
+	table.foreach(list, function(i, v)
+		if i == knife then
+			table.foreach(v, function(i2, v2)
+				table.insert(temp, v2)
+			end)
+		end
+	end)
+
+	return temp
+end
+
+SkinsTabKnife:AddToggle("Enable", false, "SkinsTabKnifeEnable", function(val)
+	if val == true then
+		lastknife = nil
+		SkinsTabKnifeLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if lastknife == nil or lastknife ~= library.pointers.SkinsTabKnifeKnife.value then
+					lastknife = library.pointers.SkinsTabKnifeKnife.value
+
+					if library.pointers.SkinsTabKnifeKnife.value == "Default" then
+						knifeChange("v_T Knife", "v_T Knife")
+						knifeChange("v_CT Knife", "v_CT Knife")
+					else
+						knifeChange("v_T Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+						knifeChange("v_CT Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+					end
+
+					local knife_skins = loadstring("return "..readfile("hexagon/knife_skins.cfg"))()
+
+					if library.pointers.SkinsTabKnifeKnife.value == "Karambit" then
+						local skins = knifeSkinsList("Karambit", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Bayonet" then
+						local skins = knifeSkinsList("Bayonet", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Bearded Axe" then
+						local skins = knifeSkinsList("Bearded Axe", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Butterfly Knife" then
+						local skins = knifeSkinsList("Butterfly Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Cleaver" then
+						local skins = knifeSkinsList("Cleaver", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Falchion Knife" then
+						local skins = knifeSkinsList("Falchion Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Gut Knife" then
+						local skins = knifeSkinsList("Gut Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Huntsman Knife" then
+						local skins = knifeSkinsList("Huntsman Knife", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					elseif library.pointers.SkinsTabKnifeKnife.value == "Sickle" then
+						local skins = knifeSkinsList("Sickle", knife_skins)
+						library.pointers.SkinsTabKnifeSkin.options = skins
+						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
+							library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						end
+					else
+						library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
+						library.pointers.SkinsTabKnifeSkin:Set("Stock")
+					end
+				end
+			end)
+		end)
+	elseif val == false and SkinsTabKnifeLoop then
+		SkinsTabKnifeLoop:Disconnect()
+
+		library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
+		library.pointers.SkinsTabKnifeSkin:Set("Stock")
+		knifeChange("v_T Knife", "v_T Knife")
+		knifeChange("v_CT Knife", "v_CT Knife")
+	end
+end)
+SkinsTabKnife:AddDropdown("Knife", {"Default", "Banana", "Bayonet", "Bearded Axe", "Butterfly Knife", "Cleaver", "Crowbar", "Falchion Knife", "Flip Knife", "Gut Knife", "Huntsman Knife", "Karambit", "Sickle"}, "Default", "SkinsTabKnifeKnife")
+SkinsTabKnife:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabKnifeSkin")
+
 local SkinsTabCategoryCredits = SkinsTab:AddCategory("Credits", 1)
 
 SkinsTabCategoryCredits:AddLabel("Skins tab made by:")
@@ -3147,143 +3284,41 @@ SkinsTabPistols:AddDropdown("USP-S", {"Stock"}, "Stock", "SkinsTabPistolsUSP")
 SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock"}, "Stock", "SkinsTabPistolsCZ")
 SkinsTabPistols:AddDropdown("44 Magnum", {"Stock"}, "Stock", "SkinsTabPistolsR8")
 
-local SkinsTabKnife = SkinsTab:AddCategory("Knife", 2)
+local SkinsTabGlove = SkinsTab:AddCategory("Gloves", 2)
 
-local Viewmodels = game:GetService("ReplicatedStorage").Viewmodels
-local HexFolModels = Instance.new("Folder", HexagonFolder)
-HexFolModels.Name = "Models"
-for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildren()) do
-	local Clone = Model:Clone()
-	Clone.Parent = HexFolModels
-end
-
-local function knifeChange(knife, replace)
-	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(knife) then
-		if HexFolModels:FindFirstChild(replace) then
-			game.ReplicatedStorage.Viewmodels[knife]:Destroy()
-			wait()
-			local Model1 = Instance.new("Model", game.ReplicatedStorage.Viewmodels)
-			local Clone = HexFolModels[replace]:Clone()
-			Clone.Parent = Model1
-			Model = game.ReplicatedStorage.Viewmodels.Model
-			for _, Child in pairs(Model:GetChildren()) do
-				Child.Parent = Model.Parent
-			end
-			Model:Destroy()
-			game.ReplicatedStorage.Viewmodels[replace].Name = knife
-
-			return true
-		else
-			return false
-		end
-	else
-		return false
-	end
-end
-
-local function knifeSkinsList(knife, list)
-	local temp = {}
-	table.foreach(list, function(i, v)
-		if i == knife then
-			table.foreach(v, function(i2, v2)
-				table.insert(temp, v2)
-			end)
-		end
-	end)
-
-	return temp
-end
-
-SkinsTabKnife:AddToggle("Enabled", false, "SkinsTabKnifeEnabled", function(val)
+SkinsTabGlove:AddToggle("Enable", false, "SkinsTabGloveEnable", function(val)
 	if val == true then
-		lastknife = nil
-		SkinsTabKnifeLoop = game:GetService("RunService").RenderStepped:Connect(function()
+		lastglove = nil
+		SkinsTabGloveLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if lastknife == nil or lastknife ~= library.pointers.SkinsTabKnifeKnife.value then
-					lastknife = library.pointers.SkinsTabKnifeKnife.value
+				if lastglove == nil or lastglove ~= library.pointers.SkinsTabGloveGlove.value then
+					lastglove = library.pointers.SkinsTabGloveGlove.value
 
-					if library.pointers.SkinsTabKnifeKnife.value == "Default" then
-						knifeChange("v_T Knife", "v_T Knife")
-						knifeChange("v_CT Knife", "v_CT Knife")
+					if library.pointers.SkinsTabGloveGlove.value == "Sports Glove" then
+						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Pumpkin", "CottonTail", "RSL", "Skulls", "Weeb", "Royal", "Majesty", "Hallows", "Hazard", "Calamity", "Twitch", "Dead Prey"}
+						library.pointers.SkinsTabGloveSkin:Set("Stock")
+					elseif library.pointers.SkinsTabGloveGlove.value == "Strapped Glove" then
+						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Cob Web", "Kringle", "Molten", "Wisk", "Grim", "Racer", "Drop-Out"}
+						library.pointers.SkinsTabGloveSkin:Set("Stock")
+					elseif library.pointers.SkinsTabGloveGlove.value == "Handwraps" then
+						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Mummy", "Toxic Nitro", "Green Hex", "Purple Hex", "Orange Hex", "Spector Hex", "Phantom Hex", "Microbes", "Wetland", "Guts", "Wraps", "MMA", "Ghoul Hex"}
+						library.pointers.SkinsTabGloveSkin:Set("Stock")
+					elseif library.pointers.SkinsTabGloveGlove.value == "Fingerless Glove" then
+						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Kimura", "Spookiness", "Patch", "Digital", "Scapter", "Crystal"}
+						library.pointers.SkinsTabGloveSkin:Set("Stock")
 					else
-						knifeChange("v_T Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
-						knifeChange("v_CT Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
-					end
-
-					local knife_skins = loadstring("return "..readfile("hexagon/knife_skins.cfg"))()
-
-					if library.pointers.SkinsTabKnifeKnife.value == "Karambit" then
-						local skins = knifeSkinsList("Karambit", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Bayonet" then
-						local skins = knifeSkinsList("Bayonet", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Bearded Axe" then
-						local skins = knifeSkinsList("Bearded Axe", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Butterfly Knife" then
-						local skins = knifeSkinsList("Butterfly Knife", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Cleaver" then
-						local skins = knifeSkinsList("Cleaver", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Falchion Knife" then
-						local skins = knifeSkinsList("Falchion Knife", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Gut Knife" then
-						local skins = knifeSkinsList("Gut Knife", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Huntsman Knife" then
-						local skins = knifeSkinsList("Huntsman Knife", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabKnifeKnife.value == "Sickle" then
-						local skins = knifeSkinsList("Sickle", knife_skins)
-						library.pointers.SkinsTabKnifeSkin.options = skins
-						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
-							library.pointers.SkinsTabKnifeSkin:Set("Stock")
-						end
-					else
-						library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
-						library.pointers.SkinsTabKnifeSkin:Set("Stock")
+						library.pointers.SkinsTabGloveSkin.options = {"Stock"}
+						library.pointers.SkinsTabGloveSkin:Set("Stock")
 					end
 				end
 			end)
 		end)
-	elseif val == false and SkinsTabKnifeLoop then
-		SkinsTabKnifeLoop:Disconnect()
-
-		library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
-		library.pointers.SkinsTabKnifeSkin:Set("Stock")
-		knifeChange("v_T Knife", "v_T Knife")
-		knifeChange("v_CT Knife", "v_CT Knife")
+	elseif val == false and SkinsTabGloveLoop then
+		SkinsTabGloveLoop:Disconnect()
 	end
 end)
-SkinsTabKnife:AddDropdown("Knife", {"Default", "Banana", "Bayonet", "Bearded Axe", "Butterfly Knife", "Cleaver", "Crowbar", "Falchion Knife", "Flip Knife", "Gut Knife", "Huntsman Knife", "Karambit", "Sickle"}, "Default", "SkinsTabKnifeKnife")
-SkinsTabKnife:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabKnifeSkin")
+SkinsTabGlove:AddDropdown("Glove", {"Sports Glove", "Strapped Glove", "Handwraps", "Fingerless Glove"}, "Sports Glove", "SkinsTabGloveGlove")
+SkinsTabGlove:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabGloveSkin")
 
 local SkinsTabAdd = SkinsTab:AddCategory("Additional", 2)
 
@@ -3840,12 +3875,44 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 		cbClient.secondarystored = 999999
 	end
 
-	local gunname = cbClient.gun ~= "none" and library.pointers.SkinsTabKnifeEnabled.value and cbClient.gun:FindFirstChild("Melee") and library.pointers.SkinsTabKnifeKnife.value 
-	if library.pointers.SkinsTabKnifeEnabled.value and gunname ~= nil and game:GetService("ReplicatedStorage").Skins:FindFirstChild(gunname) then      
+	local Model
+	for i,v in pairs(new:GetChildren()) do      
+		if v:IsA("Model") and (v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm")) then      
+			Model = v      
+		end      
+	end      
+	if Model == nil then return end
+
+	local gunname = cbClient.gun ~= "none" and library.pointers.SkinsTabKnifeEnable.value and cbClient.gun:FindFirstChild("Melee") and library.pointers.SkinsTabKnifeKnife.value 
+	if library.pointers.SkinsTabKnifeEnable.value and gunname ~= nil and game:GetService("ReplicatedStorage").Skins:FindFirstChild(gunname) then      
 		if library.pointers.SkinsTabKnifeSkin.value ~= "Stock" then      
 			MapSkin(gunname, library.pointers.SkinsTabKnifeSkin.value)
 		end      
-	end 
+	end
+
+	RArm = Model:FindFirstChild("Right Arm"); LArm = Model:FindFirstChild("Left Arm") 
+	if RArm then
+		RGlove = RArm:FindFirstChild("Glove") or RArm:FindFirstChild("RGlove")      
+		if library.pointers.SkinsTabGloveEnable.value and cbClient.gun ~= "none" and library.pointers.SkinsTabGloveSkin.value ~= "Stock" then      
+			if RGlove then RGlove:Destroy() end      
+			RGlove = game:GetService("ReplicatedStorage").Gloves.Models[library.pointers.SkinsTabGloveGlove.value].RGlove:Clone()      
+			RGlove.Mesh.TextureId = game:GetService("ReplicatedStorage").Gloves[library.pointers.SkinsTabGloveGlove.value][library.pointers.SkinsTabGloveSkin.value].Textures.TextureId      
+			RGlove.Parent = RArm      
+			RGlove.Transparency = 0      
+			RGlove.Welded.Part0 = RArm      
+		end
+	end
+	if LArm then
+		LGlove = LArm:FindFirstChild("Glove") or LArm:FindFirstChild("LGlove")      
+		if library.pointers.SkinsTabGloveEnable.value and cbClient.gun ~= "none" and library.pointers.SkinsTabGloveSkin.value ~= "Stock" then      
+			if LGlove then LGlove:Destroy() end      
+			LGlove = game:GetService("ReplicatedStorage").Gloves.Models[library.pointers.SkinsTabGloveGlove.value].RGlove:Clone()       
+			LGlove.Mesh.TextureId = game:GetService("ReplicatedStorage").Gloves[library.pointers.SkinsTabGloveGlove.value][library.pointers.SkinsTabGloveSkin.value].Textures.TextureId      
+			LGlove.Transparency = 0      
+			LGlove.Parent = LArm      
+			LGlove.Welded.Part0 = LArm      
+		end   
+	end
 
 	spawn(function()
 		if new.Name == "Arms" and new:IsA("Model") and library.pointers.VisualsTabCategoryViewmodelColorsEnabled.value == true then

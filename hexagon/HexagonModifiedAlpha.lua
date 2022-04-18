@@ -3020,10 +3020,13 @@ for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildre
 	Clone.Parent = HexFolModels
 end
 
-local function knifeChange(knife, replace)
-	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(knife) then
+local function modelChange(model, replace)
+	print(model, replace)
+	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(model) then
+		print(model, replace)
 		if HexFolModels:FindFirstChild(replace) then
-			game.ReplicatedStorage.Viewmodels[knife]:Destroy()
+			print(model, replace)
+			game.ReplicatedStorage.Viewmodels[model]:Destroy()
 			wait()
 			local Model1 = Instance.new("Model", game.ReplicatedStorage.Viewmodels)
 			local Clone = HexFolModels[replace]:Clone()
@@ -3033,7 +3036,7 @@ local function knifeChange(knife, replace)
 				Child.Parent = Model.Parent
 			end
 			Model:Destroy()
-			game.ReplicatedStorage.Viewmodels[replace].Name = knife
+			game.ReplicatedStorage.Viewmodels[replace].Name = model
 
 			return true
 		else
@@ -3044,7 +3047,7 @@ local function knifeChange(knife, replace)
 	end
 end
 
-local function knifeSkinsList(knife, list)
+local function skinsList(knife, list)
 	local temp = {}
 	table.foreach(list, function(i, v)
 		if i == knife then
@@ -3057,6 +3060,7 @@ local function knifeSkinsList(knife, list)
 	return temp
 end
 
+knifetrueorfalse = true
 SkinsTabKnife:AddToggle("Enable", false, "SkinsTabKnifeEnable", function(val)
 	if val == true then
 		lastknife = nil
@@ -3065,66 +3069,75 @@ SkinsTabKnife:AddToggle("Enable", false, "SkinsTabKnifeEnable", function(val)
 				if lastknife == nil or lastknife ~= library.pointers.SkinsTabKnifeKnife.value then
 					lastknife = library.pointers.SkinsTabKnifeKnife.value
 
-					if library.pointers.SkinsTabKnifeKnife.value == "Default" then
-						knifeChange("v_T Knife", "v_T Knife")
-						knifeChange("v_CT Knife", "v_CT Knife")
-					else
-						knifeChange("v_T Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
-						knifeChange("v_CT Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+					if knifetrueorfalse == true then
+						knifetrueorfalse = false
+						wait(5)
 					end
 
-					local knife_skins = loadstring("return "..readfile("hexagon/knife_skins.cfg"))()
+					if library.pointers.SkinsTabKnifeKnife.value == "Default" then
+						modelChange("v_T Knife", "v_T Knife")
+						modelChange("v_CT Knife", "v_CT Knife")
+					else
+						modelChange("v_T Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+						modelChange("v_CT Knife", "v_"..library.pointers.SkinsTabKnifeKnife.value)
+					end
+
+					local knife_skins = table.foreach(loadstring("return "..readfile("hexagon/weapon_skins.cfg"))(), function(i,v)
+						if i == "knives" then
+							return v
+						end
+					end)
 
 					if library.pointers.SkinsTabKnifeKnife.value == "Karambit" then
-						local skins = knifeSkinsList("Karambit", knife_skins)
+						local skins = skinsList("Karambit", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Bayonet" then
-						local skins = knifeSkinsList("Bayonet", knife_skins)
+						local skins = skinsList("Bayonet", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Bearded Axe" then
-						local skins = knifeSkinsList("Bearded Axe", knife_skins)
+						local skins = skinsList("Bearded Axe", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Butterfly Knife" then
-						local skins = knifeSkinsList("Butterfly Knife", knife_skins)
+						local skins = skinsList("Butterfly Knife", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Cleaver" then
-						local skins = knifeSkinsList("Cleaver", knife_skins)
+						local skins = skinsList("Cleaver", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Falchion Knife" then
-						local skins = knifeSkinsList("Falchion Knife", knife_skins)
+						local skins = skinsList("Falchion Knife", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Gut Knife" then
-						local skins = knifeSkinsList("Gut Knife", knife_skins)
+						local skins = skinsList("Gut Knife", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Huntsman Knife" then
-						local skins = knifeSkinsList("Huntsman Knife", knife_skins)
+						local skins = skinsList("Huntsman Knife", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
 						end
 					elseif library.pointers.SkinsTabKnifeKnife.value == "Sickle" then
-						local skins = knifeSkinsList("Sickle", knife_skins)
+						local skins = skinsList("Sickle", knife_skins)
 						library.pointers.SkinsTabKnifeSkin.options = skins
 						if not table.find(library.pointers.SkinsTabKnifeSkin.options, library.pointers.SkinsTabKnifeSkin.value) then
 							library.pointers.SkinsTabKnifeSkin:Set("Stock")
@@ -3141,8 +3154,8 @@ SkinsTabKnife:AddToggle("Enable", false, "SkinsTabKnifeEnable", function(val)
 
 		library.pointers.SkinsTabKnifeSkin.options = {"Stock"}
 		library.pointers.SkinsTabKnifeSkin:Set("Stock")
-		knifeChange("v_T Knife", "v_T Knife")
-		knifeChange("v_CT Knife", "v_CT Knife")
+		modelChange("v_T Knife", "v_T Knife")
+		modelChange("v_CT Knife", "v_CT Knife")
 	end
 end)
 SkinsTabKnife:AddDropdown("Knife", {"Default", "Banana", "Bayonet", "Bearded Axe", "Butterfly Knife", "Cleaver", "Crowbar", "Falchion Knife", "Flip Knife", "Gut Knife", "Huntsman Knife", "Karambit", "Sickle"}, "Default", "SkinsTabKnifeKnife")
@@ -3294,29 +3307,21 @@ SkinsTabGlove:AddToggle("Enable", false, "SkinsTabGloveEnable", function(val)
 				if lastglove == nil or lastglove ~= library.pointers.SkinsTabGloveGlove.value then
 					lastglove = library.pointers.SkinsTabGloveGlove.value
 
-					if library.pointers.SkinsTabGloveGlove.value == "Sports Glove" then
-						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Pumpkin", "CottonTail", "RSL", "Skulls", "Weeb", "Royal", "Majesty", "Hallows", "Hazard", "Calamity", "Twitch", "Dead Prey"}
-						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
-							library.pointers.SkinsTabGloveSkin:Set("Stock")
+					local glove_skins = table.foreach(loadstring("return "..readfile("hexagon/weapon_skins.cfg"))(), function(i,v)
+						if i == "gloves" then
+							return v
 						end
-					elseif library.pointers.SkinsTabGloveGlove.value == "Strapped Glove" then
-						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Cob Web", "Kringle", "Molten", "Wisk", "Grim", "Racer", "Drop-Out"}
-						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
-							library.pointers.SkinsTabGloveSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabGloveGlove.value == "Handwraps" then
-						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Mummy", "Toxic Nitro", "Green Hex", "Purple Hex", "Orange Hex", "Spector Hex", "Phantom Hex", "Microbes", "Wetland", "Guts", "Wraps", "MMA", "Ghoul Hex"}
-						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
-							library.pointers.SkinsTabGloveSkin:Set("Stock")
-						end
-					elseif library.pointers.SkinsTabGloveGlove.value == "Fingerless Glove" then
-						library.pointers.SkinsTabGloveSkin.options = {"Stock", "Kimura", "Spookiness", "Patch", "Digital", "Scapter", "Crystal"}
-						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
-							library.pointers.SkinsTabGloveSkin:Set("Stock")
-						end
-					else
+					end)
+
+					if library.pointers.SkinsTabGloveGlove.value == "Stock" then
 						library.pointers.SkinsTabGloveSkin.options = {"Stock"}
 						library.pointers.SkinsTabGloveSkin:Set("Stock")
+					else
+						local skins = skinsList(library.pointers.SkinsTabGloveGlove.value, glove_skins)
+						library.pointers.SkinsTabGloveSkin.options = skins
+						if not table.find(library.pointers.SkinsTabGloveSkin.options, library.pointers.SkinsTabGloveSkin.value) then
+							library.pointers.SkinsTabGloveSkin:Set("Stock")
+						end
 					end
 				end
 			end)
@@ -3325,7 +3330,7 @@ SkinsTabGlove:AddToggle("Enable", false, "SkinsTabGloveEnable", function(val)
 		SkinsTabGloveLoop:Disconnect()
 	end
 end)
-SkinsTabGlove:AddDropdown("Glove", {"Sports Glove", "Strapped Glove", "Handwraps", "Fingerless Glove"}, "Sports Glove", "SkinsTabGloveGlove")
+SkinsTabGlove:AddDropdown("Glove", {"Stock", "Sports Glove", "Strapped Glove", "Handwraps", "Fingerless Glove"}, "Sports Glove", "SkinsTabGloveGlove")
 SkinsTabGlove:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabGloveSkin")
 
 local SkinsTabAdd = SkinsTab:AddCategory("Additional", 2)
@@ -3726,7 +3731,7 @@ end)
 TrollTabPlayer:AddLabel("RAM Doesn't really work yet, W.I.P.")
 TrollTabPlayer:AddToggle("Repeat After Me", false, "TrollTabPlayerRAM")
 TrollTabPlayer:AddDropdown("RAM Options", {"Everyone", "Teammates", "Enemies", "Specific", "Alive", "Dead"}, "Everyone", "TrollTabPlayerRAMO")
-TrollTabPlayer:AddDropdown("RAM Players", {"-"}, "-", "TrollTabPlayerRAMP")
+TrollTabPlayer:AddDropdown("RAM Player", {"-"}, "-", "TrollTabPlayerRAMP")
 
 writefile("hexagon/weapon_ammo.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_ammo.cfg"))
 
@@ -4599,79 +4604,81 @@ writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubuserconten
 
 local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
 
-writefile("hexagon/knife_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/knife_skins.cfg"))
-
 table.foreach(weapon_skins, function(i,v)
-    local temp = {"Stock"}
-    table.foreach(v, function(i2,v2)
-        table.insert(temp, v2)
-    end)
-
-    if i == "AK47" then
-        library.pointers.SkinsTabRiflesAK47.options = temp
-	elseif i == "AUG" then
-		library.pointers.SkinsTabRiflesAUG.options = temp
-	elseif i == "AWP" then
-		library.pointers.SkinsTabRiflesAWP.options = temp
-	elseif i == "Bizon" then
-		library.pointers.SkinsTabSMGsBizon.options = temp
-	elseif i == "CZ" then
-		library.pointers.SkinsTabPistolsCZ.options = temp
-	elseif i == "DesertEagle" then
-		library.pointers.SkinsTabPistolsDesertEagle.options = temp
-	elseif i == "DualBerettas" then
-		library.pointers.SkinsTabPistolsDualBerettas.options = temp
-	elseif i == "Famas" then
-		library.pointers.SkinsTabRiflesFamas.options = temp
-	elseif i == "FiveSeven" then
-		library.pointers.SkinsTabPistolsFiveSeven.options = temp
-	elseif i == "G3SG1" then
-		library.pointers.SkinsTabRiflesG3SG1.options = temp
-	elseif i == "Galil" then
-		library.pointers.SkinsTabRiflesGalil.options = temp
-	elseif i == "Glock" then
-		library.pointers.SkinsTabPistolsGlock.options = temp
-	elseif i == "M249" then
-		library.pointers.SkinsTabHeavyM249.options = temp
-	elseif i == "M4A1" then
-		library.pointers.SkinsTabRiflesM4A1.options = temp
-	elseif i == "M4A4" then
-		library.pointers.SkinsTabRiflesM4A4.options = temp
-	elseif i == "MAC10" then
-		library.pointers.SkinsTabSMGsMAC10.options = temp
-	elseif i == "MAG7" then
-		library.pointers.SkinsTabHeavyMAG7.options = temp
-	elseif i == "MP7" then
-		library.pointers.SkinsTabSMGsMP7.options = temp
-	elseif i == "MP9" then
-		library.pointers.SkinsTabSMGsMP9.options = temp
-	elseif i == "Negev" then
-		library.pointers.SkinsTabHeavyNegev.options = temp
-	elseif i == "Nova" then
-		library.pointers.SkinsTabHeavyNova.options = temp
-	elseif i == "P2000" then
-		library.pointers.SkinsTabPistolsP2000.options = temp
-	elseif i == "P250" then
-		library.pointers.SkinsTabPistolsP250.options = temp
-	elseif i == "P90" then
-		library.pointers.SkinsTabSMGsP90.options = temp
-	elseif i == "R8" then
-		library.pointers.SkinsTabPistolsR8.options = temp
-	elseif i == "SG" then
-		library.pointers.SkinsTabRiflesSG.options = temp
-	elseif i == "SawedOff" then
-		library.pointers.SkinsTabHeavySawedOff.options = temp
-	elseif i == "Scout" then
-		library.pointers.SkinsTabRiflesScout.options = temp
-	elseif i == "Tec9" then
-		library.pointers.SkinsTabPistolsTec9.options = temp
-	elseif i == "UMP" then
-		library.pointers.SkinsTabSMGsUMP.options = temp
-	elseif i == "USP" then
-		library.pointers.SkinsTabPistolsUSP.options = temp
-	elseif i == "XM" then
-		library.pointers.SkinsTabHeavyXM.options = temp
-    end
+	if i == "guns" then
+		table.foreach(v, function(i2,v2)
+			local temp = {"Stock"}
+			table.foreach(v2, function(i3,v3)
+				table.insert(temp, v3)
+			end)
+		
+			if i2 == "AK47" then
+				library.pointers.SkinsTabRiflesAK47.options = temp
+			elseif i2 == "AUG" then
+				library.pointers.SkinsTabRiflesAUG.options = temp
+			elseif i2 == "AWP" then
+				library.pointers.SkinsTabRiflesAWP.options = temp
+			elseif i2 == "Bizon" then
+				library.pointers.SkinsTabSMGsBizon.options = temp
+			elseif i2 == "CZ" then
+				library.pointers.SkinsTabPistolsCZ.options = temp
+			elseif i2 == "DesertEagle" then
+				library.pointers.SkinsTabPistolsDesertEagle.options = temp
+			elseif i2 == "DualBerettas" then
+				library.pointers.SkinsTabPistolsDualBerettas.options = temp
+			elseif i2 == "Famas" then
+				library.pointers.SkinsTabRiflesFamas.options = temp
+			elseif i2 == "FiveSeven" then
+				library.pointers.SkinsTabPistolsFiveSeven.options = temp
+			elseif i2 == "G3SG1" then
+				library.pointers.SkinsTabRiflesG3SG1.options = temp
+			elseif i2 == "Galil" then
+				library.pointers.SkinsTabRiflesGalil.options = temp
+			elseif i2 == "Glock" then
+				library.pointers.SkinsTabPistolsGlock.options = temp
+			elseif i2 == "M249" then
+				library.pointers.SkinsTabHeavyM249.options = temp
+			elseif i2 == "M4A1" then
+				library.pointers.SkinsTabRiflesM4A1.options = temp
+			elseif i2 == "M4A4" then
+				library.pointers.SkinsTabRiflesM4A4.options = temp
+			elseif i2 == "MAC10" then
+				library.pointers.SkinsTabSMGsMAC10.options = temp
+			elseif i2 == "MAG7" then
+				library.pointers.SkinsTabHeavyMAG7.options = temp
+			elseif i2 == "MP7" then
+				library.pointers.SkinsTabSMGsMP7.options = temp
+			elseif i2 == "MP9" then
+				library.pointers.SkinsTabSMGsMP9.options = temp
+			elseif i2 == "Negev" then
+				library.pointers.SkinsTabHeavyNegev.options = temp
+			elseif i2 == "Nova" then
+				library.pointers.SkinsTabHeavyNova.options = temp
+			elseif i2 == "P2000" then
+				library.pointers.SkinsTabPistolsP2000.options = temp
+			elseif i2 == "P250" then
+				library.pointers.SkinsTabPistolsP250.options = temp
+			elseif i2 == "P90" then
+				library.pointers.SkinsTabSMGsP90.options = temp
+			elseif i2 == "R8" then
+				library.pointers.SkinsTabPistolsR8.options = temp
+			elseif i2 == "SG" then
+				library.pointers.SkinsTabRiflesSG.options = temp
+			elseif i2 == "SawedOff" then
+				library.pointers.SkinsTabHeavySawedOff.options = temp
+			elseif i2 == "Scout" then
+				library.pointers.SkinsTabRiflesScout.options = temp
+			elseif i2 == "Tec9" then
+				library.pointers.SkinsTabPistolsTec9.options = temp
+			elseif i2 == "UMP" then
+				library.pointers.SkinsTabSMGsUMP.options = temp
+			elseif i2 == "USP" then
+				library.pointers.SkinsTabPistolsUSP.options = temp
+			elseif i2 == "XM" then
+				library.pointers.SkinsTabHeavyXM.options = temp
+			end
+		end)
+	end
 end)
 
 if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfile("hexagon/autoload.txt")) then
@@ -4687,7 +4694,6 @@ if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfil
 end
 
 print("Hexagon finished loading!")
---print("101 120 111 100 117 115") -- :)
 
 Hint.Text = "Hexagon | Loading finished!"
 wait(1.5)

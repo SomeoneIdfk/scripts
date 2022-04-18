@@ -4194,34 +4194,6 @@ local ignoreMessageList = {
 }
 
 function sayMessage(mess, plr)
-	if not table.find(ignoreMessageList, mess) then
-		if library.pointers.TrollTabPlayerRAMO.value == "Specific" then
-			if plr.Name == library.pointers.TrollTabPlayerRAMP.value then
-				if GetTeam(LocalPlayer) ~= "Spectator" then
-					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
-						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
-							"<"..plr.Name.."> "..mess,
-							false,
-							"Innocent",
-							false,
-							false
-						)
-					else
-						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
-							"<"..plr.Name.."> "..mess,
-							false,
-							"Innocent",
-							true,
-							false
-						)
-					end
-				end
-			end
-		end
-	end
-end
-
-function OldsayMessage(mess, plr)
 	if plr.Name ~= LocalPlayer.Name then
 		local var = table.foreach(ignoreMessageList, function(k, v)
 			if mess == v then

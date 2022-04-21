@@ -1986,12 +1986,14 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 					local playerlistkillall = {"-"}
 					local playerlistfollow = {"-"}
 					local playerlistram = {"-"}
+                    local playerlistgw = {"-"}
 					player1f = false
 					player2f = false
 					player3f = false
 					playerfollowf = false
 					playertroll = false
 					playerram = false
+                    playergw = false
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v ~= LocalPlayer then
 							if IsAlive(v) then
@@ -2022,6 +2024,10 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 								playerram = true
 							end
 
+                            if tostring(v) == library.pointers.TrollTabSoundGWT.value then
+                                playergw = true
+                            end
+
 							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 								if GetTeam(v) ~= GetTeam(LocalPlayer) then
 									playerlistkillall[v] = v
@@ -2031,11 +2037,20 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 							end
 							
 							playerlistram[v] = v
+                            playerlistgw[v] = v
 						end
 					end
 
 					if prev_players ~= playerlistfollow then
 						local prev_players = playerlistfollow
+
+                        if playergw == true then
+                            library.pointers.TrollTabSoundGWT.options = playerlistgw
+                        else
+                            library.pointers.TrollTabSoundGWT:Set("-")
+                            library.pointers.TrollTabSoundGWT.options = playerlistgw
+                        end
+
 
 						if playerram == true then
 							library.pointers.TrollTabPlayerRAMP.options = playerlistram
@@ -3444,6 +3459,46 @@ TrollTabSound:AddToggle("Sound Spam", false, "TrollTabSoundSpam", function(val)
 		TrollTabSoundLoop:Disconnect()
 		trueorfalse6 = false
 	end
+end)
+
+local HexFolSoundGunWhizzBool = Instance.new("BoolValue", HexagonFolder)
+HexFolSoundGunWhizzBool.Name = "GunWhizzSoundRunning"
+HexFolSoundGunWhizzBool.Value = false
+
+TrollTabSound:AddDropdown("Gun Whizz Options", {"Everyone", "Specific"}, "Everyone", "TrollTabSoundGWO")
+TrollTabSound:AddDropdown("Gun Whizz Target", {"-"}, "-", "TrollTabSoundGWT")
+TrollTabSound:AddToggle("Gun Whizz Skip Localplayer", false, "TrollTabSoundGWSL")
+TrollTabSound:AddSlider("Gun Whizz Delay", {1, 30, 5, 1, ""}, "TrollTabSoundGWD")
+TrollTabSound:AddToggle("Gun Whizz", false, "TrollTabSoundGW", function(val)
+    if val == true then
+        HexFolSoundGunWhizzBool.Value = false
+        GunWhizzLoop = game:GetService("RunService").RenderStepped:Connect(function()
+            pcall(function()
+                if HexFolSoundGunWhizzBool.Value == false then
+                    HexFolSoundGunWhizzBool.Value = true
+
+                    if IsAlive(LocalPlayer) and LocalPlayer.Character:FindFirstChild('Gun') then
+                        for _,Player in pairs(game.Players:GetPlayers()) do
+                            if library.pointers.TrollTabSoundGWO.value == "Specific" and Player.Name == library.pointers.TrollTabSoundGWT.value then
+                                game:GetService('ReplicatedStorage').Events.Whizz:FireServer(Player)
+                            elseif library.pointers.TrollTabSoundGWO.value == "Everyone" then
+                                if library.pointers.TrollTabSoundGWSL.value and LocalPlayer ~= Player then
+                                    game:GetService('ReplicatedStorage').Events.Whizz:FireServer(Player)
+                                elseif not library.pointers.TrollTabSoundGWSL.value then
+                                    game:GetService('ReplicatedStorage').Events.Whizz:FireServer(Player)
+                                end
+                            end
+                        end
+                    end
+
+                    wait(library.pointers.TrollTabSoundGWD.value)
+                    HexFolSoundGunWhizzBool.Value = false
+                end
+            end)
+        end)
+    elseif val == false and GunWhizzLoop then
+        GunWhizzLoop:Disconnect()
+    end
 end)
 
 local TrollTabSpawn = TrollTab:AddCategory("Spawn Item")

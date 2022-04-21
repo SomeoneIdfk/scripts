@@ -3492,6 +3492,7 @@ TrollTabSound:AddToggle("Gun Whizz", false, "TrollTabSoundGW", function(val)
                     end
 
                     wait(library.pointers.TrollTabSoundGWD.value)
+
                     HexFolSoundGunWhizzBool.Value = false
                 end
             end)

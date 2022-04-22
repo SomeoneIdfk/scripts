@@ -2176,7 +2176,17 @@ ExperimentalTabCategoryTeleport:AddDropdown("Teleport Method", {"Players", "Bomb
 
 ExperimentalTabCategoryTeleport:AddDropdown("Follow Options", {"Random", "Glue", "Behind"}, "Random", "ExperimentalTabCategoryTeleportFollowMethod")
 
-ExperimentalTabCategoryTeleport:AddSlider("Teleport Offset", {0, 100, 5, 5, ""}, "ExperimentalTabCategoryTeleportOffset")
+ExperimentalTabCategoryTeleport:AddSlider("Teleport Offset", {0, 500, 5, 5, ""}, "ExperimentalTabCategoryTeleportOffset")
+
+function teleportToPlayer(plr)
+	if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
+		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
+	elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
+		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
+	elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
+		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
+	end
+end
 
 ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalTabCategoryTeleportTeleport", function(val)
 	if val == true then
@@ -2222,9 +2232,9 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 									v.CanCollide = false
 								end
 							end
-						else
-							if var == true then
-								local var = false
+						elseif var == true then
+							local var = false
+							if LocalPlayer.Character.Humanoid.PlatformStand == true then
 								LocalPlayer.Character.Humanoid.PlatformStand = false
 							end
 						end
@@ -2235,138 +2245,215 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if library.pointers.ExperimentalTabCategoryTeleportConstantTP.value == true or KillEnemiesLoop and pausetps == false then
-					playerlisttest = {}
-					if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-						for i,v in pairs(game.Players:GetChildren()) do
-							if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) and GetTeam(v) ~= "TTT" then
-								table.insert(playerlisttest, v)
+					if not library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value then
+						playerlisttest = {}
+						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
+							for i,v in pairs(game.Players:GetChildren()) do
+								if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) and GetTeam(v) ~= "TTT" then
+									table.insert(playerlisttest, v)
+								end
 							end
 						end
-					end
-					if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-						if IsAlive(LocalPlayer) then
-							teleported = false
-							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-								wait()
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
+						if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
 											wait()
 										end
 									end
 								end
 							end
-						end
-					else
-						if teleported == false then
-							pausetps = true
-							teleported = true
-							teleportTospawnpoint()
-							pausetps = false
-							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-								if v:IsA("BasePart") and v.CanCollide == false then
-									v.CanCollide = true
+						else
+							if teleported == false then
+								pausetps = true
+								teleported = true
+								teleportTospawnpoint()
+								pausetps = false
+								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+									if v:IsA("BasePart") and v.CanCollide == false then
+										v.CanCollide = true
+									end
 								end
 							end
 						end
+					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == false then
+						playerlisttest = {}
+						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
+							for i,v in pairs(game.Players:GetChildren()) do
+								if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) and GetTeam(v) ~= "TTT" then
+									table.insert(playerlisttest, v)
+								end
+							end
+						end
+						if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
+											wait()
+										end
+									end
+								end
+							end
+						else
+							if teleported == false then
+								pausetps = true
+								teleported = true
+								teleportTospawnpoint()
+								pausetps = false
+								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+									if v:IsA("BasePart") and v.CanCollide == false then
+										v.CanCollide = true
+									end
+								end
+							end
+						end
+					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == true then
+						LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1000000)
 					end
 				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) and pausetps == false then
-					if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
-						if IsAlive(LocalPlayer) then
-							teleported = false
-							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-								wait()
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
+					if not library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value then
+						if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
 											wait()
 										end
 									end
 								end
 							end
-						end
-					elseif library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
-						if IsAlive(LocalPlayer) then
-							teleported = false
-							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-								wait()
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
+						elseif library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
 											wait()
 										end
 									end
 								end
 							end
-						end
-					elseif library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
-						if IsAlive(LocalPlayer) then
-							teleported = false
-							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-								wait()
-								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-								for i,v in pairs(game.Players:GetChildren()) do
-									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-										if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
-											wait()
-										elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
-											LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
+						elseif library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
 											wait()
 										end
 									end
 								end
 							end
-						end
-					else
-						if teleported == false then
-							pausetps = true
-							teleported = true
-							teleportTospawnpoint()
-							pausetps = false
-							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-								if v:IsA("BasePart") and v.CanCollide == false then
-									v.CanCollide = true
+						else
+							if teleported == false then
+								pausetps = true
+								teleported = true
+								teleportTospawnpoint()
+								pausetps = false
+								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+									if v:IsA("BasePart") and v.CanCollide == false then
+										v.CanCollide = true
+									end
 								end
 							end
+						end
+					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == false then
+						if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
+											wait()
+										end
+									end
+								end
+							end
+						elseif library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
+											wait()
+										end
+									end
+								end
+							end
+						elseif library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
+							if IsAlive(LocalPlayer) then
+								teleported = false
+								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+									wait()
+									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+									for i,v in pairs(game.Players:GetChildren()) do
+										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
+											teleportToPlayer(v)
+											wait()
+										end
+									end
+								end
+							end
+						else
+							if teleported == false then
+								pausetps = true
+								teleported = true
+								teleportTospawnpoint()
+								pausetps = false
+								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+									if v:IsA("BasePart") and v.CanCollide == false then
+										v.CanCollide = true
+									end
+								end
+							end
+						end
+					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == true then
+						if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true or library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true or library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true then
+							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1000000)
 						end
 					end
-				
 				else
 					print("Re-ordering teleport player list.")
 					for i,v in pairs(game.Players:GetChildren()) do
@@ -2445,9 +2532,9 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 									v.CanCollide = false
 								end
 							end
-						else
-							if var == true then
-								local var = false
+						elseif var == true then
+							local var = false
+							if LocalPlayer.Character.Humanoid.PlatformStand == true then
 								LocalPlayer.Character.Humanoid.PlatformStand = false
 							end
 						end
@@ -2461,13 +2548,8 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 					if pausetps == false then
 						if IsAlive(LocalPlayer) and IsAlive(followplayer) and GetTeam(followplayer) ~= "TTT" then
 							teleported2 = false
-							if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
-							elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
-							elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
-								LocalPlayer.Character.HumanoidRootPart.CFrame = followplayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
-							end
+							teleportToPlayer(followplayer)
+							wait()
 						elseif IsAlive(LocalPlayer) then
 							if teleported2 == false then
 								pausetps = true

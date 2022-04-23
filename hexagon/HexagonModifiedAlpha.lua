@@ -1596,13 +1596,13 @@ end)
 library.pointers.SettingsTabCategoryConfigsBranch.options = versions["tables"]
 library.pointers.SettingsTabCategoryConfigsBranch:Set(versions["tables"][1])
 
-while true do
+game:GetService("RunService").Stepped:Connect(function()
 	library.pointers.SettingsTabCategoryConfigsBuild.options = versions["data"][library.pointers.Branch.value]["tables"]
 	if not table.find(versions["data"][library.pointers.Branch.value]["tables"], library.pointers.Build.value) then
 		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.Branch.value]["tables"][1])
 	end
 	wait()
-end
+end)
 
 local WorkSpace = game:GetService("Workspace")
 

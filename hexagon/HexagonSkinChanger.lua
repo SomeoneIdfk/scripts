@@ -541,7 +541,7 @@ library.pointers.SettingsTabCategoryConfigsBranch:Set(versions["tables"][1])
 
 game:GetService("RunService").Stepped:Connect(function()
 	library.pointers.SettingsTabCategoryConfigsBuild.options = versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"]
-	if not table.find(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"], library.pointers.Build.value) then
+	if not table.find(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"], library.pointers.SettingsTabCategoryConfigsBuild.value) then
 		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"][1])
 	end
 end)

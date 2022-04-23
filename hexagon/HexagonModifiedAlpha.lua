@@ -4476,7 +4476,10 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				if library.pointers.TrollTabPlayerRGK.value == true then
 					local rgun = killallguns[math.random(1,#killallguns)]
 					args[3] = rgun
+					args[4] = args[4]
 					args[5] = game.ReplicatedStorage.Weapons[rgun].Model
+					args[8] = args[8]
+					args[12] = args[12]
 				end
 
 				if library.pointers.VisualsTabCategoryOthersBulletTracers.value == true then

@@ -27,7 +27,7 @@ local function checkId()
 	return false
 end
 
-if isfile("hexagon/load_version.txt") and checkId() then
+if isfile("hexagon/load_version.txt") then
 	if checkId() then
 		if readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModified.lua" then
 			loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
@@ -36,8 +36,7 @@ if isfile("hexagon/load_version.txt") and checkId() then
 		elseif readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonSkinChanger.lua" then
 			loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
 		end
-	else
-		wait(3)
+	elseif not checkId() then
 		game.Players.LocalPlayer:Kick("Hexagon Modified is not for this game.")
 	end
 end

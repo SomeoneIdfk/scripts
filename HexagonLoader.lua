@@ -14,7 +14,20 @@ if not isfolder("hexagon") then
 	makefolder("hexagon")
 end
 
-if isfile("hexagon/load_version.txt") then
+local function checkId()
+	local temp = game.PlaceId
+	if temp == 301549746 then
+		return true
+	elseif temp == 1480424328 then
+		return true
+	elseif temp == 1869597719 then
+		return true
+	end
+
+	return false
+end
+
+if isfile("hexagon/load_version.txt") and checkId() then
 	if readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModified.lua" then
     	loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
 	elseif readfile("hexagon/load_version.txt") == "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModifiedAlpha.lua" then

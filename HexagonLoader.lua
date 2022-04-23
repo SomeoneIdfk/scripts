@@ -11,13 +11,13 @@ local isfile = isfile or false
 
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/lib/library_loader.lua"))()
 
-writefile("hexagon/versions.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/versions.cfg"))
-
-local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
-
 if not isfolder("hexagon") then
 	makefolder("hexagon")
 end
+
+writefile("hexagon/versions.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/versions.cfg"))
+
+local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
 
 local function checkId()
 	local temp = game.PlaceId

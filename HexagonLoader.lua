@@ -75,13 +75,13 @@ if checkId() then
         library.pointers.Branch.options = versions["tables"]
         library.pointers.Branch:Set(versions["tables"][1])
 
-		while true do
+		game:GetService("RunService").Stepped:Connect(function()
             library.pointers.Build.options = versions["data"][library.pointers.Branch.value]["tables"]
             if not table.find(versions["data"][library.pointers.Branch.value]["tables"], library.pointers.Build.value) then
                 library.pointers.Build:Set(versions["data"][library.pointers.Branch.value]["tables"][1])
             end
             wait()
-        end
+        end)
 	end
 elseif not checkId() then
 	game.Players.LocalPlayer:Kick("Running on the wrong game!")

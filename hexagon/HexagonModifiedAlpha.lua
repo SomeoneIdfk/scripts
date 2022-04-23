@@ -1590,16 +1590,16 @@ local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
 SettingsTabCategoryConfigs:AddDropdown("Branch", {"-"}, "-", "SettingsTabCategoryConfigsBranch")
 SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabCategoryConfigsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
-	writefile("hexagon/load_version.txt", versions["data"][library.pointers.Branch.value]["data"][library.pointers.Build.value])
+	writefile("hexagon/load_version.txt", versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["data"][library.pointers.SettingsTabCategoryConfigsBuild.value])
 end)
 
 library.pointers.SettingsTabCategoryConfigsBranch.options = versions["tables"]
 library.pointers.SettingsTabCategoryConfigsBranch:Set(versions["tables"][1])
 
 game:GetService("RunService").Stepped:Connect(function()
-	library.pointers.SettingsTabCategoryConfigsBuild.options = versions["data"][library.pointers.Branch.value]["tables"]
-	if not table.find(versions["data"][library.pointers.Branch.value]["tables"], library.pointers.Build.value) then
-		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.Branch.value]["tables"][1])
+	library.pointers.SettingsTabCategoryConfigsBuild.options = versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"]
+	if not table.find(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"], library.pointers.Build.value) then
+		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"][1])
 	end
 	wait()
 end)

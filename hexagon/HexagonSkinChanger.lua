@@ -528,42 +528,28 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Skin Changer", "SettingsTabCategoryConfigsBranch")
+local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
+
+SettingsTabCategoryConfigs:AddDropdown("Branch", {"-"}, "-", "SettingsTabCategoryConfigsBranch")
 SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabCategoryConfigsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
-	if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
-        if library.pointers.SettingsTabCategoryConfigsBuild.value == "Stable" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModified.lua")
-        elseif library.pointers.SettingsTabCategoryConfigsBuild.value == "Alpha" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModifiedAlpha.lua")
-        end
-    elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
-        if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonSkinChanger.lua")
-        end
-    end
+	writefile("hexagon/load_version.txt", versions["data"][library.pointers.Branch.value]["data"][library.pointers.Build.value])
 end)
+
+library.pointers.SettingsTabCategoryConfigsBranch.options = versions["tables"]
+library.pointers.SettingsTabCategoryConfigsBranch:Set(versions["tables"][1])
+
+while true do
+	library.pointers.SettingsTabCategoryConfigsBuild.options = versions["data"][library.pointers.Branch.value]["tables"]
+	if not table.find(versions["data"][library.pointers.Branch.value]["tables"], library.pointers.Build.value) then
+		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.Branch.value]["tables"][1])
+	end
+	wait()
+end
 
 local SettingsTabCategoryCredits = SettingsTab:AddCategory("Credits", 2)
 
-SettingsTabCategoryCredits:AddLabel("ESP - Modified Kiriot ESP")
 SettingsTabCategoryCredits:AddLabel("UI Library - Modified Phantom Ware")
-
-game:GetService("RunService").Stepped:Connect(function()
-    pcall(function()
-        if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
-            library.pointers.SettingsTabCategoryConfigsBuild.options = {"Stable", "Alpha"}
-            if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-                library.pointers.SettingsTabCategoryConfigsBuild:Set("Stable")
-            end
-        elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
-            library.pointers.SettingsTabCategoryConfigsBuild.options = {"-"}
-            if library.pointers.SettingsTabCategoryConfigsBuild.value ~= "-" then
-                library.pointers.SettingsTabCategoryConfigsBuild:Set("-")
-            end
-        end
-    end)
-end)
 
 local function MapSkin(Gun, Skin)
 	local SkinData = game:GetService("ReplicatedStorage").Skins:FindFirstChild(Gun):FindFirstChild(Skin)

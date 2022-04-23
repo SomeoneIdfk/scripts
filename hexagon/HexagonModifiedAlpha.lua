@@ -1585,37 +1585,24 @@ SettingsTabCategoryConfigs:AddButton("Set as default", function()
 	end
 end)
 
-SettingsTabCategoryConfigs:AddDropdown("Branch", {"Hexagon Modified", "Skin Changer"}, "Hexagon Modified", "SettingsTabCategoryConfigsBranch")
+local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
+
+SettingsTabCategoryConfigs:AddDropdown("Branch", {"-"}, "-", "SettingsTabCategoryConfigsBranch")
 SettingsTabCategoryConfigs:AddDropdown("Build", {"-"}, "-", "SettingsTabCategoryConfigsBuild")
 SettingsTabCategoryConfigs:AddButton("Save", function()
-	if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
-        if library.pointers.SettingsTabCategoryConfigsBuild.value == "Stable" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModified.lua")
-        elseif library.pointers.SettingsTabCategoryConfigsBuild.value == "Alpha" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonModifiedAlpha.lua")
-        end
-    elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
-        if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-            writefile("hexagon/load_version.txt", "https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/HexagonSkinChanger.lua")
-        end
-    end
+	writefile("hexagon/load_version.txt", versions["data"][library.pointers.Branch.value]["data"][library.pointers.Build.value])
 end)
 
-game:GetService("RunService").Stepped:Connect(function()
-	pcall(function()
-		if library.pointers.SettingsTabCategoryConfigsBranch.value == "Hexagon Modified" then
-			library.pointers.SettingsTabCategoryConfigsBuild.options = {"Alpha", "Stable"}
-			if library.pointers.SettingsTabCategoryConfigsBuild.value == "-" then
-				library.pointers.SettingsTabCategoryConfigsBuild:Set("Alpha")
-			end
-		elseif library.pointers.SettingsTabCategoryConfigsBranch.value == "Skin Changer" then
-			library.pointers.SettingsTabCategoryConfigsBuild.options = {"-"}
-			if library.pointers.SettingsTabCategoryConfigsBuild.value ~= "-" then
-				library.pointers.SettingsTabCategoryConfigsBuild:Set("-")
-			end
-		end
-	end)
-end)
+library.pointers.SettingsTabCategoryConfigsBranch.options = versions["tables"]
+library.pointers.SettingsTabCategoryConfigsBranch:Set(versions["tables"][1])
+
+while true do
+	library.pointers.SettingsTabCategoryConfigsBuild.options = versions["data"][library.pointers.Branch.value]["tables"]
+	if not table.find(versions["data"][library.pointers.Branch.value]["tables"], library.pointers.Build.value) then
+		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.Branch.value]["tables"][1])
+	end
+	wait()
+end
 
 local WorkSpace = game:GetService("Workspace")
 

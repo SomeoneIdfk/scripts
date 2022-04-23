@@ -1595,7 +1595,6 @@ game:GetService("RunService").Stepped:Connect(function()
 	if not table.find(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"], library.pointers.Build.value) then
 		library.pointers.SettingsTabCategoryConfigsBuild:Set(versions["data"][library.pointers.SettingsTabCategoryConfigsBranch.value]["tables"][1])
 	end
-	wait()
 end)
 
 local WorkSpace = game:GetService("Workspace")

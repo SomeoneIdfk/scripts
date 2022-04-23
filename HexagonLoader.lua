@@ -80,7 +80,6 @@ if checkId() then
             if not table.find(versions["data"][library.pointers.Branch.value]["tables"], library.pointers.Build.value) then
                 library.pointers.Build:Set(versions["data"][library.pointers.Branch.value]["tables"][1])
             end
-            wait()
         end)
 	end
 elseif not checkId() then

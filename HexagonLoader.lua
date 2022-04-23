@@ -37,6 +37,7 @@ if isfile("hexagon/load_version.txt") and checkId() then
 			loadstring(game:HttpGet(readfile("hexagon/load_version.txt")))();
 		end
 	else
+		wait(3)
 		game.Players.LocalPlayer:Kick("Hexagon Modified is not for this game.")
 	end
 end

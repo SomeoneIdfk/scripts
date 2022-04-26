@@ -2441,7 +2441,6 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 						end
 					end
 				else
-					print("Re-ordering teleport player list.")
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
 							playertp1 = v
@@ -2949,6 +2948,35 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
 	end
 end)
 
+writefile("hexagon/weapon_buy.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_buy.cfg"))
+
+
+local AutoBuy = ExperimentalTab:AddCategory("Auto Buy", 2)
+AutoBuy:AddToggle("Enabled", false, function(val)
+	if val == true then
+		AutoBuyLoop = LocalPlayer.CharacterAdded:Connect(function()
+            pcall(function()
+				local weapon_skins = loadstring("return "..readfile("hexagon/weapon_buy.cfg"))()
+
+				local args = {
+					[1] = {
+						[1] = "buyweapon",
+						[2] = library.pointers.AutoBuyPrimary.value
+					}
+				}
+				
+				game:GetService("ReplicatedStorage").Events.RemoteEvent:FireServer(unpack(args))
+			end)
+		end)
+	elseif val == false and AutoBuyLoop then
+		AutoBuyLoop:Disconnect()
+	end
+end)
+AutoBuy:AddDropdown("Primary", {"None"}, "None", "AutoBuyPrimary")
+AutoBuy:AddDropdown("Secondary", {"None"}, "None", "AutoBuySecondary")
+AutoBuy:AddDropdown("Grenades", {"None"}, "None", "AutoBuyGrenades")
+
+
 ExperimentalTabCategoryFarm:AddToggle("Buy cases", false, "ExperimentalTabCategoryFarmBuyCases")
 ExperimentalTabCategoryFarm:AddDropdown("Selected case", {"-", "Militia Case", "Modern Case", "Hapax Case", "Karambit Case", "Remastered Case", "Vortax Case", "SCR Case", "Imagenim Case", "Kitter Case", "Hiato Case"}, "-", "ExperimentalTabCategoryFarmSelectedCase")
 ExperimentalTabCategoryFarm:AddToggle("Anti Vote Kick", false, "ExperimentalTabCategoryFarmAVK")
@@ -3104,11 +3132,8 @@ for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildre
 end
 
 local function modelChange(model, replace)
-	print(model, replace)
 	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(model) then
-		print(model, replace)
 		if HexFolModels:FindFirstChild(replace) then
-			print(model, replace)
 			game.ReplicatedStorage.Viewmodels[model]:Destroy()
 			wait()
 			local Model1 = Instance.new("Model", game.ReplicatedStorage.Viewmodels)
@@ -4562,7 +4587,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
                     	return args[1]
 					end
                 elseif args[2] ~= LocalPlayer then
-					if library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false then
+					if library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
 						if IsAlive(LocalPlayer) then
 							if not IsAlive(args[2]) then
 								ChatScript.moveOldMessages()
@@ -4570,17 +4595,19 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 							end
 						end
 					end
+
+					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
+                        return args[1]
+
+						--if IsAlive(LocalPlayer) and IsAlive(args[2]) then
+                    	--	return args[1]
+						--elseif not IsAlive(LocalPlayer) and IsAlive(args[2]) then
+						--	return args[1]
+						--end
+					end
                     
 					if library.pointers.TrollTabPlayerRAM.value == true then
 						sayMessage(args[1], args[2])
-					end
-
-					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
-						if IsAlive(LocalPlayer) and IsAlive(args[2]) then
-                    		return args[1]
-						elseif not IsAlive(LocalPlayer) and IsAlive(args[2]) then
-							return args[1]
-						end
 					end
                 end
 			end
@@ -4604,7 +4631,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 	end
 	
 	return oldNamecall(self, unpack(args))
-end))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if game.Players.LocalPlayer.UserId == 1858923608 then game.Players.LocalPlayer:Kick("🤡") end -- anti skid security system :sunglasses:
+end))
 
 oldNewIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client).__newindex, newcclosure(function(self, idx, val)
 	if not checkcaller() then
@@ -4647,8 +4674,33 @@ oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client)._
     return oldIndex(self, key)
 end))
 
+local CheaterColor = Color3.fromRGB(255, 0, 0)
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
-	return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	if LocalPlayer.Name == plr then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	elseif teamcolor == AliveChatColor and msgcolor == Color3.new(1,1,1) then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	else
+		for i,v in pairs(game.Players:GetPlayers()) do
+			if v.Name == plr then
+				plr = v
+			end
+		end
+
+		if IsAlive(LocalPlayer) and IsAlive(plr) and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
+			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
+		elseif IsAlive(LocalPlayer) == false and IsAlive(plr) == false and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
+			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
+		elseif IsAlive(LocalPlayer) == false and IsAlive(plr) == true and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
+			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
+		elseif game.Workspace.Status.RoundOver.Value == true and game.Workspace.Status.Rounds.Value ~= 0 then
+			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
+		elseif game.Workspace.Status.Rounds.Value == 0 then
+			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
+		else
+			return createNewMessage("<Cheater>"..plr.Name, msg, CheaterColor, msgcolor, offset, line)
+		end
+	end
 end
 
 CharacterAdded()
@@ -4791,3 +4843,14 @@ print("Hexagon finished loading!")
 Hint.Text = "Hexagon | Loading finished!"
 wait(1.5)
 Hint:Destroy()
+
+--[[
+	-Anti Chat Spam
+	-Random gun dropdown between melee and ranged weapons
+	-Fix Repeat After Me
+	-Auto kill enemy when visible
+	-Complete new code for chat messages showing up (if not working as expected now)
+	-Start code for chat drop downs when messages are supposed to show (if possible)
+	-Add challenge modes (remove all heads, set health to 1 hp, limited ammo, etc)
+	-Auto buy weapons
+]]--

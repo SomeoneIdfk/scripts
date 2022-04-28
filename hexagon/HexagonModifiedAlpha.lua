@@ -4852,5 +4852,5 @@ Hint:Destroy()
 	-Complete new code for chat messages showing up (if not working as expected now)
 	-Start code for chat drop downs when messages are supposed to show (if possible)
 	-Add challenge modes (remove all heads, set health to 1 hp, limited ammo, etc)
-	-Auto buy weapons
+	-Auto buy weapons (if possible)
 ]]--

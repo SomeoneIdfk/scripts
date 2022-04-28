@@ -1893,7 +1893,7 @@ ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "Experiment
 			pcall(function()
 				if IsAlive(LocalPlayer) then
 					for i,plr in pairs(game.Players:GetPlayers()) do
-						if plr ~= LocalPlayer and IsAlive(plr) and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
+						if plr ~= LocalPlayer and IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
 							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then

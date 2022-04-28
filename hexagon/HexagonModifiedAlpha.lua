@@ -1752,12 +1752,7 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 	end
 end)
 
-ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
-ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
-ExperimentalTabCategoryOptions:AddToggle("After Prep", false, "ExperimentalTabCategoryOptionsAfterPrep")
-ExperimentalTabCategoryOptions:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Both", "ExperimentalTabCategoryOptionsRandomWeaponType")
-ExperimentalTabCategoryOptions:AddToggle("Random Weapon", false, "ExperimentalTabCategoryOptionsRandomGun")
-ExperimentalTabCategoryOptions:AddSlider("Loop Rate", {1, 20, 5, 1, ""}, "ExperimentalTabCategoryOptionsLoopRate")
+
 
 writefile("hexagon/killallguns.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/killallguns.cfg"))
 
@@ -1891,6 +1886,35 @@ function killtarget(target)
         end
     end
 end
+
+ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "ExperimentalTabCategoryOptionsAKV", function(val)
+	if val == true then
+		AutoKillVisibleLoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if IsAlive(LocalPlayer) then
+					for i,plr in pairs(game.Players:GetPlayers()) do
+						if plr ~= LocalPlayer and IsAlive(plr) and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
+							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+							end
+						end
+					end
+				end
+			end)
+		end)
+	elseif val == false and AutoKillVisibleLoop then
+		AutoKillVisibleLoop:Disconnect()
+	end
+end)
+
+ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
+ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
+ExperimentalTabCategoryOptions:AddToggle("After Prep", false, "ExperimentalTabCategoryOptionsAfterPrep")
+ExperimentalTabCategoryOptions:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Both", "ExperimentalTabCategoryOptionsRandomWeaponType")
+ExperimentalTabCategoryOptions:AddToggle("Random Weapon", false, "ExperimentalTabCategoryOptionsRandomGun")
+ExperimentalTabCategoryOptions:AddSlider("Loop Rate", {1, 20, 5, 1, ""}, "ExperimentalTabCategoryOptionsLoopRate")
 
 ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCategoryOptionsKillall", function(val)
 	if val == true then
@@ -4848,9 +4872,9 @@ Hint:Destroy()
 
 --[[
 	-Anti Chat Spam
-	-Random gun dropdown between melee and ranged weapons
+	-Random gun dropdown between melee and ranged weapons [Done]
 	-Fix Repeat After Me
-	-Auto kill enemy when visible
+	-Auto kill enemy when visible [Done]
 	-Complete new code for chat messages showing up (if not working as expected now)
 	-Start code for chat drop downs when messages are supposed to show (if possible)
 	-Add challenge modes (remove all heads, set health to 1 hp, limited ammo, etc)

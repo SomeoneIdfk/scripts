@@ -3830,7 +3830,7 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 		TrollTabPlayerRHLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Default", "TrollTabPlayerRWT")
+TrollTabPlayer:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Both", "TrollTabPlayerRWT")
 TrollTabPlayer:AddToggle("Random Weapon Kill", false, "TrollTabPlayerRGK")
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
 TrollTabPlayer:AddToggle("Alive Chat", false, "TrollTabPlayerAC")

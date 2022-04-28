@@ -1755,7 +1755,8 @@ end)
 ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
 ExperimentalTabCategoryOptions:AddToggle("After Prep", false, "ExperimentalTabCategoryOptionsAfterPrep")
-ExperimentalTabCategoryOptions:AddToggle("Random Gun", false, "ExperimentalTabCategoryOptionsRandomGun")
+ExperimentalTabCategoryOptions:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Both", "ExperimentalTabCategoryOptionsRandomWeaponType")
+ExperimentalTabCategoryOptions:AddToggle("Random Weapon", false, "ExperimentalTabCategoryOptionsRandomGun")
 ExperimentalTabCategoryOptions:AddSlider("Loop Rate", {1, 20, 5, 1, ""}, "ExperimentalTabCategoryOptionsLoopRate")
 
 writefile("hexagon/killallguns.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/killallguns.cfg"))
@@ -1826,7 +1827,7 @@ function killtarget(target)
             return Arguments
         end
     elseif library.pointers.ExperimentalTabCategoryOptionsRandomGun.value == true then
-        local rgun = killallguns[math.random(1,#killallguns)]
+        local rgun = killallguns[library.pointers.ExperimentalTabCategoryOptionsRandomWeaponType.value][math.random(1,#killallguns[library.pointers.ExperimentalTabCategoryOptionsRandomWeaponType.value])]
         if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
             local Arguments = {
                 [1] = target.Character.Head,
@@ -3805,7 +3806,8 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 		TrollTabPlayerRHLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddToggle("Random Gun Kill", false, "TrollTabPlayerRGK")
+TrollTabPlayer:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Default", "TrollTabPlayerRWT")
+TrollTabPlayer:AddToggle("Random Weapon Kill", false, "TrollTabPlayerRGK")
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")
 TrollTabPlayer:AddToggle("Alive Chat", false, "TrollTabPlayerAC")
 TrollTabPlayer:AddDropdown("Godmode method", {"Bloxsense Godmode", "Inf HP", "FE God"}, "Bloxsense Godmode", "TrollTabPlayerGMM")
@@ -4499,7 +4501,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				args[8] = args[8] * library.pointers.MiscellaneousTabCategoryGunModsDamageMultiplier.value
 
 				if library.pointers.TrollTabPlayerRGK.value == true then
-					local rgun = killallguns[math.random(1,#killallguns)]
+					local rgun = killallguns[library.pointers.TrollTabPlayerRWT.value][math.random(1,#killallguns[library.pointers.TrollTabPlayerRWT.value])]
 					args[3] = rgun
 					args[4] = args[4]
 					args[5] = game.ReplicatedStorage.Weapons[rgun].Model

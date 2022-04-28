@@ -4698,7 +4698,7 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 		elseif game.Workspace.Status.Rounds.Value == 0 then
 			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
 		else
-			return createNewMessage("<Cheater>"..plr.Name, msg, CheaterColor, msgcolor, offset, line)
+			return createNewMessage("<Cheater> "..plr.Name, msg, CheaterColor, msgcolor, offset, line)
 		end
 	end
 end

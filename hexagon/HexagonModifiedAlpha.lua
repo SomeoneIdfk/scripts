@@ -3874,10 +3874,12 @@ HexFolSECooldown.Value = 0
 
 TrollTabPlayer:AddToggle("Slow Everyone", false, "TrollTabPlayerSE", function(val)
 	if val == true then
+		HexFolSECooldown.Value = 0
+		
 		TrollTabPlayerSELoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if HexFolSECooldown.Value == 0 then
-					HexFolSECooldown.Value = library.pointers.TrollTabPlayerSECooldown.value
+					HexFolSECooldown.Value = library.pointers.TrollTabPlayerSEDelay.value
 					if IsAlive(LocalPlayer) then
 						for i,v in pairs(game.Players:GetPlayers()) do
 							if v ~= LocalPlayer and IsAlive(v) then

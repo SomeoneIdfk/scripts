@@ -3875,7 +3875,7 @@ HexFolSECooldown.Value = 0
 TrollTabPlayer:AddToggle("Slow Everyone", false, "TrollTabPlayerSE", function(val)
 	if val == true then
 		HexFolSECooldown.Value = 0
-		
+
 		TrollTabPlayerSELoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
 				if HexFolSECooldown.Value == 0 then
@@ -3892,9 +3892,9 @@ TrollTabPlayer:AddToggle("Slow Everyone", false, "TrollTabPlayerSE", function(va
 									[8] = 0, 
 									[9] = false,
 									[10] = false,
-									[11] = Vector3.new(100000,0,100000),
+									[11] = Vector3.new(),
 									[12] = 0,
-									[13] = Vector3.new(100000,0,100000)
+									[13] = Vector3.new()
 									}
 
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))

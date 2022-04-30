@@ -2632,8 +2632,6 @@ local ExperimentalTabCategoryPlayer1 = ExperimentalTab:AddCategory("Player 1", 2
 
 ExperimentalTabCategoryPlayer1:AddDropdown("Players", {"-"}, "-", "ExperimentalTabCategoryPlayer1Players")
 
-oof = {}; for i,v in pairs(game.ReplicatedStorage.Weapons:GetChildren()) do if v:FindFirstChild("Model") then table.insert(oof, v.Name) end end
-
 ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer1Kill", function(val)
 	if val == true then
 		for i,v in pairs(game.Players:GetChildren()) do
@@ -3050,35 +3048,6 @@ ExperimentalTabCategoryFarm:AddToggle("Enable", false, "ExperimentalTabCategoryF
         AVKLoop:Disconnect()
 	end
 end)
-
-writefile("hexagon/weapon_buy.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_buy.cfg"))
-
-
-local AutoBuy = ExperimentalTab:AddCategory("Auto Buy", 2)
-AutoBuy:AddToggle("Enabled", false, function(val)
-	if val == true then
-		AutoBuyLoop = LocalPlayer.CharacterAdded:Connect(function()
-            pcall(function()
-				local weapon_skins = loadstring("return "..readfile("hexagon/weapon_buy.cfg"))()
-
-				local args = {
-					[1] = {
-						[1] = "buyweapon",
-						[2] = library.pointers.AutoBuyPrimary.value
-					}
-				}
-				
-				game:GetService("ReplicatedStorage").Events.RemoteEvent:FireServer(unpack(args))
-			end)
-		end)
-	elseif val == false and AutoBuyLoop then
-		AutoBuyLoop:Disconnect()
-	end
-end)
-AutoBuy:AddDropdown("Primary", {"None"}, "None", "AutoBuyPrimary")
-AutoBuy:AddDropdown("Secondary", {"None"}, "None", "AutoBuySecondary")
-AutoBuy:AddDropdown("Grenades", {"None"}, "None", "AutoBuyGrenades")
-
 
 ExperimentalTabCategoryFarm:AddToggle("Buy cases", false, "ExperimentalTabCategoryFarmBuyCases")
 ExperimentalTabCategoryFarm:AddDropdown("Selected case", {"-", "Militia Case", "Modern Case", "Hapax Case", "Karambit Case", "Remastered Case", "Vortax Case", "SCR Case", "Imagenim Case", "Kitter Case", "Hiato Case"}, "-", "ExperimentalTabCategoryFarmSelectedCase")
@@ -3744,33 +3713,23 @@ TrollTabMap:AddToggle("Drop Mags", false,  "TrollTabMapDropMags", function(val)
 							ttmdmworker = 1
 							local mag = LocalPlayer.Character.Gun.Mag
 							game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag)
-							for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
-								if v.Name == "MagDrop" then
-									v:Destroy()
-								end
-							end
 						else
 							ttmdmworker = ttmdmworker - 1
 						end
 					elseif library.pointers.TrollTabMapDropRate.value == "Laggy" then
 						game:GetService("RunService").RenderStepped:Wait()
-						game:GetService("RunService").RenderStepped:Wait()
 						local mag = LocalPlayer.Character.Gun.Mag
 						game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag)
-						for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
-							if v.Name == "MagDrop" then
-								v:Destroy()
-							end
-						end
 					elseif library.pointers.TrollTabMapDropRate.value == "Server Death" then
 						for i = 1,10,1 do
 							local mag = LocalPlayer.Character.Gun.Mag
 							game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag)
-							for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
-								if v.Name == "MagDrop" then
-									v:Destroy()
-								end
-							end
+						end
+					end
+
+					for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
+						if v.Name == "MagDrop" then
+							v:Destroy()
 						end
 					end
 				end
@@ -4702,12 +4661,6 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 
 					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
                         return args[1]
-
-						--if IsAlive(LocalPlayer) and IsAlive(args[2]) then
-                    	--	return args[1]
-						--elseif not IsAlive(LocalPlayer) and IsAlive(args[2]) then
-						--	return args[1]
-						--end
 					end
                     
 					if library.pointers.TrollTabPlayerRAM.value == true then
@@ -4955,6 +4908,5 @@ Hint:Destroy()
 	-Auto kill enemy when visible [Done]
 	-Complete new code for chat messages showing up (if not working as expected now)
 	-Start code for chat drop downs when messages are supposed to show (if possible)
-	-Add challenge modes (remove all heads, set health to 1 hp, limited ammo, etc)
 	-Auto buy weapons (if possible)
 ]]--

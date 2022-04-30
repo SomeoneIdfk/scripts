@@ -3867,6 +3867,49 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 		TrollTabPlayerRHLoop:Disconnect()
 	end
 end)
+
+local HexFolSECooldown = Instance.new("NumberValue", HexagonFolder)
+HexFolSECooldown.Name = "SlowEveryoneCooldown"
+HexFolSECooldown.Value = 0
+
+TrollTabPlayer:AddToggle("Slow Everyone", false, "TrollTabPlayerSE", function(val)
+	if val == true then
+		TrollTabPlayerSELoop = game:GetService("RunService").RenderStepped:Connect(function()
+			pcall(function()
+				if HexFolSECooldown.Value == 0 then
+					HexFolSECooldown.Value = library.pointers.TrollTabPlayerSECooldown.value
+					if IsAlive(LocalPlayer) then
+						for i,v in pairs(game.Players:GetPlayers()) do
+							if v ~= LocalPlayer and IsAlive(v) then
+								local Arguments = {
+									[1] = v.Character.Head,
+									[2] = v.Character.Head.Position,									
+									[3] = "USP",
+									[4] = 0,
+									[5] = game.ReplicatedStorage.Weapons["USP"].Model,
+									[8] = 0, 
+									[9] = false,
+									[10] = false,
+									[11] = Vector3.new(100000,0,100000),
+									[12] = 0,
+									[13] = Vector3.new(100000,0,100000)
+									}
+
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+							end
+						end
+					end
+				else
+					HexFolSECooldown.Value = HexFolSECooldown.Value - 1
+				end
+			end)
+		end)
+	elseif val == false and TrollTabPlayerSELoop then
+		TrollTabPlayerSELoop:Disconnect()
+	end
+end)
+TrollTabPlayer:AddSlider("Slow Everyone Delay", {0, 1000, 60, 5, ""}, "TrollTabPlayerSEDelay")
+
 TrollTabPlayer:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Both", "TrollTabPlayerRWT")
 TrollTabPlayer:AddToggle("Random Weapon Kill", false, "TrollTabPlayerRGK")
 TrollTabPlayer:AddToggle("Chat Alive", false, "TrollTabPlayerCA")

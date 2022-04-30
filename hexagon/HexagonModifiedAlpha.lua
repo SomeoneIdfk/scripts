@@ -2189,12 +2189,12 @@ ExperimentalTabCategoryTeleport:AddDropdown("Follow Options", {"Random", "Glue",
 
 ExperimentalTabCategoryTeleport:AddSlider("Teleport Offset", {0, 500, 5, 5, ""}, "ExperimentalTabCategoryTeleportOffset")
 
-function teleportToPlayer(plr)
-	if library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Random" then
+function teleportToPlayer(plr, offset)
+	if offset == "Random" then
 		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value), 0, (math.random(0, (library.pointers.ExperimentalTabCategoryTeleportOffset.value * 2)) - library.pointers.ExperimentalTabCategoryTeleportOffset.value))
-	elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Glue" then
+	elseif offset == "Glue" then
 		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, library.pointers.ExperimentalTabCategoryTeleportOffset.value, 0)
-	elseif library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value == "Behind" then
+	elseif offset == "Behind" then
 		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, 3, library.pointers.ExperimentalTabCategoryTeleportOffset.value)
 	end
 end
@@ -2275,7 +2275,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2313,7 +2313,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2347,7 +2347,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2363,7 +2363,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2379,7 +2379,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2409,7 +2409,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2425,7 +2425,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2441,7 +2441,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
 									for i,v in pairs(game.Players:GetChildren()) do
 										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v)
+											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 											wait()
 										end
 									end
@@ -2558,7 +2558,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 					if pausetps == false then
 						if IsAlive(LocalPlayer) and IsAlive(followplayer) and GetTeam(followplayer) ~= "TTT" then
 							teleported2 = false
-							teleportToPlayer(followplayer)
+							teleportToPlayer(followplayer, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
 							wait()
 						elseif IsAlive(LocalPlayer) then
 							if teleported2 == false then

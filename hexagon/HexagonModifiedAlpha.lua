@@ -3170,9 +3170,9 @@ for i,v in pairs(weapon_skins["guns"]) do
 	CurrentGunSkinsTable[i] = "Stock"
 end
 
-local SkinsTabOof = SkinsTab:AddCategory("Oof", 1)
+local SkinsTabMain = SkinsTab:AddCategory("Oof", 1)
 
-SkinsTabOof:AddDropdown("Weapon", {"-"}, "-", "SkinsTabOofWeapon", function(val)
+SkinsTabMain:AddDropdown("Weapon", {"-"}, "-", "SkinsTabMainWeapon", function(val)
 	if val ~= "-" then
 		spawn(function()
 			if HexFolSkinsStart.Value == false then
@@ -3180,8 +3180,8 @@ SkinsTabOof:AddDropdown("Weapon", {"-"}, "-", "SkinsTabOofWeapon", function(val)
 				wait(1)
 			end
 			
-			library.pointers.SkinsTabOofSkin.options = weapon_skins["guns"][val]["list"]
-			library.pointers.SkinsTabOofSkin:Set(CurrentGunSkinsTable[val])
+			library.pointers.SkinsTabMainSkin.options = weapon_skins["guns"][val]["list"]
+			library.pointers.SkinsTabMainSkin:Set(CurrentGunSkinsTable[val])
 		end)
 	else
 		if HexFolSkinsStart.Value == false then
@@ -3194,10 +3194,10 @@ local temp = {}
 table.foreach(weapon_skins["guns"], function(i,v)
 	table.insert(temp, i)
 end)
-library.pointers.SkinsTabOofWeapon.options = temp
+library.pointers.SkinsTabMainWeapon.options = temp
 
-SkinsTabOof:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabOofSkin", function(val)
-	CurrentGunSkinsTable[library.pointers.SkinsTabOofWeapon.value] = val
+SkinsTabMain:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabMainSkin", function(val)
+	CurrentGunSkinsTable[library.pointers.SkinsTabMainWeapon.value] = val
 
 	table.foreach(CurrentGunSkinsTable, function(i,v)
 		if i ~= "-" then
@@ -3245,10 +3245,10 @@ SkinsTabSettings:AddDropdown("List", {"-"}, "-", "SkinsTabSettingsList", functio
 		end
 	end)
 
-	if library.pointers.SkinsTabOofWeapon.value ~= "-" then
-		library.pointers.SkinsTabOofSkin:Set(CurrentGunSkinsTable[library.pointers.SkinsTabOofWeapon.value])
-	elseif library.pointers.SkinsTabOofWeapon.value == "-" then
-		library.pointers.SkinsTabOofSkin:Set("-")
+	if library.pointers.SkinsTabMainWeapon.value ~= "-" then
+		library.pointers.SkinsTabMainSkin:Set(CurrentGunSkinsTable[library.pointers.SkinsTabMainWeapon.value])
+	elseif library.pointers.SkinsTabMainWeapon.value == "-" then
+		library.pointers.SkinsTabMainSkin:Set("-")
 	end
 end)
 SkinsTabSettings:AddButton("Create", function()

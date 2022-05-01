@@ -4407,7 +4407,17 @@ Hint.Text = "Hexagon | Setting up hooks..."
 
 hookfunc(getrenv().xpcall, function() end)
 
---print(library, LocalPlayer, IsAlive, SilentRagebot, SilentLegitbot, isBhopping, JumpBug, cbClient)
+local function warmupCheck()
+	if game.PlaceId == 301549746 or game.PlaceId == 1480424328 then
+		if workspace.Status.TWins.Value == 0 and workspace.Status.CTWins.Value == 0 and workspace.Status.Rounds.Value ~= 1 then
+			return true
+		end
+	elseif game.PlaceId == 1869597719 then
+		return true
+	end
+
+	return false
+end
 
 local ignoreMessageList = {
 	"Fall back!",
@@ -4695,21 +4705,23 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
                     	return args[1]
 					end
                 elseif args[2] ~= LocalPlayer then
-					if library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
+					if library.pointers.TrollTabPlayerAC.value == true and warmupCheck() == false then
 						if IsAlive(LocalPlayer) then
 							if not IsAlive(args[2]) then
-								ChatScript.moveOldMessages()
-                            	ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], AliveChatColor, Color3.new(1,1,1), 0.01, nil)
+								spawn(function()
+									ChatScript.moveOldMessages()
+									ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], AliveChatColor, Color3.new(1,1,1), 0.01, nil)
+								end)
 							end
 						end
-					end
-
-					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
-                        return args[1]
 					end
                     
 					if library.pointers.TrollTabPlayerRAM.value == true then
 						sayMessage(args[1], args[2])
+					end
+
+					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
+                        return args[1]
 					end
                 end
 			end
@@ -4783,24 +4795,18 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 	elseif teamcolor == AliveChatColor and msgcolor == Color3.new(1,1,1) then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	else
-		for i,v in pairs(game.Players:GetPlayers()) do
-			if v.Name == plr then
-				plr = v
-			end
-		end
-
-		if IsAlive(LocalPlayer) and IsAlive(plr) and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
-			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
-		elseif IsAlive(LocalPlayer) == false and IsAlive(plr) == false and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
-			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
-		elseif IsAlive(LocalPlayer) == false and IsAlive(plr) == true and game.Workspace.Status.RoundOver.Value == false and game.Workspace.Status.Rounds.Value ~= 0 then
-			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
-		elseif game.Workspace.Status.RoundOver.Value == true and game.Workspace.Status.Rounds.Value ~= 0 then
-			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
-		elseif game.Workspace.Status.Rounds.Value == 0 then
-			return createNewMessage(plr.Name, msg, teamcolor, msgcolor, offset, line)
+		if IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == true and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif game.Workspace.Status.RoundOver.Value == true and warmupCheck() == false then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif warmupCheck() then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 		else
-			return createNewMessage("<Cheater> "..plr.Name, msg, CheaterColor, msgcolor, offset, line)
+			return createNewMessage("<Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
 		end
 	end
 end
@@ -4954,4 +4960,5 @@ Hint:Destroy()
 	-Complete new code for chat messages showing up (if not working as expected now)
 	-Start code for chat drop downs when messages are supposed to show (if possible)
 	-Auto buy weapons (if possible)
+	-Make code more efficient (wherever possible)
 ]]--

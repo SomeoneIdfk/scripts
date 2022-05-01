@@ -4705,7 +4705,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
                     	return args[1]
 					end
                 elseif args[2] ~= LocalPlayer then
-					if library.pointers.TrollTabPlayerAC.value == true and warmupCheck() == false then
+					if library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 						if IsAlive(LocalPlayer) then
 							if not IsAlive(args[2]) then
 								spawn(function()
@@ -4794,7 +4794,7 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif teamcolor == AliveChatColor and msgcolor == Color3.new(1,1,1) then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	else
+	elseif game.Players:FindFirstChild(plr) then
 		if IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then

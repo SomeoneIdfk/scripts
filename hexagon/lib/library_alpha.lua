@@ -371,7 +371,7 @@ function library:SaveConfiguration()
 	end
 	
     for i,v in pairs(library.pointers) do
-		if not table.find({"SettingsTabCategoryPlayersUsername", "SettingsTabCategoryConfigsConfig", "SettingsTabCategoryConfigsName"}, i) then
+		if not table.find({"SettingsTabCategoryPlayersUsername", "SettingsTabCategoryConfigsName"}, i) then
 			tbl[i] = v.value
 		end
 	end

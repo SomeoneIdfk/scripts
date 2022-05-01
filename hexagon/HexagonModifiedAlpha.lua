@@ -71,6 +71,89 @@ for i,v in pairs(game.ReplicatedStorage.Viewmodels:GetChildren()) do
     end
 end
 
+local function SaveTable(queuetable)
+	local tbl = {}
+	
+	local SpecialCharacters = {
+		['\a'] = '\\a',
+		['\b'] = '\\b',
+		['\f'] = '\\f',
+		['\n'] = '\\n',
+		['\r'] = '\\r',
+		['\t'] = '\\t',
+		['\v'] = '\\v',
+		['\0'] = '\\0'
+	}
+	
+	local function SerializeType(Value, Class, Comma)
+		local NewValue = ''
+	
+		if Class == 'string' then
+			NewValue = ('"%s"'):format(Value:gsub('[%c%z]', SpecialCharacters))
+		elseif Class == 'Instance' then
+			NewValue = Value:GetFullName()
+		elseif Class == 'EnumItem' then
+			NewValue = tostring(Value)
+		elseif type(Value) ~= Class then -- CFrame, Vector3, UDim2, ...
+			NewValue = Class .. '.new(' .. tostring(Value) .. ')'
+		elseif Class == 'userdata' then
+			NewValue = ('[Userdata, Metatable Field: %s]'):format(tostring(not not getmetatable(Value)))
+		else -- thread, number, boolean, nil, ...
+			NewValue = tostring(Value)
+		end
+	
+		if Comma == true then
+			NewValue = NewValue..","
+		end
+
+		return NewValue
+	end
+	
+	local function TableToString(Table, IgnoredTables, Depth)
+		IgnoredTables = IgnoredTables or {}
+	
+		--if IgnoredTables[Table] then
+			--return IgnoredTables[Table] == Depth - 1 and '[Parent table]' or '[Cyclic Table]'
+		--end
+	
+		Depth = Depth or 0
+		Depth = Depth + 1
+		IgnoredTables[Table] = Depth
+	
+		local Tab = ('    '):rep(Depth)
+		local TrailingTab = ('    '):rep(Depth - 1)
+		local Result = '{'
+		local LineTab = '\n' .. Tab
+	
+		for Key, Value in pairs(Table) do
+			local KeyClass, ValueClass = typeof(Key), typeof(Value)
+			
+			if KeyClass == 'string' then
+				Key = Key:gsub('[%c%z]', SpecialCharacters)
+				
+				if Key:match'%s' then
+					Key = ('["%s"]'):format(Key)
+				end
+				
+				Key = '["'..Key..'"]'
+			else
+				Key = '[' .. (KeyClass == 'table' and TableToString(Key, IgnoredTables, Depth):gsub('^[\n\r%s]*(.-)[\n\r%s]*$', '%1') or SerializeType(Key, KeyClass, false)) .. ']'
+			end
+	
+			Value = ValueClass == 'table' and TableToString(Value, IgnoredTables, Depth) or SerializeType(Value, ValueClass, true)
+			Result = Result .. LineTab .. Key .. ' = ' .. Value
+		end
+	
+		return Result .. '\n'  .. TrailingTab .. '}' .. ","
+	end
+	
+    for i,v in pairs(queuetable) do
+		tbl[i] = v
+	end
+	
+    return TableToString(tbl):sub(0, -2)
+end
+
 game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"].Silencer.Transparency = 1
 local fix = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"].Silencer:Clone()
 fix.Parent = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"]
@@ -3072,127 +3155,144 @@ end)
 
 local SkinsTab = Window:CreateTab("Skins")
 
-local SkinsTabRifles = SkinsTab:AddCategory("Rifles", 1)
+writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins_alpha.cfg"))
 
-SkinsTabRifles:AddToggle("Enable", false, "SkinsTabRiflesEnabled", function(val)
-	if val == true then
-		SkinsTabRiflesLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value ~= library.pointers.SkinsTabRiflesGalil.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = library.pointers.SkinsTabRiflesGalil.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value ~= library.pointers.SkinsTabRiflesAK47.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = library.pointers.SkinsTabRiflesAK47.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value ~= library.pointers.SkinsTabRiflesScout.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = library.pointers.SkinsTabRiflesScout.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value ~= library.pointers.SkinsTabRiflesSG.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = library.pointers.SkinsTabRiflesSG.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value ~= library.pointers.SkinsTabRiflesAWP.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = library.pointers.SkinsTabRiflesAWP.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value ~= library.pointers.SkinsTabRiflesG3SG1.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = library.pointers.SkinsTabRiflesG3SG1.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value ~= library.pointers.SkinsTabRiflesM4A4.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = library.pointers.SkinsTabRiflesM4A4.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value ~= library.pointers.SkinsTabRiflesAUG.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = library.pointers.SkinsTabRiflesAUG.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value ~= library.pointers.SkinsTabRiflesFamas.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = library.pointers.SkinsTabRiflesFamas.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value ~= library.pointers.SkinsTabRiflesM4A1.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = library.pointers.SkinsTabRiflesM4A1.value
-				end
+local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
+
+CurrentGunSkinsTable = {}
+CurrentGunSkinsTable["-"] = "-"
+
+local HexFolSkinsStart = Instance.new("BoolValue", HexagonFolder)
+HexFolSkinsStart.Name = "SkinStart"
+HexFolSkinsStart.Value = false
+
+for i,v in pairs(weapon_skins["guns"]) do
+	CurrentGunSkinsTable[i] = "Stock"
+end
+
+local SkinsTabOof = SkinsTab:AddCategory("Oof", 1)
+
+SkinsTabOof:AddDropdown("Weapon", {"-"}, "-", "SkinsTabOofWeapon", function(val)
+	if val ~= "-" then
+		spawn(function()
+			if HexFolSkinsStart.Value == false then
+				HexFolSkinsStart.Value = true
 				wait(1)
-			end)
+			end
+			
+			library.pointers.SkinsTabOofSkin.options = weapon_skins["guns"][val]["list"]
+			library.pointers.SkinsTabOofSkin:Set(CurrentGunSkinsTable[val])
 		end)
-	elseif val == false and SkinsTabRiflesLoop then
-		SkinsTabRiflesLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Galil.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AK47.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Scout.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Scout.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SG.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.AWP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AWP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.G3SG1.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.G3SG1.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A4.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.AUG.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Famas.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M4A1.Value = "Stock"
+	else
+		if HexFolSkinsStart.Value == false then
+			HexFolSkinsStart.Value = true
+		end
 	end
 end)
-SkinsTabRifles:AddDropdown("Galil", {"Stock"}, "Stock", "SkinsTabRiflesGalil")
-SkinsTabRifles:AddDropdown("Ak-47", {"Stock"}, "Stock", "SkinsTabRiflesAK47")
-SkinsTabRifles:AddDropdown("Scout", {"Stock"}, "Stock", "SkinsTabRiflesScout")
-SkinsTabRifles:AddDropdown("SG 553", {"Stock"}, "Stock", "SkinsTabRiflesSG")
-SkinsTabRifles:AddDropdown("AWP", {"Stock"}, "Stock", "SkinsTabRiflesAWP")
-SkinsTabRifles:AddDropdown("G3SG1", {"Stock"}, "Stock", "SkinsTabRiflesG3SG1")
-SkinsTabRifles:AddDropdown("M4A4", {"Stock"}, "Stock", "SkinsTabRiflesM4A4")
-SkinsTabRifles:AddDropdown("AUG", {"Stock"}, "Stock", "SkinsTabRiflesAUG")
-SkinsTabRifles:AddDropdown("Famas F1", {"Stock"}, "Stock", "SkinsTabRiflesFamas")
-SkinsTabRifles:AddDropdown("M4A1", {"Stock"}, "Stock", "SkinsTabRiflesM4A1")
 
-local SkinsTabHeavy = SkinsTab:AddCategory("Heavy", 1)
+local temp = {}
+table.foreach(weapon_skins["guns"], function(i,v)
+	table.insert(temp, i)
+end)
+library.pointers.SkinsTabOofWeapon.options = temp
 
-SkinsTabHeavy:AddToggle("Enable", false, "SkinsTabHeavyEnabled", function(val)
-	if val == true then
-		SkinsTabHeavyLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value ~= library.pointers.SkinsTabHeavyNova.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = library.pointers.SkinsTabHeavyNova.value
+SkinsTabOof:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabOofSkin", function(val)
+	CurrentGunSkinsTable[library.pointers.SkinsTabOofWeapon.value] = val
+
+	table.foreach(CurrentGunSkinsTable, function(i,v)
+		if i ~= "-" then
+			table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
+				if v2 == "T" then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
+				elseif v2 == "CT" then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
 				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value ~= library.pointers.SkinsTabHeavyXM.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = library.pointers.SkinsTabHeavyXM.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value ~= library.pointers.SkinsTabHeavyMAG7.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = library.pointers.SkinsTabHeavyMAG7.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value ~= library.pointers.SkinsTabHeavySawedOff.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = library.pointers.SkinsTabHeavySawedOff.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value ~= library.pointers.SkinsTabHeavyM249.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = library.pointers.SkinsTabHeavyM249.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value ~= library.pointers.SkinsTabHeavyNegev.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = library.pointers.SkinsTabHeavyNegev.value
-				end
-				wait(1)
 			end)
-		end)
-	elseif val == false and SkinsTabHeavyLoop then
-		SkinsTabHeavyLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Nova.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Nova.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.XM.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.XM.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MAG7.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.SawedOff.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.M249.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.M249.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Negev.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Negev.Value = "Stock"
+		end
+	end)
+end)
+
+if isfile("hexagon/savedskins.cfg") then
+	AllGunSkinsTable = loadstring("return "..readfile("hexagon/savedskins.cfg"))()
+else
+	AllGunSkinsTable = {}
+
+	local temp = {}
+	temp["-"] = "-"
+
+	for i,v in pairs(weapon_skins["guns"]) do
+		temp[i] = "Stock"
+	end
+
+	AllGunSkinsTable["-"] = temp
+end
+
+local SkinsTabSettings = SkinsTab:AddCategory("Settings", 1)
+
+SkinsTabSettings:AddTextBox("List Name", "", "SkinsTabSettingsListName")
+SkinsTabSettings:AddDropdown("List", {"-"}, "-", "SkinsTabSettingsList", function(val)
+	CurrentGunSkinsTable = AllGunSkinsTable[val]
+
+	table.foreach(CurrentGunSkinsTable, function(i,v)
+		if i ~= "-" then
+			table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
+				if v2 == "T" then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
+				elseif v2 == "CT" then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
+				end
+			end)
+		end
+	end)
+
+	if library.pointers.SkinsTabOofWeapon.value ~= "-" then
+		library.pointers.SkinsTabOofSkin:Set(CurrentGunSkinsTable[library.pointers.SkinsTabOofWeapon.value])
+	elseif library.pointers.SkinsTabOofWeapon.value == "-" then
+		library.pointers.SkinsTabOofSkin:Set("-")
 	end
 end)
-SkinsTabHeavy:AddDropdown("Nova", {"Stock"}, "Stock", "SkinsTabHeavyNova")
-SkinsTabHeavy:AddDropdown("XM1014", {"Stock"}, "Stock", "SkinsTabHeavyXM")
-SkinsTabHeavy:AddDropdown("MAG-7", {"Stock"}, "Stock", "SkinsTabHeavyMAG7")
-SkinsTabHeavy:AddDropdown("Sawed Off", {"Stock"}, "Stock", "SkinsTabHeavySawedOff")
-SkinsTabHeavy:AddDropdown("M249", {"Stock"}, "Stock", "SkinsTabHeavyM249")
-SkinsTabHeavy:AddDropdown("MG42", {"Stock"}, "Stock", "SkinsTabHeavyNegev")
+SkinsTabSettings:AddButton("Create", function()
+	AllGunSkinsTable[library.pointers.SkinsTabSettingsListName.value] = CurrentGunSkinsTable
+
+	local temp = {}
+	temp["-"] = "-"
+
+	for i,v in pairs(weapon_skins["guns"]) do
+		temp[i] = "Stock"
+	end
+
+	AllGunSkinsTable["-"] = temp
+
+	writefile("hexagon/savedskins.cfg", SaveTable(AllGunSkinsTable))
+
+	local temp = {}
+	table.foreach(loadstring("return "..readfile("hexagon/savedskins.cfg"))(), function(i,v)
+		table.insert(temp, i)
+	end)
+
+	library.pointers.SkinsTabSettingsList.options = temp
+end)
+SkinsTabSettings:AddButton("Save", function()
+	AllGunSkinsTable[library.pointers.SkinsTabSettingsList.value] = CurrentGunSkinsTable
+
+	local temp = {}
+	temp["-"] = "-"
+
+	for i,v in pairs(weapon_skins["guns"]) do
+		temp[i] = "Stock"
+	end
+
+	AllGunSkinsTable["-"] = temp
+
+	writefile("hexagon/savedskins.cfg", SaveTable(AllGunSkinsTable))
+
+	local temp = {}
+	table.foreach(loadstring("return "..readfile("hexagon/savedskins.cfg"))(), function(i,v)
+		table.insert(temp, i)
+	end)
+
+	library.pointers.SkinsTabSettingsList.options = temp
+end)
 
 local SkinsTabKnife = SkinsTab:AddCategory("Knife", 1)
 
@@ -3328,132 +3428,6 @@ SkinsTabCategoryCredits:AddLabel("")
 SkinsTabCategoryCredits:AddLabel("Special thanks to these beta testers!")
 SkinsTabCategoryCredits:AddLabel("hxg.addictt#8871")
 SkinsTabCategoryCredits:AddLabel("Sex Offender#2997")
-
-local SkinsTabSMGs = SkinsTab:AddCategory("SMGs", 2)
-
-SkinsTabSMGs:AddToggle("Enable", false, "SkinsTabSMGsEnabled", function(val)
-	if val == true then
-		SkinsTabSMGsLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value ~= library.pointers.SkinsTabSMGsMP9.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = library.pointers.SkinsTabSMGsMP9.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value ~= library.pointers.SkinsTabSMGsMAC10.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = library.pointers.SkinsTabSMGsMAC10.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value ~= library.pointers.SkinsTabSMGsMP7.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value ~= library.pointers.SkinstabSMGsMP7.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = library.pointers.SkinsTabSMGsMP7.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value ~= library.pointers.SkinsTabSMGsUMP.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = library.pointers.SkinsTabSMGsUMP.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value ~= library.pointers.SkinsTabSMGsP90.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = library.pointers.SkinsTabSMGsP90.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value ~= library.pointers.SkinsTabSMGsBizon.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = library.pointers.SkinsTabSMGsBizon.value
-				end
-				wait(1)
-			end)
-		end)
-	elseif val == false and SkinsTabSMGsLoop then
-		SkinsTabSMGsLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP9.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MAC10.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.MP7.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.MP7.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.UMP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.UMP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P90.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P90.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Bizon.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.Bizon.Value = "Stock"
-	end
-end)
-SkinsTabSMGs:AddDropdown("MP9", {"Stock"}, "Stock", "SkinsTabSMGsMP9")
-SkinsTabSMGs:AddDropdown("MAC-10", {"Stock"}, "Stock", "SkinsTabSMGsMAC10")
-SkinsTabSMGs:AddDropdown("MP5", {"Stock"}, "Stock", "SkinsTabSMGsMP7")
-SkinsTabSMGs:AddDropdown("UMP-45", {"Stock"}, "Stock", "SkinsTabSMGsUMP")
-SkinsTabSMGs:AddDropdown("P90", {"Stock"}, "Stock", "SkinsTabSMGsP90")
-SkinsTabSMGs:AddDropdown("Thompson", {"Stock"}, "Stock", "SkinsTabSMGsBizon")
-
-local SkinsTabPistols = SkinsTab:AddCategory("Pistols", 2)
-
-SkinsTabPistols:AddToggle("Enable", false, "SkinsTabPistolsEnabled", function(val)
-	if val == true then
-		SkinsTabPistolsLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value ~= library.pointers.SkinsTabPistolsGlock.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = library.pointers.SkinsTabPistolsGlock.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value ~= library.pointers.SkinsTabPistolsDualBerettas.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = library.pointers.SkinsTabPistolsDualBerettas.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value ~= library.pointers.SkinsTabPistolsP250 then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = library.pointers.SkinsTabPistolsP250.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value ~= library.pointers.SkinsTabPistolsTec9.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = library.pointers.SkinsTabPistolsTec9.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value ~= library.pointers.SkinsTabPistolsDesertEagle.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = library.pointers.SkinsTabPistolsDesertEagle.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value ~= library.pointers.SkinsTabPistolsP2000.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = library.pointers.SkinsTabPistolsP2000.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value ~= library.pointers.SkinsTabPistolsFiveSeven.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = library.pointers.SkinsTabPistolsFiveSeven.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value ~= library.pointers.SkinsTabPistolsUSP.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = library.pointers.SkinsTabPistolsUSP.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value ~= library.pointers.SkinsTabPistolsCZ.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = library.pointers.SkinsTabPistolsCZ.value
-				end
-				if game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value or game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value ~= library.pointers.SkinsTabPistolsR8.value then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = library.pointers.SkinsTabPistolsR8.value
-				end
-				wait(1)
-			end)
-		end)
-	elseif val == false and SkinsTabPistolsLoop then
-		SkinsTabPistolsLoop:Disconnect()
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Glock.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DualBerettas.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DualBerettas.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.P250.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P250.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.Tec9.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.DesertEagle.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.DesertEagle.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.P2000.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.FiveSeven.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.USP.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.CZ.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.CZ.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.TFolder.R8.Value = "Stock"
-		game:GetService('Players').LocalPlayer.SkinFolder.CTFolder.R8.Value = "Stock"
-	end
-end)
-SkinsTabPistols:AddDropdown("Glock-18", {"Stock"}, "Stock", "SkinsTabPistolsGlock")
-SkinsTabPistols:AddDropdown("Dual Berettas", {"Stock"}, "Stock", "SkinsTabPistolsDualBerettas")
-SkinsTabPistols:AddDropdown("P250", {"Stock"}, "Stock", "SkinsTabPistolsP250")
-SkinsTabPistols:AddDropdown("TEC-9", {"Stock"}, "Stock", "SkinsTabPistolsTec9")
-SkinsTabPistols:AddDropdown("Deagle", {"Stock"}, "Stock", "SkinsTabPistolsDesertEagle")
-SkinsTabPistols:AddDropdown("PX4", {"Stock"}, "Stock", "SkinsTabPistolsP2000")
-SkinsTabPistols:AddDropdown("Five-seveN", {"Stock"}, "Stock", "SkinsTabPistolsFiveSeven")
-SkinsTabPistols:AddDropdown("USP-S", {"Stock"}, "Stock", "SkinsTabPistolsUSP")
-SkinsTabPistols:AddDropdown("CZ75-Auto", {"Stock"}, "Stock", "SkinsTabPistolsCZ")
-SkinsTabPistols:AddDropdown("44 Magnum", {"Stock"}, "Stock", "SkinsTabPistolsR8")
 
 local SkinsTabGlove = SkinsTab:AddCategory("Gloves", 2)
 
@@ -4837,12 +4811,8 @@ for i,v in pairs({"CT", "T"}) do
 	end)
 end
 
-writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins.cfg"))
-
-local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
-
 table.foreach(weapon_skins, function(i,v)
-	if i == "guns" then
+	if i == "-" then
 		table.foreach(v, function(i2,v2)
 			local temp = {"Stock"}
 			table.foreach(v2, function(i3,v3)
@@ -4934,6 +4904,16 @@ table.foreach(weapon_skins, function(i,v)
 	end
 end)
 
+if isfile("hexagon/savedskins.cfg") then
+	AllGunSkinsTable = loadstring("return "..readfile("hexagon/savedskins.cfg"))()
+	local temp = {}
+	table.foreach(AllGunSkinsTable, function(i,v)
+		table.insert(temp, i)
+	end)
+
+	library.pointers.SkinsTabSettingsList.options = temp
+end
+
 if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfile("hexagon/autoload.txt")) then
 	local a,b = pcall(function()
 		cfg = loadstring("return "..readfile("hexagon/configs/"..readfile("hexagon/autoload.txt")))()
@@ -4961,4 +4941,5 @@ Hint:Destroy()
 	-Start code for chat drop downs when messages are supposed to show (if possible)
 	-Auto buy weapons (if possible)
 	-Make code more efficient (wherever possible)
+	-Save/load skins differently (preferable from a table) [Started/Working]
 ]]--

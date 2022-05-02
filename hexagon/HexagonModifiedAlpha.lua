@@ -4900,19 +4900,22 @@ if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfil
 	elseif a == true then
 		library:LoadConfiguration(cfg)
 
-		CurrentGunSkinsTable = AllGunSkinsTable[string.sub(readfile("hexagon/autoload.txt"), 1, -5)]
 
-		table.foreach(CurrentGunSkinsTable, function(i,v)
-			if i ~= "-" then
-				table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
-					if v2 == "T" then
-						game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
-					elseif v2 == "CT" then
-						game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
-					end
-				end)
-			end
-		end)
+		if AllGunSkinsTable[string.sub(readfile("hexagon/autoload.txt"), 1, -5)] then
+			CurrentGunSkinsTable = AllGunSkinsTable[string.sub(readfile("hexagon/autoload.txt"), 1, -5)]
+
+			table.foreach(CurrentGunSkinsTable, function(i,v)
+				if i ~= "-" then
+					table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
+						if v2 == "T" then
+							game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
+						elseif v2 == "CT" then
+							game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
+						end
+					end)
+				end
+			end)
+		end
 	end
 end
 

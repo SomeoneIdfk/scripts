@@ -32,9 +32,18 @@ if not isfolder("hexagon") then
 	makefolder("hexagon")
 end
 
+writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins_alpha.cfg"))
+
+local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
+
 if not isfolder("hexagon/configs") then
 	print("creating hexagon configs folder")
 	makefolder("hexagon/configs")
+end
+
+if not isfolder("hexagon/skinconfigs") then
+	print("creating hexagon skinconfigs folder")
+	makefolder("hexagon/skinconfigs")
 end
 
 if not isfile("hexagon/autoload.txt") then
@@ -60,6 +69,21 @@ end
 if not isfile("hexagon/skyboxes.txt") then
 	print("downloading hexagon skyboxes file")
 	writefile("hexagon/skyboxes.txt", game:HttpGet("https://raw.githubusercontent.com/Pawel12d/hexagon/main/scripts/default_data/skyboxes.txt"))
+end
+
+if isfile("hexagon/savedskins.cfg") then
+	AllGunSkinsTable = loadstring("return "..readfile("hexagon/savedskins.cfg"))()
+else
+	AllGunSkinsTable = {}
+
+	local temp = {}
+	temp["-"] = "-"
+
+	for i,v in pairs(weapon_skins["guns"]) do
+		temp[i] = "Stock"
+	end
+
+	AllGunSkinsTable["-"] = temp
 end
 
 Hint.Text = "Hexagon | Loading..."
@@ -1624,16 +1648,59 @@ SettingsTabCategoryPlayers:AddLabel("Team: ", "SettingsTabCategoryPlayersTeam")
 
 local SettingsTabCategoryConfigs = SettingsTab:AddCategory("Configs", 2)
 
+CurrentGunSkinsTable = {}
+CurrentGunSkinsTable["-"] = "-"
+
+for i,v in pairs(weapon_skins["guns"]) do
+	CurrentGunSkinsTable[i] = "Stock"
+end
+
 SettingsTabCategoryConfigs:AddTextBox("Name", "", "SettingsTabCategoryConfigsName")
 
 SettingsTabCategoryConfigs:AddDropdown("Config", {"-"}, "-", "SettingsTabCategoryConfigsConfig")
 
 SettingsTabCategoryConfigs:AddButton("Create", function()
     writefile("hexagon/configs/"..library.pointers.SettingsTabCategoryConfigsName.value..".cfg", library:SaveConfiguration())
+	
+	AllGunSkinsTable[library.pointers.SettingsTabCategoryConfigsName.value] = CurrentGunSkinsTable
+
+	local temp = {}
+	temp["-"] = "-"
+
+	for i,v in pairs(weapon_skins["guns"]) do
+		temp[i] = "Stock"
+	end
+
+	AllGunSkinsTable["-"] = temp
+
+	writefile("hexagon/savedskins.cfg", SaveTable(AllGunSkinsTable))
+
+	local temp = {}
+	table.foreach(loadstring("return "..readfile("hexagon/savedskins.cfg"))(), function(i,v)
+		table.insert(temp, i)
+	end)
 end)
 
 SettingsTabCategoryConfigs:AddButton("Save", function()
     writefile("hexagon/configs/"..library.pointers.SettingsTabCategoryConfigsConfig.value..".cfg", library:SaveConfiguration())
+
+	AllGunSkinsTable[library.pointers.SettingsTabCategoryConfigsConfig.value] = CurrentGunSkinsTable
+
+	local temp = {}
+	temp["-"] = "-"
+
+	for i,v in pairs(weapon_skins["guns"]) do
+		temp[i] = "Stock"
+	end
+
+	AllGunSkinsTable["-"] = temp
+
+	writefile("hexagon/savedskins.cfg", SaveTable(AllGunSkinsTable))
+
+	local temp = {}
+	table.foreach(loadstring("return "..readfile("hexagon/savedskins.cfg"))(), function(i,v)
+		table.insert(temp, i)
+	end)
 end)
 
 SettingsTabCategoryConfigs:AddButton("Load", function()
@@ -1646,6 +1713,20 @@ SettingsTabCategoryConfigs:AddButton("Load", function()
 	elseif a == true then
 		library:LoadConfiguration(cfg)
 	end
+
+	CurrentGunSkinsTable = AllGunSkinsTable[library.pointers.SettingsTabCategoryConfigsConfig.value]
+
+	table.foreach(CurrentGunSkinsTable, function(i,v)
+		if i ~= "-" then
+			table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
+				if v2 == "T" then
+					game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
+				elseif v2 == "CT" then
+					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
+				end
+			end)
+		end
+	end)
 end)
 
 SettingsTabCategoryConfigs:AddButton("Refresh", function()
@@ -1834,8 +1915,6 @@ ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"Experimental
 		TextureRemoverLoop:Disconnect()
 	end
 end)
-
-
 
 writefile("hexagon/killallguns.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/killallguns.cfg"))
 
@@ -3155,22 +3234,11 @@ end)
 
 local SkinsTab = Window:CreateTab("Skins")
 
-writefile("hexagon/weapon_skins.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/weapon_skins_alpha.cfg"))
-
-local weapon_skins = loadstring("return "..readfile("hexagon/weapon_skins.cfg"))()
-
-CurrentGunSkinsTable = {}
-CurrentGunSkinsTable["-"] = "-"
-
 local HexFolSkinsStart = Instance.new("BoolValue", HexagonFolder)
 HexFolSkinsStart.Name = "SkinStart"
 HexFolSkinsStart.Value = false
 
-for i,v in pairs(weapon_skins["guns"]) do
-	CurrentGunSkinsTable[i] = "Stock"
-end
-
-local SkinsTabMain = SkinsTab:AddCategory("Oof", 1)
+local SkinsTabMain = SkinsTab:AddCategory("Main", 1)
 
 SkinsTabMain:AddDropdown("Weapon", {"-"}, "-", "SkinsTabMainWeapon", function(val)
 	if val ~= "-" then
@@ -3196,7 +3264,7 @@ table.foreach(weapon_skins["guns"], function(i,v)
 end)
 library.pointers.SkinsTabMainWeapon.options = temp
 
-SkinsTabMain:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabMainSkin", function(val)
+SkinsTabMain:AddDropdown("Skin", {"-"}, "-", "SkinsTabMainSkin", function(val)
 	CurrentGunSkinsTable[library.pointers.SkinsTabMainWeapon.value] = val
 
 	table.foreach(CurrentGunSkinsTable, function(i,v)
@@ -3210,88 +3278,6 @@ SkinsTabMain:AddDropdown("Skin", {"Stock"}, "Stock", "SkinsTabMainSkin", functio
 			end)
 		end
 	end)
-end)
-
-if isfile("hexagon/savedskins.cfg") then
-	AllGunSkinsTable = loadstring("return "..readfile("hexagon/savedskins.cfg"))()
-else
-	AllGunSkinsTable = {}
-
-	local temp = {}
-	temp["-"] = "-"
-
-	for i,v in pairs(weapon_skins["guns"]) do
-		temp[i] = "Stock"
-	end
-
-	AllGunSkinsTable["-"] = temp
-end
-
-local SkinsTabSettings = SkinsTab:AddCategory("Settings", 1)
-
-SkinsTabSettings:AddTextBox("List Name", "", "SkinsTabSettingsListName")
-SkinsTabSettings:AddDropdown("List", {"-"}, "-", "SkinsTabSettingsList", function(val)
-	CurrentGunSkinsTable = AllGunSkinsTable[val]
-
-	table.foreach(CurrentGunSkinsTable, function(i,v)
-		if i ~= "-" then
-			table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
-				if v2 == "T" then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
-				elseif v2 == "CT" then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
-				end
-			end)
-		end
-	end)
-
-	if library.pointers.SkinsTabMainWeapon.value ~= "-" then
-		library.pointers.SkinsTabMainSkin:Set(CurrentGunSkinsTable[library.pointers.SkinsTabMainWeapon.value])
-	elseif library.pointers.SkinsTabMainWeapon.value == "-" then
-		library.pointers.SkinsTabMainSkin:Set("-")
-	end
-end)
-SkinsTabSettings:AddButton("Create", function()
-	AllGunSkinsTable[library.pointers.SkinsTabSettingsListName.value] = CurrentGunSkinsTable
-
-	local temp = {}
-	temp["-"] = "-"
-
-	for i,v in pairs(weapon_skins["guns"]) do
-		temp[i] = "Stock"
-	end
-
-	AllGunSkinsTable["-"] = temp
-
-	writefile("hexagon/savedskins.cfg", SaveTable(AllGunSkinsTable))
-
-	local temp = {}
-	table.foreach(loadstring("return "..readfile("hexagon/savedskins.cfg"))(), function(i,v)
-		table.insert(temp, i)
-	end)
-
-	library.pointers.SkinsTabSettingsList.options = temp
-end)
-SkinsTabSettings:AddButton("Save", function()
-	AllGunSkinsTable[library.pointers.SkinsTabSettingsList.value] = CurrentGunSkinsTable
-
-	local temp = {}
-	temp["-"] = "-"
-
-	for i,v in pairs(weapon_skins["guns"]) do
-		temp[i] = "Stock"
-	end
-
-	AllGunSkinsTable["-"] = temp
-
-	writefile("hexagon/savedskins.cfg", SaveTable(AllGunSkinsTable))
-
-	local temp = {}
-	table.foreach(loadstring("return "..readfile("hexagon/savedskins.cfg"))(), function(i,v)
-		table.insert(temp, i)
-	end)
-
-	library.pointers.SkinsTabSettingsList.options = temp
 end)
 
 local SkinsTabKnife = SkinsTab:AddCategory("Knife", 1)
@@ -4904,16 +4890,6 @@ table.foreach(weapon_skins, function(i,v)
 	end
 end)
 
-if isfile("hexagon/savedskins.cfg") then
-	AllGunSkinsTable = loadstring("return "..readfile("hexagon/savedskins.cfg"))()
-	local temp = {}
-	table.foreach(AllGunSkinsTable, function(i,v)
-		table.insert(temp, i)
-	end)
-
-	library.pointers.SkinsTabSettingsList.options = temp
-end
-
 if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfile("hexagon/autoload.txt")) then
 	local a,b = pcall(function()
 		cfg = loadstring("return "..readfile("hexagon/configs/"..readfile("hexagon/autoload.txt")))()
@@ -4923,6 +4899,20 @@ if readfile("hexagon/autoload.txt") ~= "" and isfile("hexagon/configs/"..readfil
 		warn("Config Loading Error", a, b)
 	elseif a == true then
 		library:LoadConfiguration(cfg)
+
+		CurrentGunSkinsTable = AllGunSkinsTable[string.sub(readfile("hexagon/autoload.txt"), 1, -5)]
+
+		table.foreach(CurrentGunSkinsTable, function(i,v)
+			if i ~= "-" then
+				table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
+					if v2 == "T" then
+						game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
+					elseif v2 == "CT" then
+						game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
+					end
+				end)
+			end
+		end)
 	end
 end
 

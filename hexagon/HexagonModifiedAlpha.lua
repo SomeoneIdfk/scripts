@@ -3252,13 +3252,19 @@ SkinsTabMain:AddDropdown("Weapon", {"-"}, "-", "SkinsTabMainWeapon", function(va
 			library.pointers.SkinsTabMainSkin:Set(CurrentGunSkinsTable[val])
 		end)
 	else
-		if HexFolSkinsStart.Value == false then
-			HexFolSkinsStart.Value = true
-		end
+		spawn(function()
+			if HexFolSkinsStart.Value == false then
+				HexFolSkinsStart.Value = true
+				wait(1)
+			end
+
+			library.pointers.SkinsTabMainSkin.options = {"-"}
+			library.pointers.SkinsTabMainSkin:Set("-")
+		end)
 	end
 end)
 
-local temp = {}
+local temp = {"-"}
 table.foreach(weapon_skins["guns"], function(i,v)
 	table.insert(temp, i)
 end)

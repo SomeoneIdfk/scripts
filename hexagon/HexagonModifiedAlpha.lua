@@ -245,8 +245,6 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Someo
 
 local Window = library:CreateWindow(Vector2.new(500, 500), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
 
-
-
 -- Functions
 local function RandomString(length, strings)
 	local strings = strings or {
@@ -5018,4 +5016,5 @@ Hint:Destroy()
 		-Auto buy weapons (if possible)
 		-Start code for chat drop downs when messages are supposed to show (if possible)
 		-Anti Chat Spam
+		-Sort all code/start from scratch
 ]]--

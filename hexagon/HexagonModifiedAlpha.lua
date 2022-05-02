@@ -86,6 +86,12 @@ else
 	AllGunSkinsTable["-"] = temp
 end
 
+if isfile("hexagon/cheatingskids.cfg") then
+	CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
+else
+	CheatingSkids = {}
+end
+
 Hint.Text = "Hexagon | Loading..."
 
 -- Viewmodels fix
@@ -2163,6 +2169,7 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 					local playerlistram = {"-"}
                     local playerlistgw = {"-"}
 					local playerlistss = {"-"}
+					local playerlistrp = {"-"}
 					player1f = false
 					player2f = false
 					player3f = false
@@ -2217,6 +2224,7 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 								playerlistkillall[v] = v
 							end
 							
+							playerlistrp[v] = v
 							playerlistram[v] = v
                             playerlistgw[v] = v
 							playerlistss[v] = v
@@ -2225,6 +2233,8 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 
 					if prev_players ~= playerlistfollow then
 						local prev_players = playerlistfollow
+
+						library.pointers.ReportPlayer.options = playerlistrp
 
 						if playerss == true then
 							library.pointers.TrollTabPlayerSS.options = playerlistss
@@ -2239,7 +2249,6 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
                             library.pointers.TrollTabSoundGWT:Set("-")
                             library.pointers.TrollTabSoundGWT.options = playerlistgw
                         end
-
 
 						if playerram == true then
 							library.pointers.TrollTabPlayerRAMP.options = playerlistram
@@ -4035,6 +4044,94 @@ SettingsTabCategoryCredits:AddLabel("MrPolaczekPL#1884")
 SettingsTabCategoryCredits:AddLabel("")
 SettingsTabCategoryCredits:AddLabel("Don't steal credits or burn in hell.")
 
+local ReportTab = Window:CreateTab("Report")
+
+local ReportCat = ReportTab:AddCategory("Report", 2)
+
+local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
+
+ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
+ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList")
+ReportCat:AddButton("Add Player", function()
+	if library.pointers.ReportPlayer.value ~= "-" then
+		if not table.find(CheatingSkids, library.pointers.ReportPlayer.value) then
+			table.insert(CheatingSkids, library.pointers.ReportPlayer.value)
+			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
+			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
+
+			ChatScript.moveOldMessages()
+			ChatScript.createNewMessage("Cheater Added", library.pointers.ReportPlayer.value, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+		end
+	end
+
+	library.pointers.ReportPlayer:Set("-")
+
+	local temp = {"-"}
+	table.foreach(CheatingSkids, function(i, v)
+		table.insert(temp, v)
+	end)
+	library.pointers.ReportList.options = temp
+end)
+ReportCat:AddButton("Remove Player", function()
+	if library.pointers.ReportList.value ~= "-" then
+		local succes = table.foreach(CheatingSkids, function(i, v)
+			if v == library.pointers.ReportList.value then
+				table.remove(CheatingSkids, i)
+				return true
+			end
+		end)
+
+		if succes == true then
+			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
+			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
+
+			ChatScript.moveOldMessages()
+			ChatScript.createNewMessage("Cheater Removed", library.pointers.ReportList.value, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+		end
+	end
+
+	library.pointers.ReportList:Set("-")
+
+	local temp = {"-"}
+	table.foreach(CheatingSkids, function(i, v)
+		table.insert(temp, v)
+	end)
+	library.pointers.ReportList.options = temp
+end)
+ReportCat:AddToggle("Notify Cheaters", false, "ReportNotify", function(val)
+	if val == true then
+		ReportNotifyJoinLoop = game.Players.PlayerAdded:Connect(function(plr)
+			if table.find(CheatingSkids, plr.Name) then
+				ChatScript.moveOldMessages()
+				ChatScript.createNewMessage("Cheater Joined The Game", plr.Name, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+			end
+		end)
+
+		ReportNotifyLeaveLoop = game.Players.PlayerRemoving:Connect(function(plr)
+			if table.find(CheatingSkids, plr.Name) then
+				ChatScript.moveOldMessages()
+				ChatScript.createNewMessage("Cheater Left The Game", plr.Name, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+			end
+		end)
+
+		for i,v in pairs(game.Players:GetPlayers()) do
+			if table.find(CheatingSkids, v.Name) then
+				ChatScript.moveOldMessages()
+				ChatScript.createNewMessage("Cheater In The Game", v.Name, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+			end
+		end
+	elseif val == false and ReportNotifyJoinLoop or val == false and ReportNotifyLeaveLoop then
+		ReportNotifyJoinLoop:Disconnect()
+		ReportNotifyLeaveLoop:Disconnect()
+	end
+end)
+
+local temp = {"-"}
+table.foreach(CheatingSkids, function(i, v)
+	table.insert(temp, v)
+end)
+library.pointers.ReportList.options = temp
+
 -- Other
 game.Players.LocalPlayer.Additionals.TotalDamage.Changed:Connect(function(val)
 	if library.pointers.MiscellaneousTabCategoryMainHitSound.value ~= "" and val ~= 0 then
@@ -4801,6 +4898,8 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif teamcolor == AliveChatColor and msgcolor == Color3.new(1,1,1) then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	elseif teamcolor == CheaterColor and msgcolor == Color3.new(1,1,1) then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif game.Players:FindFirstChild(plr) then
 		if IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
@@ -4900,15 +4999,23 @@ wait(1.5)
 Hint:Destroy()
 
 --[[
-	-Anti Chat Spam
-	-Random gun dropdown between melee and ranged weapons [Done]
-	-Fix Repeat After Me
-	-Auto kill enemy when visible [Done]
-	-Complete new code for chat messages showing up (if not working as expected now)
-	-Start code for chat drop downs when messages are supposed to show (if possible)
-	-Auto buy weapons (if possible)
-	-Make code more efficient (wherever possible)
-	-Save/load skins differently (preferable from a table) [Started/Working]
-	-Slow enemies by hitting them with bullets that do 0 damage [Done]
-	-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater
+	Priority list:
+	[Done]
+		-Slow enemies by hitting them with bullets that do 0 damage [Done]
+		-Auto kill enemy when visible [Done]
+		-Random gun dropdown between melee and ranged weapons [Done]
+		-Complete new code for chat messages showing up (if not working as expected now) [Done?]
+
+	[Highest]
+		-Make code more efficient (wherever possible)
+		-Fix Repeat After Me
+
+	[Mid]
+		-Save/load skins differently (preferable from a table) [Started/Working/Almost?]
+		-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater [Started/Working/Almost]
+
+	[Lowest]
+		-Auto buy weapons (if possible)
+		-Start code for chat drop downs when messages are supposed to show (if possible)
+		-Anti Chat Spam
 ]]--

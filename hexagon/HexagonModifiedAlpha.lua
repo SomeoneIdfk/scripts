@@ -1714,19 +1714,21 @@ SettingsTabCategoryConfigs:AddButton("Load", function()
 		library:LoadConfiguration(cfg)
 	end
 
-	CurrentGunSkinsTable = AllGunSkinsTable[library.pointers.SettingsTabCategoryConfigsConfig.value]
+	if AllGunSkinsTable[library.pointers.SettingsTabCategoryConfigsConfig.value] then
+		CurrentGunSkinsTable = AllGunSkinsTable[library.pointers.SettingsTabCategoryConfigsConfig.value]
 
-	table.foreach(CurrentGunSkinsTable, function(i,v)
-		if i ~= "-" then
-			table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
-				if v2 == "T" then
-					game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
-				elseif v2 == "CT" then
-					game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
-				end
-			end)
-		end
-	end)
+		table.foreach(CurrentGunSkinsTable, function(i,v)
+			if i ~= "-" then
+				table.foreach(weapon_skins["guns"][i]["teams"], function(i2,v2)
+					if v2 == "T" then
+						game:GetService('Players').LocalPlayer.SkinFolder.TFolder[weapon_skins["guns"][i]["name"]].Value = v
+					elseif v2 == "CT" then
+						game:GetService('Players').LocalPlayer.SkinFolder.CTFolder[weapon_skins["guns"][i]["name"]].Value = v
+					end
+				end)
+			end
+		end)
+	end
 end)
 
 SettingsTabCategoryConfigs:AddButton("Refresh", function()
@@ -4868,4 +4870,5 @@ Hint:Destroy()
 	-Auto buy weapons (if possible)
 	-Make code more efficient (wherever possible)
 	-Save/load skins differently (preferable from a table) [Started/Working]
+	-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater
 ]]--

@@ -2162,12 +2162,14 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 					local playerlistfollow = {"-"}
 					local playerlistram = {"-"}
                     local playerlistgw = {"-"}
+					local playerlistss = {"-"}
 					player1f = false
 					player2f = false
 					player3f = false
 					playerfollowf = false
 					playertroll = false
 					playerram = false
+					playerss = false
                     playergw = false
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v ~= LocalPlayer then
@@ -2203,6 +2205,10 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
                                 playergw = true
                             end
 
+							if tostring(v) == library.pointers.TrollTabPlayerSS.value then
+								playerss = true
+							end
+
 							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
 								if GetTeam(v) ~= GetTeam(LocalPlayer) then
 									playerlistkillall[v] = v
@@ -2213,11 +2219,19 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 							
 							playerlistram[v] = v
                             playerlistgw[v] = v
+							playerlistss[v] = v
 						end
 					end
 
 					if prev_players ~= playerlistfollow then
 						local prev_players = playerlistfollow
+
+						if playerss == true then
+							library.pointers.TrollTabPlayerSS.options = playerlistss
+						else
+							library.pointers.TrollTabPlayerSS:Set("-")
+                            library.pointers.TrollTabPlayerSS.options = playerlistss
+						end
 
                         if playergw == true then
                             library.pointers.TrollTabSoundGWT.options = playerlistgw
@@ -3840,37 +3854,62 @@ local HexFolSECooldown = Instance.new("NumberValue", HexagonFolder)
 HexFolSECooldown.Name = "SlowEveryoneCooldown"
 HexFolSECooldown.Value = 0
 
+local function slowPlayer(player)
+	if game.Players[player] and LocalPlayer ~= game.Players[player] and IsAlive(LocalPlayer) and IsAlive(game.Players[player]) then
+		local Arguments = {
+			[1] = game.Players[player].Character.Head,
+			[2] = game.Players[player].Character.Head.Position,									
+			[3] = "USP",
+			[4] = 0,
+			[5] = game.ReplicatedStorage.Weapons["USP"].Model,
+			[8] = 0, 
+			[9] = false,
+			[10] = false,
+			[11] = Vector3.new(),
+			[12] = 0,
+			[13] = Vector3.new()
+			}
+
+		return Arguments
+	end
+end
+
+TrollTabPlayer:AddDropdown("Slow Everyone Target", {"All", "Team", "Enemy", "Specific"}, "All", "TrollTabPlayerSET")
+TrollTabPlayer:AddDropdown("Slow Specific", {"-"}, "-", "TrollTabPlayerSS")
 TrollTabPlayer:AddToggle("Slow Everyone", false, "TrollTabPlayerSE", function(val)
 	if val == true then
 		HexFolSECooldown.Value = 0
 
 		TrollTabPlayerSELoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if HexFolSECooldown.Value == 0 then
+				if HexFolSECooldown.Value == 0 and IsAlive(LocalPlayer) then
 					HexFolSECooldown.Value = library.pointers.TrollTabPlayerSEDelay.value
-					if IsAlive(LocalPlayer) then
-						for i,v in pairs(game.Players:GetPlayers()) do
-							if v ~= LocalPlayer and IsAlive(v) then
-								local Arguments = {
-									[1] = v.Character.Head,
-									[2] = v.Character.Head.Position,									
-									[3] = "USP",
-									[4] = 0,
-									[5] = game.ReplicatedStorage.Weapons["USP"].Model,
-									[8] = 0, 
-									[9] = false,
-									[10] = false,
-									[11] = Vector3.new(),
-									[12] = 0,
-									[13] = Vector3.new()
-									}
 
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+					if library.pointers.TrollTabPlayerSET.value == "All" then
+						for i,v in pairs(game.Players:GetPlayers()) do
+							if v ~= LocalPlayer then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(slowPlayer(v.Name)))
 							end
 						end
+					elseif library.pointers.TrollTabPlayerSET.value == "Team" then
+						for i,v in pairs(game.Players:GetPlayers()) do
+							if v ~= LocalPlayer and GetTeam(v) == GetTeam(LocalPlayer) then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(slowPlayer(v.Name)))
+							end
+						end
+					elseif library.pointers.TrollTabPlayerSET.value == "Enemy" then
+						for i,v in pairs(game.Players:GetPlayers()) do
+							if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(slowPlayer(v.Name)))
+							end
+						end
+					elseif library.pointers.TrollTabPlayerSET.value == "Specific" then
+						game.ReplicatedStorage.Events.HitPart:FireServer(unpack(slowPlayer(library.pointers.TrollTabPlayerSS.value)))
 					end
-				else
+				elseif IsAlive(LocalPlayer) then
 					HexFolSECooldown.Value = HexFolSECooldown.Value - 1
+				elseif not IsAlive(LocalPlayer) then
+					HexFolSECooldown.Value = library.pointers.TrollTabPlayerSEDelay.value
 				end
 			end)
 		end)
@@ -4870,5 +4909,6 @@ Hint:Destroy()
 	-Auto buy weapons (if possible)
 	-Make code more efficient (wherever possible)
 	-Save/load skins differently (preferable from a table) [Started/Working]
+	-Slow enemies by hitting them with bullets that do 0 damage [Done]
 	-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater
 ]]--

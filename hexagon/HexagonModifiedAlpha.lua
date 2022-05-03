@@ -1808,6 +1808,19 @@ end)
 
 local ExperimentalTabCategoryOptions = ExperimentalTab:AddCategory("Options", 1)
 
+ExperimentalTabCategoryOptions:AddToggle("Anti-AFK", false, "ExperimentalTabCategoryOptionsAntiAFK", function(val)
+    if val == true then
+        Anti_AFKLoop = game:GetService("RunService").Heartbeat:Connect(function()
+            pcall(function()
+                for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
+                    v:Disable()
+                end
+            end)
+        end)
+    elseif val == false and Anti_AFKLoop then
+        Anti_AFKLoop:Disconnect()
+    end
+end)
 ExperimentalTabCategoryOptions:AddDropdown("Texture Remove Method", {"Legacy", "New"}, "Legacy", "ExperimentalTabCategoryOptionsTRM")
 ExperimentalTabCategoryOptions:AddToggle("Texture Remover", false ,"ExperimentalTabCategoryOptionsTR", function(val)
 	if val == true then
@@ -4043,92 +4056,214 @@ SettingsTabCategoryCredits:AddLabel("")
 SettingsTabCategoryCredits:AddLabel("Don't steal credits or burn in hell.")
 
 local ReportTab = Window:CreateTab("Report")
-
-local ReportCat = ReportTab:AddCategory("Report", 2)
+local ReportCat = ReportTab:AddCategory("Report", 1)
 
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
+local CheaterColor = Color3.fromRGB(150, 0, 0)
 
-ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
-ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList")
-ReportCat:AddButton("Add Player", function()
-	if library.pointers.ReportPlayer.value ~= "-" then
-		if not table.find(CheatingSkids, library.pointers.ReportPlayer.value) then
-			table.insert(CheatingSkids, library.pointers.ReportPlayer.value)
-			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
-			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
-
-			ChatScript.moveOldMessages()
-			ChatScript.createNewMessage("Cheater Added", library.pointers.ReportPlayer.value, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
-		end
-	end
-
-	library.pointers.ReportPlayer:Set("-")
-
-	local temp = {"-"}
-	table.foreach(CheatingSkids, function(i, v)
-		table.insert(temp, v)
-	end)
-	library.pointers.ReportList.options = temp
-end)
-ReportCat:AddButton("Remove Player", function()
-	if library.pointers.ReportList.value ~= "-" then
-		local succes = table.foreach(CheatingSkids, function(i, v)
-			if v == library.pointers.ReportList.value then
-				table.remove(CheatingSkids, i)
+local function reportTableFind(reporttable, value)
+	local succes = table.foreach(reporttable, function(i, v)
+		local succes = table.foreach(v, function(i2, v2)
+			if v2 == value then
 				return true
 			end
 		end)
 
 		if succes == true then
+			return i
+		end
+	end)
+
+	if succes then
+		return succes
+	else
+		return false
+	end
+end
+
+local function checkCheaterSkidsInGame()
+	local iteration = 0
+	local string = ""
+	for i,v in pairs(game.Players:GetPlayers()) do
+		if reportTableFind(CheatingSkids, v.Name) then
+			iteration = iteration + 1
+			if string == "" then
+				string = v.Name
+			else
+				string = string..", "..v.Name
+			end
+		end
+	end
+
+	if iteration == 0 then
+		ChatScript.moveOldMessages()
+		ChatScript.createNewMessage("Cheater(s) In The Game", "None Found", CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+		if library.pointers.ReportCatNEA.value == true then
+			game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+				"Found [0] Cheaters In The Game",
+				false,
+				"Innocent",
+				false,
+				true
+			)
+		end
+	elseif iteration == 1 then
+		ChatScript.moveOldMessages()
+		ChatScript.createNewMessage("Cheater In The Game", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+		if library.pointers.ReportCatNEA.value == true then
+			game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+				"Found ["..iteration.."] Cheater In The Game: "..string,
+				false,
+				"Innocent",
+				false,
+				true
+			)
+		end
+	elseif iteration > 1 then
+		ChatScript.moveOldMessages()
+		ChatScript.createNewMessage("["..iteration.."] Cheaters In The Game", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+		if library.pointers.ReportCatNEA.value == true then
+			game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+				"Found ["..iteration.."] Cheater(s) In The Game: "..string,
+				false,
+				"Innocent",
+				false,
+				true
+			)
+		end
+	end
+end
+
+local function reportListUsernames(reporttable)
+	local temp = {"-"}
+	table.foreach(reporttable, function(i, v)
+		table.foreach(v, function(i2, v2)
+			table.insert(temp, v2)
+		end)
+	end)
+
+	return temp
+end
+
+local function reportListUserIds(reporttable)
+	local temp = {}
+	table.foreach(reporttable, function(i, v)
+		table.foreach(v, function(i2, v2)
+			table.insert(temp, i2)
+		end)
+	end)
+
+	return temp
+end
+
+ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
+ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList")
+ReportCat:AddButton("Add Player", function()
+	if library.pointers.ReportPlayer.value ~= "-" then
+		if not reportTableFind(CheatingSkids, library.pointers.ReportPlayer.value) then
+			table.insert(CheatingSkids, {[game.Players[library.pointers.ReportPlayer.value].UserId] = library.pointers.ReportPlayer.value})
 			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
 			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
 
 			ChatScript.moveOldMessages()
-			ChatScript.createNewMessage("Cheater Removed", library.pointers.ReportList.value, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+			ChatScript.createNewMessage("Cheater Added", library.pointers.ReportPlayer.value, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+			checkCheaterSkidsInGame()
+		end
+	end
+
+	library.pointers.ReportPlayer:Set("-")
+
+	library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+
+	if library.pointers["ReportCatCount"] then
+		library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
+	end
+end)
+ReportCat:AddButton("Remove Player", function()
+	if library.pointers.ReportList.value ~= "-" then
+		if reportTableFind(CheatingSkids, library.pointers.ReportList.value) then
+			table.remove(CheatingSkids, reportTableFind(CheatingSkids, library.pointers.ReportList.value))
+
+			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
+			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
+
+			ChatScript.moveOldMessages()
+			ChatScript.createNewMessage("Cheater Removed", library.pointers.ReportList.value, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+			checkCheaterSkidsInGame()
 		end
 	end
 
 	library.pointers.ReportList:Set("-")
 
-	local temp = {"-"}
-	table.foreach(CheatingSkids, function(i, v)
-		table.insert(temp, v)
-	end)
-	library.pointers.ReportList.options = temp
+	library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+
+	if library.pointers["ReportCatCount"] then
+		library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
+	end
+end)
+ReportCat:AddButton("Copy Username", function()
+	if library.pointers.ReportList.value ~= "-" then
+		syn.write_clipboard(library.pointers.ReportList.value)
+	end
 end)
 ReportCat:AddToggle("Notify Cheaters", false, "ReportNotify", function(val)
 	if val == true then
 		ReportNotifyJoinLoop = game.Players.PlayerAdded:Connect(function(plr)
-			if table.find(CheatingSkids, plr.Name) then
+			if reportTableFind(CheatingSkids, plr.Name) then
 				ChatScript.moveOldMessages()
-				ChatScript.createNewMessage("Cheater Joined The Game", plr.Name, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+				ChatScript.createNewMessage("Cheater Joined The Game", plr.Name, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+				checkCheaterSkidsInGame()
+
+				if library.pointers.ReportCatNE.value == true and library.pointers.ReportCatNEA.value == false then
+					game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+						"<Cheater> "..plr.Name..": ".."Joined the game.",
+						false,
+						"Innocent",
+						false,
+						true
+					)
+				end
 			end
 		end)
 
 		ReportNotifyLeaveLoop = game.Players.PlayerRemoving:Connect(function(plr)
-			if table.find(CheatingSkids, plr.Name) then
+			if reportTableFind(CheatingSkids, plr.Name) then
 				ChatScript.moveOldMessages()
-				ChatScript.createNewMessage("Cheater Left The Game", plr.Name, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
+				ChatScript.createNewMessage("Cheater Left The Game", plr.Name, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+
+				checkCheaterSkidsInGame()
+
+				if library.pointers.ReportCatNE.value == true and library.pointers.ReportCatNEA.value == false then
+					game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+						"<Cheater> "..plr.Name..": ".."Left the game.",
+						false,
+						"Innocent",
+						false,
+						true
+					)
+				end
 			end
 		end)
 
-		for i,v in pairs(game.Players:GetPlayers()) do
-			if table.find(CheatingSkids, v.Name) then
-				ChatScript.moveOldMessages()
-				ChatScript.createNewMessage("Cheater In The Game", v.Name, Color3.fromRGB(255, 0, 0), Color3.new(1,1,1), 0.01, nil)
-			end
-		end
+        checkCheaterSkidsInGame()
 	elseif val == false and ReportNotifyJoinLoop or val == false and ReportNotifyLeaveLoop then
 		ReportNotifyJoinLoop:Disconnect()
 		ReportNotifyLeaveLoop:Disconnect()
 	end
 end)
+ReportCat:AddToggle("Notify Everyone", false, "ReportCatNE")
+ReportCat:AddToggle("Notify Everyone All", false, "ReportCatNEA")
+ReportCat:AddLabel("If you see this, something went wrong.", "ReportCatCount")
 
-local temp = {"-"}
-table.foreach(CheatingSkids, function(i, v)
-	table.insert(temp, v)
-end)
-library.pointers.ReportList.options = temp
+library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+
+library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
 
 -- Other
 game.Players.LocalPlayer.Additionals.TotalDamage.Changed:Connect(function(val)
@@ -4681,7 +4816,7 @@ end
 
 local mt = getrawmetatable(game)
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
-local AliveChatColor = Color3.fromRGB(0, 0, 0)
+local AliveChatColor = Color3.fromRGB(50, 50, 50)
 local createNewMessage = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage
 
 if setreadonly then setreadonly(mt, false) else make_writeable(mt, true) end
@@ -4890,7 +5025,6 @@ oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client)._
     return oldIndex(self, key)
 end))
 
-local CheaterColor = Color3.fromRGB(255, 0, 0)
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
 	if LocalPlayer.Name == plr then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
@@ -4898,8 +5032,10 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif teamcolor == CheaterColor and msgcolor == Color3.new(1,1,1) then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	elseif game.Players:FindFirstChild(plr) then
-		if IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
+	elseif game.Players[plr] then
+		if table.find(CheatingSkids, plr) then
+			return createNewMessage("[Tagged] <Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
+		elseif IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
@@ -4913,6 +5049,8 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 			return createNewMessage("<Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
 		end
 	end
+
+	return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 end
 
 CharacterAdded()
@@ -5011,6 +5149,7 @@ Hint:Destroy()
 	[Mid]
 		-Save/load skins differently (preferable from a table) [Started/Working/Almost?]
 		-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater [Started/Working/Almost]
+        -Anti AFK [Started/Working?]
 
 	[Lowest]
 		-Auto buy weapons (if possible)

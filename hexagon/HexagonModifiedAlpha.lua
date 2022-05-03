@@ -4061,10 +4061,10 @@ local ReportCat = ReportTab:AddCategory("Report", 1)
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
 local CheaterColor = Color3.fromRGB(150, 0, 0)
 
-local function reportTableFind(reporttable, value)
+local function reportTableFind(reporttable, value, field)
 	local succes = table.foreach(reporttable, function(i, v)
 		local succes = table.foreach(v, function(i2, v2)
-			if v2 == value then
+			if field == "id" and i2 == value or field == "name" and v2 == value then
 				return true
 			end
 		end)
@@ -4085,7 +4085,7 @@ local function checkCheaterSkidsInGame()
 	local iteration = 0
 	local string = ""
 	for i,v in pairs(game.Players:GetPlayers()) do
-		if reportTableFind(CheatingSkids, v.Name) then
+		if reportTableFind(CheatingSkids, v.UserId, "id") then
 			iteration = iteration + 1
 			if string == "" then
 				string = v.Name
@@ -4163,7 +4163,7 @@ ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
 ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList")
 ReportCat:AddButton("Add Player", function()
 	if library.pointers.ReportPlayer.value ~= "-" then
-		if not reportTableFind(CheatingSkids, library.pointers.ReportPlayer.value) then
+		if not reportTableFind(CheatingSkids, game.Players[library.pointers.ReportPlayer.value].UserId, "id") then
 			table.insert(CheatingSkids, {[game.Players[library.pointers.ReportPlayer.value].UserId] = library.pointers.ReportPlayer.value})
 			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
 			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
@@ -4185,8 +4185,8 @@ ReportCat:AddButton("Add Player", function()
 end)
 ReportCat:AddButton("Remove Player", function()
 	if library.pointers.ReportList.value ~= "-" then
-		if reportTableFind(CheatingSkids, library.pointers.ReportList.value) then
-			table.remove(CheatingSkids, reportTableFind(CheatingSkids, library.pointers.ReportList.value))
+		if reportTableFind(CheatingSkids, library.pointers.ReportList.value, "name") then
+			table.remove(CheatingSkids, reportTableFind(CheatingSkids, library.pointers.ReportList.value, "name"))
 
 			writefile("hexagon/cheatingskids.cfg", SaveTable(CheatingSkids))
 			CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
@@ -4214,7 +4214,7 @@ end)
 ReportCat:AddToggle("Notify Cheaters", false, "ReportNotify", function(val)
 	if val == true then
 		ReportNotifyJoinLoop = game.Players.PlayerAdded:Connect(function(plr)
-			if reportTableFind(CheatingSkids, plr.Name) then
+			if reportTableFind(CheatingSkids, plr.UserId, "id") then
 				ChatScript.moveOldMessages()
 				ChatScript.createNewMessage("Cheater Joined The Game", plr.Name, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 
@@ -4233,7 +4233,7 @@ ReportCat:AddToggle("Notify Cheaters", false, "ReportNotify", function(val)
 		end)
 
 		ReportNotifyLeaveLoop = game.Players.PlayerRemoving:Connect(function(plr)
-			if reportTableFind(CheatingSkids, plr.Name) then
+			if reportTableFind(CheatingSkids, plr.UserId, "id") then
 				ChatScript.moveOldMessages()
 				ChatScript.createNewMessage("Cheater Left The Game", plr.Name, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 

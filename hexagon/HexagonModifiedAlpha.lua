@@ -4159,8 +4159,59 @@ local function reportListUserIds(reporttable)
 	return temp
 end
 
+local function reportListIdFromUsername(reporttable, username)
+	local succes = table.foreach(reporttable, function(i, v)
+		local succes = table.foreach(v, function(i2, v2)
+			if v2 == username then
+				return i2
+			end
+		end)
+
+		if succes then
+			return succes
+		end
+	end)
+
+	if succes then
+		return succes
+	else 
+		return false
+	end
+end
+
+local function reportListUsernameFromId(reporttable, id)
+	local succes = table.foreach(reporttable, function(i, v)
+		local succes = table.foreach(v, function(i2, v2)
+			if i2 == id then
+				return v2
+			end
+		end)
+
+		if succes then
+			return succes
+		end
+	end)
+
+	if succes then
+		return succes
+	else 
+		return false
+	end
+end
+
 ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
-ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList")
+ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList", function(val)
+	if val ~= "-" and library.pointers["ReportCatOnline"] then
+		library.pointers.ReportCatOnline:Set("<Online Status>")
+		print(reportListIdFromUsername(CheatingSkids, val))
+		if reportListIdFromUsername(CheatingSkids, val) then
+			local table = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..reportListIdFromUsername(CheatingSkids, val).."/onlinestatus/"))
+			library.pointers.ReportCatOnline:Set("Online Status: "..tostring(table.IsOnline))
+		end
+	elseif val == "-" and library.pointers["ReportCatOnline"] then
+		library.pointers.ReportCatOnline:Set("<Online Status>")
+	end
+end)
 ReportCat:AddButton("Add Player", function()
 	if library.pointers.ReportPlayer.value ~= "-" then
 		if not reportTableFind(CheatingSkids, game.Players[library.pointers.ReportPlayer.value].UserId, "id") then
@@ -4260,6 +4311,18 @@ end)
 ReportCat:AddToggle("Notify Everyone", false, "ReportCatNE")
 ReportCat:AddToggle("Notify Everyone All", false, "ReportCatNEA")
 ReportCat:AddLabel("If you see this, something went wrong.", "ReportCatCount")
+ReportCat:AddLabel("<Online Status>", "ReportCatOnline")
+ReportCat:AddDropdown("Online Cheaters", {"-"}, "-", "ReportCatOnlineList")
+ReportCat:AddButton("List Online Cheaters", function()
+	local temp = {"-"}
+	for i,v in pairs(reportListUserIds(CheatingSkids)) do
+		local tabletemp = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..v.."/onlinestatus/"))
+		if tabletemp.IsOnline == true then
+			table.insert(temp, reportListUsernameFromId(CheatingSkids, v))
+		end
+	end
+	library.pointers.ReportCatOnlineList.options = temp
+end)
 
 library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
 

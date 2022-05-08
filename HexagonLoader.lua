@@ -20,12 +20,11 @@ writefile("hexagon/versions.cfg", game:HttpGet("https://raw.githubusercontent.co
 local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
 
 local function checkId()
-	local temp = game.PlaceId
-	if temp == 301549746 then
+	if game.PlaceId == 301549746 then
 		return true
-	elseif temp == 1480424328 then
+	elseif game.PlaceId == 1480424328 then
 		return true
-	elseif temp == 1869597719 then
+	elseif game.PlaceId == 1869597719 then
 		return true
 	end
 

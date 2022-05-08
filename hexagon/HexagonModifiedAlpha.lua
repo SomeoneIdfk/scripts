@@ -2068,7 +2068,7 @@ function killtarget(target)
     end
 end
 
-ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "ExperimentalTabCategoryOptionsAKV", function(val)
+--[[ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "ExperimentalTabCategoryOptionsAKV", function(val)
 	if val == true then
 		AutoKillVisibleLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
@@ -2076,9 +2076,9 @@ ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "Experiment
 					for i,plr in pairs(game.Players:GetPlayers()) do
 						if plr ~= LocalPlayer and IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
 							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+								--game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+								--game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 							end
 						end
 					end
@@ -2087,6 +2087,29 @@ ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "Experiment
 		end)
 	elseif val == false and AutoKillVisibleLoop then
 		AutoKillVisibleLoop:Disconnect()
+	end
+end)]]--
+ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "ExperimentalTabCategoryOptionsAKV", function(val)
+	if val == true then
+		while library.pointers.ExperimentalTabCategoryOptionsAKV2.value == true do
+			if IsAlive(LocalPlayer) and workspace.Status.Preparation.Value == false then
+				for i,plr in pairs(game.Players:GetPlayers()) do
+					if plr ~= LocalPlayer then
+						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
+							if IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+							end
+						elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+							if IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+							end
+						end
+					end
+				end
+			end
+
+			wait(0.1)
+		end
 	end
 end)
 
@@ -2802,7 +2825,7 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 end)
 
 function Serverhop()
-    wait(1)
+	wait(0.1)
 	local x = {}
 	for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100")).data) do
 		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
@@ -4061,6 +4084,10 @@ local ReportCat = ReportTab:AddCategory("Report", 1)
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
 local CheaterColor = Color3.fromRGB(150, 0, 0)
 
+local HexFolrmosCooldown = Instance.new("NumberValue", HexagonFolder)
+HexFolrmosCooldown.Name = "MessageOnlineSkidsCooldown"
+HexFolrmosCooldown.Value = 0
+
 local function reportTableFind(reporttable, value, field)
 	local succes = table.foreach(reporttable, function(i, v)
 		local succes = table.foreach(v, function(i2, v2)
@@ -4199,19 +4226,63 @@ local function reportListUsernameFromId(reporttable, id)
 	end
 end
 
-ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
-ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList", function(val)
-	if val ~= "-" and library.pointers["ReportCatOnline"] then
-		library.pointers.ReportCatOnline:Set("<Online Status>")
-		print(reportListIdFromUsername(CheatingSkids, val))
-		if reportListIdFromUsername(CheatingSkids, val) then
-			local table = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..reportListIdFromUsername(CheatingSkids, val).."/onlinestatus/"))
-			library.pointers.ReportCatOnline:Set("Online Status: "..tostring(table.IsOnline))
+local function reportListOnlineSkids(player)
+	if player then
+		if reportListIdFromUsername(CheatingSkids, player) then
+			local tabletemp = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..reportListIdFromUsername(CheatingSkids, player).."/onlinestatus/"))
+			if tabletemp then
+				return tabletemp
+			end
 		end
-	elseif val == "-" and library.pointers["ReportCatOnline"] then
-		library.pointers.ReportCatOnline:Set("<Online Status>")
+	else
+		local temp = {"-"}
+		for i,v in pairs(reportListUserIds(CheatingSkids)) do
+			local tabletemp = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..v.."/onlinestatus/"))
+			if tabletemp["IsOnline"] and tabletemp.IsOnline == true then
+				table.insert(temp, reportListUsernameFromId(CheatingSkids, v))
+			end
+		end
+
+		return temp
 	end
-end)
+
+	return false
+end
+
+local function reportMessageOnlineSkids()
+	if HexFolrmosCooldown.Value == 0 then
+		HexFolrmosCooldown.Value = 5000
+		local temp = reportListOnlineSkids()
+		table.remove(temp, 1)
+		local iteration = 0
+		local string = ""
+		for i,v in pairs(temp) do
+			iteration = iteration + 1
+			if string == "" then
+				string = v
+			else
+				string = string..", "..v
+			end
+		end
+
+		if iteration == 0 then
+			ChatScript.moveOldMessages()
+			ChatScript.createNewMessage("Cheater(s) Online", "None Found", CheaterColor, Color3.new(1,1,1), 0.01, nil)
+		elseif iteration == 1 then
+			ChatScript.moveOldMessages()
+			ChatScript.createNewMessage("Cheater Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+		elseif iteration > 1 then
+			ChatScript.moveOldMessages()
+			ChatScript.createNewMessage("["..iteration.."] Cheaters Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+		end
+	else
+		ChatScript.moveOldMessages()
+		ChatScript.createNewMessage("Cheater(s) Online", "Is On A Cooldown.", CheaterColor, Color3.new(1,1,1), 0.01, nil)
+	end
+end
+
+ReportCat:AddDropdown("Player", {"-"}, "-", "ReportPlayer")
+ReportCat:AddDropdown("Report List", {"-"}, "-", "ReportList")
 ReportCat:AddButton("Add Player", function()
 	if library.pointers.ReportPlayer.value ~= "-" then
 		if not reportTableFind(CheatingSkids, game.Players[library.pointers.ReportPlayer.value].UserId, "id") then
@@ -4223,12 +4294,17 @@ ReportCat:AddButton("Add Player", function()
 			ChatScript.createNewMessage("Cheater Added", library.pointers.ReportPlayer.value, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 
 			checkCheaterSkidsInGame()
+
+			if library.pointers["ReportCatCheckOnline"] and library.pointers.ReportCatCheckOnline.value == true then
+				reportMessageOnlineSkids()
+			end
 		end
 	end
 
 	library.pointers.ReportPlayer:Set("-")
 
 	library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+	library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
 
 	if library.pointers["ReportCatCount"] then
 		library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
@@ -4246,12 +4322,17 @@ ReportCat:AddButton("Remove Player", function()
 			ChatScript.createNewMessage("Cheater Removed", library.pointers.ReportList.value, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 
 			checkCheaterSkidsInGame()
+
+			if library.pointers["ReportCatCheckOnline"] and library.pointers.ReportCatCheckOnline.value == true then
+				reportMessageOnlineSkids()
+			end
 		end
 	end
 
 	library.pointers.ReportList:Set("-")
 
 	library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+	library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
 
 	if library.pointers["ReportCatCount"] then
 		library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
@@ -4310,23 +4391,77 @@ ReportCat:AddToggle("Notify Cheaters", false, "ReportNotify", function(val)
 end)
 ReportCat:AddToggle("Notify Everyone", false, "ReportCatNE")
 ReportCat:AddToggle("Notify Everyone All", false, "ReportCatNEA")
-ReportCat:AddLabel("If you see this, something went wrong.", "ReportCatCount")
-ReportCat:AddLabel("<Online Status>", "ReportCatOnline")
-ReportCat:AddDropdown("Online Cheaters", {"-"}, "-", "ReportCatOnlineList")
-ReportCat:AddButton("List Online Cheaters", function()
-	local temp = {"-"}
-	for i,v in pairs(reportListUserIds(CheatingSkids)) do
-		local tabletemp = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..v.."/onlinestatus/"))
-		if tabletemp.IsOnline == true then
-			table.insert(temp, reportListUsernameFromId(CheatingSkids, v))
-		end
+ReportCat:AddToggle("Check Online", false, "ReportCatCheckOnline", function(val)
+	if val == true then
+		ReportOnlineJoinLoop = game.Players.PlayerAdded:Connect(function(plr)
+			if library.pointers.ReportCatCheckOnJL.value == "Cheaters" and reportTableFind(CheatingSkids, plr.UserId, "id") or library.pointers.ReportCatCheckOnJL.value == "Everyone" then
+				reportMessageOnlineSkids()
+			end
+		end)
+
+		ReportOnlineLeaveLoop = game.Players.PlayerRemoving:Connect(function(plr)
+			if library.pointers.ReportCatCheckOnJL.value == "Cheaters" and reportTableFind(CheatingSkids, plr.UserId, "id") or library.pointers.ReportCatCheckOnJL.value == "Everyone" then
+				reportMessageOnlineSkids()
+			end
+		end)
+
+		reportMessageOnlineSkids()
+	elseif val == false and ReportOnlineJoinLoop or val == false and ReportOnlineLeaveLoop then
+		ReportOnlineJoinLoop:Disconnect()
+		ReportOnlineLeaveLoop:Disconnect()
 	end
-	library.pointers.ReportCatOnlineList.options = temp
 end)
+ReportCat:AddDropdown("Check On Join/Leave", {"Cheaters", "Everyone"}, "Cheaters", "ReportCatCheckOnJL")
+ReportCat:AddLabel("If you see this, something went wrong.", "ReportCatCount")
 
 library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
 
 library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
+
+game:GetService("RunService").RenderStepped:Connect(function()
+	pcall(function()
+		if HexFolrmosCooldown.Value > 0 then
+			HexFolrmosCooldown.Value = HexFolrmosCooldown.Value - 1
+		end
+	end)
+end)
+
+local InfoCat = ReportTab:AddCategory("Information", 2)
+
+InfoCat:AddDropdown("Selection", {"-"}, "-", "InfoCatSelection", function(val)
+	if val ~= "-" and reportTableFind(CheatingSkids, val, "name") then
+		if library.pointers["InfoCatOnlineStatus"] then
+			library.pointers.InfoCatOnlineStatus:Set("Online:")
+		end
+
+		if library.pointers["InfoCatPlayingStatus"] then
+			library.pointers.InfoCatPlayingStatus:Set("Playing:")
+		end
+
+		local values = reportListOnlineSkids(val)
+		if library.pointers["InfoCatOnlineStatus"] then
+			library.pointers.InfoCatOnlineStatus:Set("Online:")
+			library.pointers.InfoCatOnlineStatus:Set("Online: "..tostring(values["IsOnline"]))
+		end
+
+		if library.pointers["InfoCatPlayingStatus"] then
+			library.pointers.InfoCatPlayingStatus:Set("Playing:")
+			library.pointers.InfoCatPlayingStatus:Set("Playing: "..tostring(values["LastLocation"]))
+		end
+	else
+		if library.pointers["InfoCatOnlineStatus"] then
+			library.pointers.InfoCatOnlineStatus:Set("Online:")
+		end
+
+		if library.pointers["InfoCatPlayingStatus"] then
+			library.pointers.InfoCatPlayingStatus:Set("Playing:")
+		end
+	end
+end)
+InfoCat:AddLabel("Online:", "InfoCatOnlineStatus")
+--InfoCat:AddLabel("Playing:", "InfoCatPlayingStatus")
+
+library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
 
 -- Other
 game.Players.LocalPlayer.Additionals.TotalDamage.Changed:Connect(function(val)
@@ -5096,7 +5231,7 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 	elseif teamcolor == CheaterColor and msgcolor == Color3.new(1,1,1) then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif game.Players[plr] then
-		if table.find(CheatingSkids, plr) then
+		if reportTableFind(CheatingSkids, plr, "name") then
 			return createNewMessage("[Tagged] <Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
 		elseif IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
@@ -5198,25 +5333,28 @@ wait(1.5)
 Hint:Destroy()
 
 --[[
-	Priority list:
+	Priority list: []
+	Difficulty list: <> (Estimation)
+
 	[Done]
 		-Slow enemies by hitting them with bullets that do 0 damage [Done]
 		-Auto kill enemy when visible [Done]
 		-Random gun dropdown between melee and ranged weapons [Done]
+		-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater [Done]
+		-Save/load skins differently (preferable from a table) [Done]
 		-Complete new code for chat messages showing up (if not working as expected now) [Done?]
 
 	[Highest]
-		-Make code more efficient (wherever possible)
-		-Fix Repeat After Me
+		-Make code more efficient (wherever possible) <Mid>
+		-Fix Repeat After Me <Mid>
 
 	[Mid]
-		-Save/load skins differently (preferable from a table) [Started/Working/Almost?]
-		-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater [Started/Working/Almost]
-        -Anti AFK [Started/Working?]
+        -Anti AFK [Started/Working?] <Low>
+		-Chat spam to be annoying <Low>
 
 	[Lowest]
-		-Auto buy weapons (if possible)
-		-Start code for chat drop downs when messages are supposed to show (if possible)
-		-Anti Chat Spam
-		-Sort all code/start from scratch
+		-Auto buy weapons (if possible) <Unsure>
+		-Start code for chat drop downs when messages are supposed to show (if possible) <High>
+		-Anti Chat Spam <High>
+		-Sort all code/start from scratch <Mid>
 ]]--

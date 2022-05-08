@@ -4255,25 +4255,34 @@ local function reportMessageOnlineSkids()
 		local temp = reportListOnlineSkids()
 		table.remove(temp, 1)
 		local iteration = 0
+		local page = 1
 		local string = ""
-		for i,v in pairs(temp) do
-			iteration = iteration + 1
-			if string == "" then
-				string = v
-			else
-				string = string..", "..v
-			end
-		end
 
-		if iteration == 0 then
+		if #temp == 0 then
 			ChatScript.moveOldMessages()
 			ChatScript.createNewMessage("Cheater(s) Online", "None Found", CheaterColor, Color3.new(1,1,1), 0.01, nil)
-		elseif iteration == 1 then
+		elseif #temp == 1 then
 			ChatScript.moveOldMessages()
-			ChatScript.createNewMessage("Cheater Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
-		elseif iteration > 1 then
-			ChatScript.moveOldMessages()
-			ChatScript.createNewMessage("["..iteration.."] Cheaters Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+			ChatScript.createNewMessage("Cheater Online", temp[1], CheaterColor, Color3.new(1,1,1), 0.01, nil)
+		elseif #temp > 1 then
+			for i,v in pairs(temp) do
+				iteration = iteration + 1
+				if string == "" then
+					string = v
+				else
+					string = string..", "..v
+				end
+
+				if #temp > 6 and iteration == (page * 6) or #temp > 6 and iteration == #temp then
+					ChatScript.moveOldMessages()
+					ChatScript.createNewMessage("["..#temp.."] <"..page.."> Cheaters Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+					page = page + 1
+					string = ""
+				elseif #temp < 7 and iteration == #temp then
+					ChatScript.moveOldMessages()
+					ChatScript.createNewMessage("["..#temp.."] Cheaters Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
+				end
+			end
 		end
 	else
 		ChatScript.moveOldMessages()
@@ -5342,6 +5351,7 @@ Hint:Destroy()
 		-Random gun dropdown between melee and ranged weapons [Done]
 		-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater [Done]
 		-Save/load skins differently (preferable from a table) [Done]
+        -Anti AFK [Done] <Low>
 		-Complete new code for chat messages showing up (if not working as expected now) [Done?]
 
 	[Highest]
@@ -5349,7 +5359,6 @@ Hint:Destroy()
 		-Fix Repeat After Me <Mid>
 
 	[Mid]
-        -Anti AFK [Started/Working?] <Low>
 		-Chat spam to be annoying <Low>
 
 	[Lowest]

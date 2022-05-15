@@ -14,6 +14,7 @@ Hint.Text = "Hexagon | Setting up environment..."
 -- Services
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
 
 -- Environment 
 local getrawmetatable = getrawmetatable or false
@@ -22,7 +23,6 @@ local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local isfolder = isfolder or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false
-pausetps = false
 
 
 Hint.Text = "Hexagon | Setting up configuration settings..."
@@ -101,6 +101,76 @@ for i,v in pairs(game.ReplicatedStorage.Viewmodels:GetChildren()) do
     end
 end
 
+game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"].Silencer.Transparency = 1
+local fix = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"].Silencer:Clone()
+fix.Parent = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"]
+fix.Name = "Silencer2"
+fix.Transparency = 0
+
+local Hitboxes = {
+	["Head"] = {"Head"},
+	["Chest"] = {"UpperTorso", "LowerTorso"},
+	["Arms"] = {"LeftUpperArm", "LeftLowerArm", "LeftHand", "RightUpperArm", "RightLowerArm", "RightHand"},
+	["Legs"] = {"LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "RightUpperLeg", "RightLowerLeg", "RightFoot"}
+}
+
+local HexagonFolder = Instance.new("Folder", workspace)
+HexagonFolder.Name = "HexagonFolder"
+
+local oldOsPlatform = game.Players.LocalPlayer.OsPlatform
+local oldMusicT = game.Players.LocalPlayer.PlayerGui.Music.ValveT:Clone()
+local oldMusicCT = game.Players.LocalPlayer.PlayerGui.Music.ValveCT:Clone()
+
+local Weapons = {}; for i,v in pairs(game.ReplicatedStorage.Weapons:GetChildren()) do if v:FindFirstChild("Model") then table.insert(Weapons, v.Name) end end
+
+local Colliders = {
+	"UpperTorso",
+	"LowerTorso",
+	"Head",
+	"HumanoidRootPart"
+}
+
+local Sounds = {
+	["TTT a"] = workspace.RoundEnd,
+	["TTT b"] = workspace.RoundStart,
+	["T Win"] = workspace.Sounds.T,
+	["CT Win"] = workspace.Sounds.CT,
+	["Planted"] = workspace.Sounds.Arm,
+	["Defused"] = workspace.Sounds.Defuse,
+	["Rescued"] = workspace.Sounds.Rescue,
+	["Explosion"] = workspace.Sounds.Explosion,
+	["Becky"] = workspace.Sounds.Becky,
+	["Beep"] = workspace.Sounds.Beep
+}
+	
+local FOVCircle = Drawing.new("Circle")
+local Cases = {}; for i,v in pairs(game.ReplicatedStorage.Cases:GetChildren()) do table.insert(Cases, v.Name) end
+
+local Configs = {}
+local Inventories = loadstring("return "..readfile("hexagon/inventories.txt"))()
+local Skyboxes = loadstring("return "..readfile("hexagon/skyboxes.txt"))()
+
+
+
+-- Main
+local SilentTable = {Teleporter1 = true, Teleporter2 = true, NoclipSwitch = true, Pause = false}
+local SilentLegitbot = {target = nil}
+local SilentRagebot = {target = nil, cooldown = false}
+local LocalPlayer = game.Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local cbClient = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
+local oldInventory = cbClient.CurrentInventory
+local nocw_s = {}
+local nocw_m = {}
+local curVel = 16
+local isBhopping = false
+
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pawel12d/hexagon/main/scripts/ESP.lua"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/lib/library_alpha.lua"))()
+
+local Window = library:CreateWindow(Vector2.new(500, 500), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
+
+-- Functions
 local function SaveTable(queuetable)
 	local tbl = {}
 	
@@ -142,9 +212,9 @@ local function SaveTable(queuetable)
 	local function TableToString(Table, IgnoredTables, Depth)
 		IgnoredTables = IgnoredTables or {}
 	
-		--if IgnoredTables[Table] then
-			--return IgnoredTables[Table] == Depth - 1 and '[Parent table]' or '[Cyclic Table]'
-		--end
+		--[[if IgnoredTables[Table] then
+			return IgnoredTables[Table] == Depth - 1 and '[Parent table]' or '[Cyclic Table]'
+		end]]--
 	
 		Depth = Depth or 0
 		Depth = Depth + 1
@@ -184,68 +254,28 @@ local function SaveTable(queuetable)
     return TableToString(tbl):sub(0, -2)
 end
 
-game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"].Silencer.Transparency = 1
-local fix = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"].Silencer:Clone()
-fix.Parent = game.ReplicatedStorage.Viewmodels["v_oldM4A1-S"]
-fix.Name = "Silencer2"
-fix.Transparency = 0
+local function checkId(mode)
+	if mode == "team" and game.PlaceId == 301549746 or mode == "team" and game.PlaceId == 1480424328 then
+		return true
+	elseif mode == "ffa" and game.PlaceId == 1869597719 then
+		return true
+	end
 
-local Hitboxes = {
-	["Head"] = {"Head"},
-	["Chest"] = {"UpperTorso", "LowerTorso"},
-	["Arms"] = {"LeftUpperArm", "LeftLowerArm", "LeftHand", "RightUpperArm", "RightLowerArm", "RightHand"},
-	["Legs"] = {"LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "RightUpperLeg", "RightLowerLeg", "RightFoot"}
-}
+	return false
+end
 
-local HexagonFolder = Instance.new("Folder", workspace)
-HexagonFolder.Name = "HexagonFolder"
+local function checkGamemode()
+	if game.PlaceId == 301549746 then
+		return "casual"
+	elseif game.PlaceId == 1480424328 then
+		return "unranked"
+	elseif game.PlaceId == 1869597719 then
+		return "deathmatch"
+	end
 
-local oldOsPlatform = game.Players.LocalPlayer.OsPlatform
-local oldMusicT = game.Players.LocalPlayer.PlayerGui.Music.ValveT:Clone()
-local oldMusicCT = game.Players.LocalPlayer.PlayerGui.Music.ValveCT:Clone()
+	return false
+end
 
-local Weapons = {}; for i,v in pairs(game.ReplicatedStorage.Weapons:GetChildren()) do if v:FindFirstChild("Model") then table.insert(Weapons, v.Name) end end
-
-local Sounds = {
-	["TTT a"] = workspace.RoundEnd,
-	["TTT b"] = workspace.RoundStart,
-	["T Win"] = workspace.Sounds.T,
-	["CT Win"] = workspace.Sounds.CT,
-	["Planted"] = workspace.Sounds.Arm,
-	["Defused"] = workspace.Sounds.Defuse,
-	["Rescued"] = workspace.Sounds.Rescue,
-	["Explosion"] = workspace.Sounds.Explosion,
-	["Becky"] = workspace.Sounds.Becky,
-	["Beep"] = workspace.Sounds.Beep
-}
-	
-local FOVCircle = Drawing.new("Circle")
-local Cases = {}; for i,v in pairs(game.ReplicatedStorage.Cases:GetChildren()) do table.insert(Cases, v.Name) end
-
-local Configs = {}
-local Inventories = loadstring("return "..readfile("hexagon/inventories.txt"))()
-local Skyboxes = loadstring("return "..readfile("hexagon/skyboxes.txt"))()
-
-
-
--- Main
-local SilentLegitbot = {target = nil}
-local SilentRagebot = {target = nil, cooldown = false}
-local LocalPlayer = game.Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
-local cbClient = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
-local oldInventory = cbClient.CurrentInventory
-local nocw_s = {}
-local nocw_m = {}
-local curVel = 16
-local isBhopping = false
-
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pawel12d/hexagon/main/scripts/ESP.lua"))()
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/hexagon/lib/library_alpha.lua"))()
-
-local Window = library:CreateWindow(Vector2.new(500, 500), Vector2.new((workspace.CurrentCamera.ViewportSize.X/2)-250, (workspace.CurrentCamera.ViewportSize.Y/2)-250))
-
--- Functions
 local function RandomString(length, strings)
 	local strings = strings or {
 		"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z",
@@ -275,6 +305,14 @@ end
 
 local function GetTeam(plr)
 	return game.Teams[plr.Team.Name]
+end
+
+local function GetTeamDif(plr)
+	if plr:FindFirstChild("Status") and plr.Status:FindFirstChild("Team") then
+		return plr.Status.Team.Value
+	end
+
+	return "Spectator"
 end
 
 local function GetSite()
@@ -311,7 +349,7 @@ end
 local function PlantC4()
 	pcall(function()
 	if IsAlive(LocalPlayer) and workspace.Map.Gamemode.Value == "defusal" and workspace.Status.Preparation.Value == false and not planting then 
-		pausetps = true
+		SilentTable.Pause = true
 		wait()
 		planting = true
 		local pos = LocalPlayer.Character.HumanoidRootPart.CFrame 
@@ -324,7 +362,7 @@ local function PlantC4()
 		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
 		game.Workspace.CurrentCamera.CameraType = "Custom"
 		planting = false
-		pausetps = false
+		SilentTable.Pause = false
 	end
 	end)
 end
@@ -332,7 +370,7 @@ end
 local function DefuseC4()
 	pcall(function()
 	if IsAlive(LocalPlayer) and workspace.Map.Gamemode.Value == "defusal" and not defusing and workspace:FindFirstChild("C4") then 
-		pausetps = true
+		SilentTable.Pause = true
 		wait()
 		defusing = true
 		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
@@ -354,7 +392,7 @@ local function DefuseC4()
 		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
 		game.Workspace.CurrentCamera.CameraType = "Custom"
 		defusing = false
-		pausetps = false
+		SilentTable.Pause = false
 	end
 	end)
 end
@@ -448,6 +486,10 @@ local function GetLegitbotHitbox(plr)
 	end
 	
 	return nil
+end
+
+local function GetHitbox(plr)
+	if plr.Character:FindFirstChild("Head") then return plr.Character.Head elseif plr.Character:FindFirstChild("UpperTorso") then return plr.Character.UpperTorso end
 end
 
 local function TableToNames(tbl, alt)
@@ -565,13 +607,8 @@ AimbotTabCategoryLegitbot:AddToggle("Enabled", false, "AimbotTabCategoryLegitbot
 						if hitboxpart ~= nil then
 							local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(hitboxpart.Position)
 
-							if library.pointers.AimbotTabCategoryLegitbotSmoothnessToggle.value == true then
-								local PositionX = (Mouse.X-Vector.X)/library.pointers.AimbotTabCategoryLegitbotSmoothness.value + 1
-								local PositionY = (Mouse.Y-Vector.Y)/library.pointers.AimbotTabCategoryLegitbotSmoothness.value + 1
-							elseif library.pointers.AimbotTabCategoryLegitbotSmoothnessToggle == false then
-								local PositionX = Mouse.X-Vector.X
-								local PositionY = Mouse.Y-Vector.Y
-							end
+							local PositionX = Mouse.X-Vector.X
+							local PositionY = Mouse.Y-Vector.Y
 							
 							if library.pointers.AimbotTabCategoryLegitbotSilent.value == true then
 								SilentLegitbot.target = hitboxpart
@@ -597,8 +634,6 @@ AimbotTabCategoryLegitbot:AddToggle("Enabled", false, "AimbotTabCategoryLegitbot
 		LegitbotLoop:Disconnect()
 	end
 end)
-
-AimbotTabCategoryLegitbot:AddToggle("Smoothness", false, "AimbotTabCategoryLegitbotSmoothnessToggle")
 
 AimbotTabCategoryLegitbot:AddToggle("Silent", false, "AimbotTabCategoryLegitbotSilent")
 
@@ -914,23 +949,28 @@ VisualsTabCategoryViewmodelColors:AddLabel("")
 VisualsTabCategoryViewmodelColors:AddLabel("Arms")
 VisualsTabCategoryViewmodelColors:AddToggle("Enabled", false, "VisualsTabCategoryViewmodelColorsArms")
 VisualsTabCategoryViewmodelColors:AddColorPicker("Color", Color3.new(1,1,1), "VisualsTabCategoryViewmodelColorsArmsColor")
+VisualsTabCategoryViewmodelColors:AddDropdown("Material", {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, "SmoothPlastic", "VisualsTabCategoryViewmodelColorsArmsMaterial")
 VisualsTabCategoryViewmodelColors:AddSlider("Transparency", {0, 1, 0, 0.01, ""}, "VisualsTabCategoryViewmodelColorsArmsTransparency")
 
 VisualsTabCategoryViewmodelColors:AddLabel("")
 VisualsTabCategoryViewmodelColors:AddLabel("Gloves")
 VisualsTabCategoryViewmodelColors:AddToggle("Enabled", false, "VisualsTabCategoryViewmodelColorsGloves")
+VisualsTabCategoryViewmodelColors:AddDropdown("Visible", {"Texture", "Color"}, "Texture", "VisualsTabCategoryViewmodelColorsGlovesVisible")
 VisualsTabCategoryViewmodelColors:AddColorPicker("Color", Color3.new(1,1,1), "VisualsTabCategoryViewmodelColorsGlovesColor")
+VisualsTabCategoryViewmodelColors:AddDropdown("Material", {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, "SmoothPlastic", "VisualsTabCategoryViewmodelColorsGlovesMaterial")
 VisualsTabCategoryViewmodelColors:AddSlider("Transparency", {0, 1, 0, 0.01, ""}, "VisualsTabCategoryViewmodelColorsGlovesTransparency")
 
 VisualsTabCategoryViewmodelColors:AddLabel("")
 VisualsTabCategoryViewmodelColors:AddLabel("Sleeves")
 VisualsTabCategoryViewmodelColors:AddToggle("Enabled", false, "VisualsTabCategoryViewmodelColorsSleeves")
 VisualsTabCategoryViewmodelColors:AddColorPicker("Color", Color3.new(1,1,1), "VisualsTabCategoryViewmodelColorsSleevesColor")
+VisualsTabCategoryViewmodelColors:AddDropdown("Material", {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, "ForceField", "VisualsTabCategoryViewmodelColorsSleevesMaterial")
 VisualsTabCategoryViewmodelColors:AddSlider("Transparency", {0, 1, 0, 0.01, ""}, "VisualsTabCategoryViewmodelColorsSleevesTransparency")
 
 VisualsTabCategoryViewmodelColors:AddLabel("")
 VisualsTabCategoryViewmodelColors:AddLabel("Weapons")
 VisualsTabCategoryViewmodelColors:AddToggle("Enabled", false, "VisualsTabCategoryViewmodelColorsWeapons")
+VisualsTabCategoryViewmodelColors:AddDropdown("Visible", {"Texture", "Color"}, "Texture", "VisualsTabCategoryViewmodelColorsWeaponsVisible")
 VisualsTabCategoryViewmodelColors:AddColorPicker("Color", Color3.new(1,1,1), "VisualsTabCategoryViewmodelColorsWeaponsColor")
 VisualsTabCategoryViewmodelColors:AddDropdown("Material", {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, "SmoothPlastic", "VisualsTabCategoryViewmodelColorsWeaponsMaterial")
 VisualsTabCategoryViewmodelColors:AddSlider("Transparency", {0, 1, 0, 0.01, ""}, "VisualsTabCategoryViewmodelColorsWeaponsTransparency")
@@ -1268,9 +1308,11 @@ MiscellaneousTabCategoryMain:AddToggle("Anti Vote Kick", false, "MiscellaneousTa
 
 MiscellaneousTabCategoryMain:AddToggle("Anti Spectators", false, "MiscellaneousTabCategoryMainAntiSpectators")
 
---MiscellaneousTabCategoryMain:AddToggle("Unlock Reset Character", false, "MiscellaneousTabCategoryMainUnlockResetCharacter", function(val)
-	--game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
---end)
+MiscellaneousTabCategoryMain:AddToggle("Unlock Reset Character", false, "MiscellaneousTabCategoryMainUnlockResetCharacter", function(val)
+	pcall(function()
+		game:GetService("StarterGui"):SetCore("ResetButtonCallback", val)
+	end)
+end)
 
 MiscellaneousTabCategoryMain:AddToggle("Unlock Shop While Alive", false, "MiscellaneousTabCategoryMainUnlockShopWhileAlive")
 
@@ -2068,50 +2110,51 @@ function killtarget(target)
     end
 end
 
---[[ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "ExperimentalTabCategoryOptionsAKV", function(val)
-	if val == true then
-		AutoKillVisibleLoop = game:GetService("RunService").RenderStepped:Connect(function()
-			pcall(function()
-				if IsAlive(LocalPlayer) then
-					for i,plr in pairs(game.Players:GetPlayers()) do
-						if plr ~= LocalPlayer and IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
-							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
-								--game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-								--game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
-							end
-						end
-					end
-				end
-			end)
-		end)
-	elseif val == false and AutoKillVisibleLoop then
-		AutoKillVisibleLoop:Disconnect()
-	end
-end)]]--
 ExperimentalTabCategoryOptions:AddToggle("Auto Kill Visible", false, "ExperimentalTabCategoryOptionsAKV", function(val)
 	if val == true then
-		while library.pointers.ExperimentalTabCategoryOptionsAKV2.value == true do
-			if IsAlive(LocalPlayer) and workspace.Status.Preparation.Value == false then
+		while library.pointers.ExperimentalTabCategoryOptionsAKV.value == true do
+			if IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and workspace.Status.Preparation.Value == false then
 				for i,plr in pairs(game.Players:GetPlayers()) do
-					if plr ~= LocalPlayer then
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
-							if IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+					if plr ~= LocalPlayer and library.pointers.ExperimentalTabCategoryOptionsAKSO.value == false or plr ~= LocalPlayer and library.pointers.ExperimentalTabCategoryOptionsAKSO.value == true and plr.Name == library.pointers.ExperimentalTabCategoryOptionsAKS.value then
+						if checkId("team") and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+							if IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and plr.Character["Head"] and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true or IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and plr.Character["UpperTorso"] and IsVisible(plr.Character.UpperTorso.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
+								spawn(function()
+									if library.pointers["ExperimentalTabCategoryOptionsAKD"] then
+										wait(library.pointers.ExperimentalTabCategoryOptionsAKD.value)
+									end
+	
+									if IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+									end
+								end)
 							end
-						elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-							if IsAlive(plr) and GetTeam(plr) ~= "TTT" and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+						elseif checkId("ffa") then
+							if IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and plr.Character["Head"] and IsVisible(plr.Character.Head.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true or IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and plr.Character["UpperTorso"] and IsVisible(plr.Character.UpperTorso.Position, {plr.Character, LocalPlayer.Character, HexagonFolder, workspace.CurrentCamera}) == true then
+								spawn(function()
+									if library.pointers["ExperimentalTabCategoryOptionsAKD"] then
+										wait(library.pointers.ExperimentalTabCategoryOptionsAKD.value)
+									end
+									
+									if IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
+									end
+								end)
 							end
 						end
 					end
 				end
 			end
 
-			wait(0.1)
+			if library.pointers["ExperimentalTabCategoryOptionsAKLD"] and library.pointers.ExperimentalTabCategoryOptionsAKLD.value ~= 0 then
+				wait(library.pointers.ExperimentalTabCategoryOptionsAKLD.value / 1000)
+			end
 		end
 	end
 end)
+ExperimentalTabCategoryOptions:AddSlider("Auto Kill Loop Delay", {0, 3000, 100, 100, "Ms"}, "ExperimentalTabCategoryOptionsAKLD")
+ExperimentalTabCategoryOptions:AddSlider("Auto Kill Delay", {0, 10, 0, 1, ""}, "ExperimentalTabCategoryOptionsAKD")
+ExperimentalTabCategoryOptions:AddToggle("Auto Kill Specific Only", false, "ExperimentalTabCategoryOptionsAKSO")
+ExperimentalTabCategoryOptions:AddDropdown("Auto Kill Specific", {"-"}, "-", "ExperimentalTabCategoryOptionsAKS")
 
 ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
@@ -2124,17 +2167,17 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 	if val == true then
 		KillEnemiesLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if IsAlive(LocalPlayer) then
+				if IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" then
 					for i,v in pairs(game.Players:GetChildren()) do
 						if v ~= LocalPlayer and IsAlive(v) then
-							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-                                if GetTeam(v) ~= "TTT" and GetTeam(v) ~= GetTeam(LocalPlayer) then
+							if checkId("team") then
+                                if GetTeamDif(v) ~= "Spectator" and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
                                     if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
                                         game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
                                     elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-                                        if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+                                        if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 											for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-												if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+												if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 													game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
 												end
 												wait()
@@ -2143,9 +2186,9 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
                                     elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
                                         game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
                                     elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-                                        if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+                                        if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 											for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-												if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+												if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 													game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
 												end
 												wait()
@@ -2153,13 +2196,13 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 										end
                                     end
                                 end
-                            elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+                            elseif checkId("ffa") then
                                 if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
                                     game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
                                 elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-                                    if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+                                    if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) then
 										for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-											if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+											if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) then
 												game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
 											end
 											wait()
@@ -2168,9 +2211,9 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
                                 elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
                                     game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
                                 elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-                                    if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+                                    if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 										for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-											if GetTeam(v) ~= "TTT" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeam(v) ~= GetTeam(LocalPlayer) then
+											if GetTeamDif(v) ~= "Spectator" and v ~= LocalPlayer and IsAlive(v) and IsAlive(LocalPlayer) and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 												game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(v)))
 											end
 											wait()
@@ -2188,8 +2231,6 @@ ExperimentalTabCategoryOptions:AddToggle("Kill all", false, "ExperimentalTabCate
 	end
 end)
 
-ExperimentalTabCategoryOptions:AddDropdown("Gamemode", {"Teams", "FFA"}, "Teams", "ExperimentalTabCategoryOptionsGamemode")
-
 ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "ExperimentalTabCategoryOptionsRefresh", function(val)
 	if val == true then
 		trueorfalse3 = true
@@ -2204,6 +2245,7 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
                     local playerlistgw = {"-"}
 					local playerlistss = {"-"}
 					local playerlistrp = {"-"}
+					playerak = false
 					player1f = false
 					player2f = false
 					player3f = false
@@ -2216,6 +2258,10 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 						if v ~= LocalPlayer then
 							if IsAlive(v) then
 								playerlistfollow[v] = v
+							end
+
+							if tostring(v) == library.pointers.ExperimentalTabCategoryOptionsAKS.value then
+								playerak = true
 							end
 
 							if tostring(v) == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
@@ -2250,11 +2296,11 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 								playerss = true
 							end
 
-							if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-								if GetTeam(v) ~= GetTeam(LocalPlayer) then
+							if checkId("team") then
+								if GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 									playerlistkillall[v] = v
 								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
+							elseif checkId("ffa") then
 								playerlistkillall[v] = v
 							end
 							
@@ -2305,6 +2351,13 @@ ExperimentalTabCategoryOptions:AddToggle("Refresh player list", false, "Experime
 							library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.options = playerlistfollow
 						end
 					
+						if playerak == true then
+							library.pointers.ExperimentalTabCategoryOptionsAKS.options = playerlistkillall
+						else
+							library.pointers.ExperimentalTabCategoryOptionsAKS:Set("-")
+							library.pointers.ExperimentalTabCategoryOptionsAKS.options = playerlistkillall
+						end
+
 						if player1f == true then
 							library.pointers.ExperimentalTabCategoryPlayer1Players.options = playerlistkillall
 						else
@@ -2367,7 +2420,7 @@ ExperimentalTabCategoryOptions:AddToggle("Anti Anti-Aim", false, "ExperimentalTa
 	end
 end)
 
-ExperimentalTabCategoryOptions:AddToggle("Break Stormy Ragebot", false, "ExperimentalTabCategoryOptionsBreakStormyRagebot", function(val)
+--[[ExperimentalTabCategoryOptions:AddToggle("Break Stormy Ragebot", false, "ExperimentalTabCategoryOptionsBreakStormyRagebot", function(val)
 	if val == true then
 		BreakStormyRagebotLoop = LocalPlayer.CharacterAdded:Connect(function()
 			pcall(function()
@@ -2377,7 +2430,7 @@ ExperimentalTabCategoryOptions:AddToggle("Break Stormy Ragebot", false, "Experim
 	elseif val == false and BreakStormyRagebotLoop then
 		BreakStormyRagebotLoop:Disconnect()
 	end
-end)
+end)]]--
 
 function teleportTospawnpoint()
 	wait()
@@ -2422,50 +2475,27 @@ end
 
 ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalTabCategoryTeleportTeleport", function(val)
 	if val == true then
-		for i,v in pairs(game.Players:GetChildren()) do
-			if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
-				playertp1 = v
-				playertp1m = tostring(v)
-			elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
-				playertp1 = nil
-				playertp1m = "-"
-			end
-
-			if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
-				playertp2 = v
-				playertp2m = tostring(v)
-			elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
-				playertp2 = nil
-				playertp2m = "-"
-			end
-			
-			if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
-				playertp3 = v
-				playertp3m = tostring(v)
-			elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
-				playertp3 = nil
-				playertp3m = "-"
-			end
-		end
-		teleported = false
-		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
+		etctFDLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-                local var = var or true
 				if IsAlive(LocalPlayer) then
 					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
-						if teleported == false or teleported2 == false then
-							local var = true
+						if SilentTable.Teleporter1 == false or SilentTable.Teleporter2 == false then
+							SilentTable.NoclipSwitch = true
 							local velocity = Vector3.new(0, 1, 0)
 						
 							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
 							LocalPlayer.Character.Humanoid.PlatformStand = true
 							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-								if v:IsA("BasePart") and v.CanCollide == true then
-									v.CanCollide = false
+								for i2,v2 in pairs(Colliders) do
+									if v.CanCollide == true then
+										if v.Name == v2 then
+											v.CanCollide = false
+										end
+									end
 								end
 							end
-						elseif var == true then
-							local var = false
+						elseif SilentTable.NoclipSwitch == true then
+							SilentTable.NoclipSwitch = false
 							if LocalPlayer.Character.Humanoid.PlatformStand == true then
 								LocalPlayer.Character.Humanoid.PlatformStand = false
 							end
@@ -2476,259 +2506,99 @@ ExperimentalTabCategoryTeleport:AddToggle("Teleport Loop", false, "ExperimentalT
 		end)
 		TeleportLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if library.pointers.ExperimentalTabCategoryTeleportConstantTP.value == true or KillEnemiesLoop and pausetps == false then
-					if not library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value then
-						playerlisttest = {}
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-							for i,v in pairs(game.Players:GetChildren()) do
-								if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) and GetTeam(v) ~= "TTT" then
-									table.insert(playerlisttest, v)
-								end
+				if IsAlive(LocalPlayer) then
+					if library.pointers.ExperimentalTabCategoryTeleportConstantTP.value == true and SilentTable.Pause == false or library.pointers.ExperimentalTabCategoryOptionsKillall.value == true and SilentTable.Pause == false then
+						local check = table.foreach(game.Players:GetPlayers(), function(i,v)
+							if v ~= LocalPlayer and IsAlive(v) and GetTeamDif(v) ~= "Spectator" and checkId("team") and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) or v ~= LocalPlayer and IsAlive(v) and GetTeamDif(v) ~= "Spectator" and checkId("ffa") then
+								return true
 							end
-						end
-						if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
+						end)
+						if check == true and library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false or check == true and library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false then
+							SilentTable.Teleporter1 = false
+							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+								wait()
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+								for i,v in pairs(game.Players:GetChildren()) do
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and SilentTable.Pause == false and GetTeamDif(v) ~= "Spectator" then
+										teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
+										wait()
+									elseif SilentTable.Pause == true then
+										break
 									end
 								end
 							end
-						else
-							if teleported == false then
-								pausetps = true
-								teleported = true
-								teleportTospawnpoint()
-								pausetps = false
+						elseif check == true and library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == true then
+							SilentTable.Teleporter1 = false
+							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1000000)
+						elseif check == nil then
+							if SilentTable.Teleporter1 == false then
+								SilentTable.Pause = true
+								SilentTable.Teleporter1 = true
 								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == false then
-										v.CanCollide = true
-									end
-								end
-							end
-						end
-					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == false then
-						playerlisttest = {}
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" then
-							for i,v in pairs(game.Players:GetChildren()) do
-								if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) and IsAlive(v) and GetTeam(v) ~= "TTT" then
-									table.insert(playerlisttest, v)
-								end
-							end
-						end
-						if (#playerlisttest ~= 0) or library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
+									for i2,v2 in pairs(Colliders) do
+										if v.Name == v2 then
+											v.CanCollide = true
 										end
 									end
 								end
-							end
-						else
-							if teleported == false then
-								pausetps = true
-								teleported = true
 								teleportTospawnpoint()
-								pausetps = false
-								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == false then
-										v.CanCollide = true
-									end
-								end
+								SilentTable.Pause = false
 							end
 						end
-					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == true then
-						LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1000000)
-					end
-				elseif string.match(playertp1m, library.pointers.ExperimentalTabCategoryPlayer1Players.value) and string.match(playertp2m, library.pointers.ExperimentalTabCategoryPlayer2Players.value) and string.match(playertp3m, library.pointers.ExperimentalTabCategoryPlayer3Players.value) and pausetps == false then
-					if not library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value then
-						if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
+					elseif library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer1Players.value) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer1Players.value]) ~= "Spectator" and checkId("team") and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer1Players.value]) ~= GetTeamDif(LocalPlayer) and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryPlayer1Players.value]) or library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer1Players.value) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer1Players.value]) ~= "Spectator" and checkId("ffa") and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryPlayer1Players.value]) or library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer2Players.value) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer2Players.value]) ~= "Spectator" and checkId("team") and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer2Players.value]) ~= GetTeamDif(LocalPlayer) and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryPlayer2Players.value]) or library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer2Players.value) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer2Players.value]) ~= "Spectator" and checkId("ffa") and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryPlayer2Players.value]) or library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer3Players.value) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer3Players.value]) ~= "Spectator" and checkId("team") and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer3Players.value]) ~= GetTeamDif(LocalPlayer) and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryPlayer3Players.value]) or library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer3Players.value) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryPlayer3Players.value]) ~= "Spectator" and checkId("ffa") and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryPlayer3Players.value]) then
+						SilentTable.Teleporter1 = false
+						if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false then
+							if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
+								wait()
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
+							elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
+								for i,v in pairs(game.Players:GetChildren()) do
+									if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and SilentTable.Pause == false and GetTeamDif(v) ~= "Spectator" then
+										teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
+										wait()
+									elseif SilentTable.Pause == true then
+										break
 									end
 								end
 							end
-						elseif library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
-									end
-								end
-							end
-						elseif library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
-									end
-								end
-							end
-						else
-							if teleported == false then
-								pausetps = true
-								teleported = true
-								teleportTospawnpoint()
-								pausetps = false
-								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == false then
-										v.CanCollide = true
-									end
-								end
-							end
-						end
-					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == false then
-						if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true and IsAlive(playertp1) and library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and pausetps == false then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
-									end
-								end
-							end
-						elseif library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true and IsAlive(playertp2) and library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and pausetps == false then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
-									end
-								end
-							end
-						elseif library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true and IsAlive(playertp3) and library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and pausetps == false then
-							if IsAlive(LocalPlayer) then
-								teleported = false
-								if library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Bomb Sites" then
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant"].Position + Vector3.new(0, 3, 0))
-									wait()
-									LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(workspace.Map.SpawnPoints["C4Plant2"].Position + Vector3.new(0, 3, 0))
-								elseif library.pointers.ExperimentalTabCategoryTeleportTeleportOptions.value == "Players" then
-									for i,v in pairs(game.Players:GetChildren()) do
-										if IsAlive(LocalPlayer) and v ~= LocalPlayer and IsAlive(v) and pausetps == false and GetTeam(v) ~= "TTT" then
-											teleportToPlayer(v, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-											wait()
-										end
-									end
-								end
-							end
-						else
-							if teleported == false then
-								pausetps = true
-								teleported = true
-								teleportTospawnpoint()
-								pausetps = false
-								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == false then
-										v.CanCollide = true
-									end
-								end
-							end
-						end
-					elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value and workspace.Status.Preparation.Value == true then
-						if library.pointers.ExperimentalTabCategoryPlayer1Kill.value == true or library.pointers.ExperimentalTabCategoryPlayer2Kill.value == true or library.pointers.ExperimentalTabCategoryPlayer3Kill.value == true then
+						elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == true then
 							LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 1000000)
 						end
-					end
-				else
-					for i,v in pairs(game.Players:GetChildren()) do
-						if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
-							playertp1 = v
-							playertp1m = tostring(v)
-						elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
-							playertp1 = nil
-							playertp1m = "-"
-						end
-		
-						if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
-							playertp2 = v
-							playertp2m = tostring(v)
-						elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
-							playertp2 = nil
-							playertp2m = "-"
-						end
-					
-						if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
-							playertp3 = v
-							playertp3m = tostring(v)
-						elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
-							playertp3 = nil
-							playertp3m = "-"
+					else
+						if SilentTable.Teleporter1 == false then
+							SilentTable.Pause = true
+							SilentTable.Teleporter1 = true
+							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+								for i2,v2 in pairs(Colliders) do
+									if v.Name == v2 then
+										v.CanCollide = true
+									end
+								end
+							end
+							teleportTospawnpoint()
+							SilentTable.Pause = false
 						end
 					end
 				end
 			end)
 		end)
-
 	elseif val == false and TeleportLoop then
 		TeleportLoop:Disconnect()
-		LocalPlayer.Character.Humanoid.PlatformStand = false
-		pausetps = true
-		teleportTospawnpoint()
-		pausetps = false
+		SilentTable.Teleporter1 = true
 		if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == false then
 			etctFDLoop:Disconnect()
 			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-				if v:IsA("BasePart") and v.CanCollide == false then
-					v.CanCollide = true
+				for i2,v2 in pairs(Colliders) do
+					if v.Name == v2 then
+						v.CanCollide = true
+					end
 				end
 			end
+
+			teleportTospawnpoint()
 		end
 	end
 end)
@@ -2739,32 +2609,27 @@ ExperimentalTabCategoryTeleport:AddDropdown("Player Follower", {"-"}, "-", "Expe
 
 ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCategoryTeleportFollowPLR", function(val)
 	if val == true then
-		for i,v in pairs(game.Players:GetChildren()) do
-			if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value ~= "-" then
-				if v.Name == library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value then
-					followplayer = v
-					break
-				end
-			end
-		end
-		etctFDLoop = game:GetService("RunService").Stepped:Connect(function()
+		etctFDLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-                local var = var or true
-				if IsAlive(LocalPlayer) then
+                if IsAlive(LocalPlayer) then
 					if library.pointers.ExperimentalTabCategoryTeleportFollowPLR.value == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true then
-						if teleported == false or teleported2 == false then
-							local var = true
+						if SilentTable.Teleporter1 == false or SilentTable.Teleporter2 == false then
+							SilentTable.NoclipSwitch = true
 							local velocity = Vector3.new(0, 1, 0)
 						
 							LocalPlayer.Character.HumanoidRootPart.Velocity = velocity
 							LocalPlayer.Character.Humanoid.PlatformStand = true
 							for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-								if v:IsA("BasePart") and v.CanCollide == true then
-									v.CanCollide = false
+								for i2,v2 in pairs(Colliders) do
+									if v.CanCollide == true then
+										if v.Name == v2 then
+											v.CanCollide = false
+										end
+									end
 								end
 							end
-						elseif var == true then
-							local var = false
+						elseif SilentTable.NoclipSwitch == true then
+							SilentTable.NoclipSwitch = false
 							if LocalPlayer.Character.Humanoid.PlatformStand == true then
 								LocalPlayer.Character.Humanoid.PlatformStand = false
 							end
@@ -2775,51 +2640,42 @@ ExperimentalTabCategoryTeleport:AddToggle("Follow", false, "ExperimentalTabCateg
 		end)
 		PlayerFollowLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value == tostring(followplayer) then
-					if pausetps == false then
-						if IsAlive(LocalPlayer) and IsAlive(followplayer) and GetTeam(followplayer) ~= "TTT" then
-							teleported2 = false
-							teleportToPlayer(followplayer, library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
-							wait()
-						elseif IsAlive(LocalPlayer) then
-							if teleported2 == false then
-								pausetps = true
-								teleported2 = true
-								teleportTospawnpoint()
-								pausetps = false
-								for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-									if v:IsA("BasePart") and v.CanCollide == false then
-										v.CanCollide = true
-									end
+				if IsAlive(LocalPlayer) and SilentTable.Pause == false and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value) and IsAlive(game.Players[library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value]) and GetTeamDif(game.Players[library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value]) ~= "Spectator" then
+					SilentTable.Teleporter2 = false
+					if library.pointers.ExperimentalTabCategoryTeleportTeleport.value == true and SilentTable.Teleporter1 == true or library.pointers.ExperimentalTabCategoryTeleportTeleport.value == false then
+						teleportToPlayer(game.Players[library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value], library.pointers.ExperimentalTabCategoryTeleportFollowMethod.value)
+					end
+				elseif IsAlive(LocalPlayer) then
+					if SilentTable.Teleporter2 == false then
+						SilentTable.Pause = true
+						SilentTable.Teleporter2 = true
+						for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
+							for i2,v2 in pairs(Colliders) do
+								if v.Name == v2 then
+									v.CanCollide = true
 								end
 							end
 						end
-					end
-				else
-					for i,v in pairs(game.Players:GetChildren()) do
-						if library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value ~= "-" then
-							if v.Name == library.pointers.ExperimentalTabCategoryTeleportPLRFollowList.value then
-								followplayer = v
-								break
-							end
-						end
+						teleportTospawnpoint()
+						SilentTable.Pause = false
 					end
 				end
 			end)
 		end)
 	elseif val == false and PlayerFollowLoop then
 		PlayerFollowLoop:Disconnect()
-		LocalPlayer.Character.Humanoid.PlatformStand = false
-		pausetps = true
-		teleportTospawnpoint()
-		pausetps = false
+		SilentTable.Teleporter2 = true
 		if library.pointers.ExperimentalTabCategoryTeleportTeleport.value == false then
 			etctFDLoop:Disconnect()
 			for i,v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-				if v:IsA("BasePart") and v.CanCollide == false then
-					v.CanCollide = true
+				for i2,v2 in pairs(Colliders) do
+					if v.Name == v2 then
+						v.CanCollide = true
+					end
 				end
 			end
+
+			teleportTospawnpoint()
 		end
 	end
 end)
@@ -2855,77 +2711,23 @@ ExperimentalTabCategoryPlayer1:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer1:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer1Kill", function(val)
 	if val == true then
-		for i,v in pairs(game.Players:GetChildren()) do
-			if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
-				player1 = v
-				break
-			elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
-				player1 = nil
-				break
-			end
-		end
 		KillSpecificLoop1 = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if string.match(tostring(player1), library.pointers.ExperimentalTabCategoryPlayer1Players.value) then
-					if player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) then
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(player1) ~= "TTT" and GetTeam(player1) ~= GetTeam(LocalPlayer) then
-							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-										end
-										wait()
-									end
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) and GetTeam(player1) ~= GetTeam(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-										end
-										wait()
+				if library.pointers.ExperimentalTabCategoryPlayer1Players.value ~= "-" and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer1Players.value) and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" then
+					local plr = game.Players[library.pointers.ExperimentalTabCategoryPlayer1Players.value]
+					if checkId("ffa") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" or checkId("team") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+						if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
+							for i = 1,library.pointers.ExperimentalTabCategoryOptionsLoopRate.value,1 do
+								if checkId("ffa") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" or checkId("team") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+									if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 									end
 								end
 							end
-						elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" and GetTeam(player1) ~= "TTT" then
-							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-										end
-										wait()
-									end
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player1) ~= "TTT" and player1 ~= LocalPlayer and IsAlive(player1) and IsAlive(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player1)))
-										end
-										wait()
-									end
-								end
+						elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 							end
-						end
-					end
-				else
-					for i,v in pairs(game.Players:GetChildren()) do
-						if v.Name == library.pointers.ExperimentalTabCategoryPlayer1Players.value then
-							player1 = v
-							break
-						elseif library.pointers.ExperimentalTabCategoryPlayer1Players.value == "-" then
-							player1 = nil
-							break
 						end
 					end
 				end
@@ -2942,77 +2744,23 @@ ExperimentalTabCategoryPlayer2:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer2:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer2Kill", function(val)
 	if val == true then
-		for i,v in pairs(game.Players:GetChildren()) do
-			if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
-				player2 = v
-				break
-			elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
-				player2 = nil
-				break
-			end
-		end
 		KillSpecificLoop2 = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if string.match(tostring(player2), library.pointers.ExperimentalTabCategoryPlayer2Players.value) then
-					if player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) then
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(player2) ~= "TTT" and GetTeam(player2) ~= GetTeam(LocalPlayer) then
-							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-										end
-										wait()
-									end
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) and GetTeam(player2) ~= GetTeam(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-										end
-										wait()
+				if library.pointers.ExperimentalTabCategoryPlayer2Players.value ~= "-" and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer2Players.value) and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" then
+					local plr = game.Players[library.pointers.ExperimentalTabCategoryPlayer2Players.value]
+					if checkId("ffa") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" or checkId("team") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+						if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
+							for i = 1,library.pointers.ExperimentalTabCategoryOptionsLoopRate.value,1 do
+								if checkId("ffa") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" or checkId("team") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+									if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 									end
 								end
 							end
-						elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" and GetTeam(player2) ~= "TTT" then
-							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-										end
-										wait()
-									end
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player2) ~= "TTT" and player2 ~= LocalPlayer and IsAlive(player2) and IsAlive(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player2)))
-										end
-										wait()
-									end
-								end
+						elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 							end
-						end
-					end
-				else
-					for i,v in pairs(game.Players:GetChildren()) do
-						if v.Name == library.pointers.ExperimentalTabCategoryPlayer2Players.value then
-							player2 = v
-							break
-						elseif library.pointers.ExperimentalTabCategoryPlayer2Players.value == "-" then
-							player2 = nil
-							break
 						end
 					end
 				end
@@ -3029,77 +2777,23 @@ ExperimentalTabCategoryPlayer3:AddDropdown("Players", {"-"}, "-", "ExperimentalT
 
 ExperimentalTabCategoryPlayer3:AddToggle("Kill Specific", false, "ExperimentalTabCategoryPlayer3Kill", function(val)
 	if val == true then
-		for i,v in pairs(game.Players:GetChildren()) do
-			if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
-				player3 = v
-				break
-			elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
-				player3 = nil
-				break
-			end
-		end
 		KillSpecificLoop3 = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-				if string.match(tostring(player3), library.pointers.ExperimentalTabCategoryPlayer3Players.value) then
-					if player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) then
-						if library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "Teams" and GetTeam(player3) ~= "TTT" and GetTeam(player3) ~= GetTeam(LocalPlayer) then
-							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-										end
-										wait()
-									end
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) and GetTeam(player3) ~= GetTeam(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-										end
-										wait()
+				if library.pointers.ExperimentalTabCategoryPlayer3Players.value ~= "-" and game.Players:FindFirstChild(library.pointers.ExperimentalTabCategoryPlayer3Players.value) and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" then
+					local plr = game.Players[library.pointers.ExperimentalTabCategoryPlayer3Players.value]
+					if checkId("ffa") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" or checkId("team") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+						if library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
+							for i = 1,library.pointers.ExperimentalTabCategoryOptionsLoopRate.value,1 do
+								if checkId("ffa") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" or checkId("team") and IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(plr) and GetTeamDif(plr) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
+									if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false then
+										game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 									end
 								end
 							end
-						elseif library.pointers.ExperimentalTabCategoryOptionsGamemode.value == "FFA" and GetTeam(player3) ~= "TTT" then
-							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-										end
-										wait()
-									end
-								end
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
-								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-							elseif library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false and library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Loop" then
-								if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) then
-									for i = 1, library.pointers.ExperimentalTabCategoryOptionsLoopRate.value, 1 do
-										if GetTeam(player3) ~= "TTT" and player3 ~= LocalPlayer and IsAlive(player3) and IsAlive(LocalPlayer) then
-											game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(player3)))
-										end
-										wait()
-									end
-								end
+						elseif library.pointers.ExperimentalTabCategoryOptionsKMethod.value == "Once" then
+							if library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == true and workspace.Status.Preparation.Value == false or library.pointers.ExperimentalTabCategoryOptionsAfterPrep.value == false then
+								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(killtarget(plr)))
 							end
-						end
-					end
-				else
-					for i,v in pairs(game.Players:GetChildren()) do
-						if v.Name == library.pointers.ExperimentalTabCategoryPlayer3Players.value then
-							player3 = v
-							break
-						elseif library.pointers.ExperimentalTabCategoryPlayer3Players.value == "-" then
-							player3 = nil
-							break
 						end
 					end
 				end
@@ -3766,6 +3460,9 @@ TrollTabMap:AddToggle("Drop Mags", false,  "TrollTabMapDropMags", function(val)
 end)
 TrollTabMap:AddToggle("Remove Preparation", false, "TrollTabMapRP", function(val)
 	if val == true then
+		if game:FindFirstChild("Workspace"):FindFirstChild("Status"):FindFirstChild("Preparation") then
+			WorkSpace.Status.Preparation.Value = false
+		end
 		TrollTabMapRPLoop = WorkSpace:FindFirstChild("Status"):FindFirstChild("Preparation"):GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
 				if game:FindFirstChild("Workspace"):FindFirstChild("Status"):FindFirstChild("Preparation") then
@@ -3837,39 +3534,78 @@ shittalklibnc = {
 	"I apologize for not being bad."
 }
 
+local shittalklibcuteware = {
+	"who? who? who? who? who? who? who? who? who? who? who? who? who? who? who?",
+	"cuteware! cuteware! cuteware! cuteware! cuteware! cuteware! cuteware! cuteware! cuteware! cuteware! cuteware!",
+	"$$$",
+	"cuteware.xyz",
+	"1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn 1 sit nn"
+}
+
+local shittalklibowlhub = {
+	"owlhub.xyz",
+	"Owlhub is back!",
+	"Owlhub v2 is the best!",
+	"nn",
+	"Owlhub v2 nn",
+	"woohoo",
+	"owl owl owl owl owl owl~",
+	"Owlhub=#1! Owlhub=#1! Owlhub=#1! Owlhub=#1! Owlhub=#1! Owlhub=#1! Owlhub=#1! Owlhub=#1! Owlhub=#1!"
+}
+
+local function trolltabPlayerSay(message)
+	game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
+		message,
+		false,
+		"Innocent",
+		false,
+		true
+	)
+end
+
 TrollTabPlayer:AddToggle("Talk shit", false, "TrollTabPlayerTS", function(val)
 	if val == true then
 		TrollTabPlayerTSLoop = game.Players.LocalPlayer.Status.Kills:GetPropertyChangedSignal("Value"):Connect(function()
 			pcall(function()
-                if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
+				if game.Players.LocalPlayer.Status.Kills.Value ~= 0 then
 					if library.pointers.TrollTabPlayerDelay.value ~= 0 then
 						wait(library.pointers.TrollTabPlayerDelay.value)
 					end
+
 					if library.pointers.TrollTabPlayerMessages.value == "Default" and IsAlive(LocalPlayer) then
-						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
-							shittalklibnc[math.random(0, #shittalklibnc)],
-							false,
-							"Innocent",
-							false,
-							true
-						)
+							trolltabPlayerSay(shittalklibnc[math.random(0, #shittalklibnc)])
 					elseif library.pointers.TrollTabPlayerMessages.value == "Custom" and IsAlive(LocalPlayer) then
-						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
-							shittalklibcu[math.random(0, #shittalklibcu)],
-							false,
-							"Innocent",
-							false,
-							true
-						)
+						trolltabPlayerSay(shittalklibcu[math.random(0, #shittalklibcu)])
+					elseif library.pointers.TrollTabPlayerMessages.value == "cuteware" and IsAlive(LocalPlayer) then
+						trolltabPlayerSay(shittalklibcuteware[math.random(0, #shittalklibcuteware)])
+					elseif library.pointers.TrollTabPlayerMessages.value == "owlhub" then
+						trolltabPlayerSay(shittalklibowlhub[math.random(0, #shittalklibowlhub)])
 					end
-                end
+				end
 			end)
 		end)
 	elseif val == false and TrollTabPlayerTSLoop then
 		TrollTabPlayerTSLoop:Disconnect()
 	end
 end)
-TrollTabPlayer:AddDropdown("Messages", {"Default", "Custom"}, "Default", "TrollTabPlayerMessages")
+TrollTabPlayer:AddToggle("Spam Chat", false, "TrollTabPlayerSC", function(val)
+	if val == true then
+		while library.pointers.TrollTabPlayerSC.value == true do
+			if library.pointers.TrollTabPlayerMessages.value == "Default" then
+				trolltabPlayerSay(shittalklibnc[math.random(0, #shittalklibnc)])
+			elseif library.pointers.TrollTabPlayerMessages.value == "Custom" then
+				trolltabPlayerSay(shittalklibcu[math.random(0, #shittalklibcu)])
+			elseif library.pointers.TrollTabPlayerMessages.value == "cuteware" then
+				trolltabPlayerSay(shittalklibcuteware[math.random(0, #shittalklibcuteware)])
+			elseif library.pointers.TrollTabPlayerMessages.value == "owlhub" then
+				trolltabPlayerSay(shittalklibowlhub[math.random(0, #shittalklibowlhub)])
+			end
+
+			wait(2)
+		end
+	end
+end)
+TrollTabPlayer:AddDropdown("Messages", {"Default", "Custom", "cuteware", "owlhub"}, "Default", "TrollTabPlayerMessages")
 TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas.", "TrollTabPlayerCM", function(val)
 	shittalklibcu = {}
 	for i,v in pairs(string.split(val, ",,")) do
@@ -3877,12 +3613,16 @@ TrollTabPlayer:AddTextBox("Custom Message", "Seperate,,them,,with,,double commas
 	end
 end)
 TrollTabPlayer:AddSlider("Delay", {0, 10, 0, 1, ""}, "TrollTabPlayerDelay")
-TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
+--[[TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	if val == true then
 		TrollTabPlayerRHLoop = game:GetService("RunService").RenderStepped:Connect(function()
 			pcall(function()
-            	if WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead") then
-					WorkSpace:FindFirstChild(LocalPlayer.Name):FindFirstChild("FakeHead"):Destroy()
+            	if LocalPlayer.Character["FakeHead"] then
+					LocalPlayer.Character["FakeHead"]:Destroy()
+				elseif LocalPlayer.Character["HeadHB"] then
+					LocalPlayer.Character["HeadHB"]:Destroy()
+				elseif LocalPlayer.Character["Head"] then
+					LocalPlayer.Character["Head"]:Destroy()
 				else
 					wait(1)
 				end
@@ -3891,7 +3631,7 @@ TrollTabPlayer:AddToggle("Remove Head", false, "TrollTabPlayerRH", function(val)
 	elseif val == false and TrollTabPlayerRHLoop then
 		TrollTabPlayerRHLoop:Disconnect()
 	end
-end)
+end)}]]--
 
 local HexFolSECooldown = Instance.new("NumberValue", HexagonFolder)
 HexFolSECooldown.Name = "SlowEveryoneCooldown"
@@ -3936,13 +3676,13 @@ TrollTabPlayer:AddToggle("Slow Everyone", false, "TrollTabPlayerSE", function(va
 						end
 					elseif library.pointers.TrollTabPlayerSET.value == "Team" then
 						for i,v in pairs(game.Players:GetPlayers()) do
-							if v ~= LocalPlayer and GetTeam(v) == GetTeam(LocalPlayer) then
+							if v ~= LocalPlayer and GetTeamDif(v) == GetTeamDif(LocalPlayer) then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(slowPlayer(v.Name)))
 							end
 						end
 					elseif library.pointers.TrollTabPlayerSET.value == "Enemy" then
 						for i,v in pairs(game.Players:GetPlayers()) do
-							if v ~= LocalPlayer and GetTeam(v) ~= GetTeam(LocalPlayer) then
+							if v ~= LocalPlayer and GetTeamDif(v) ~= GetTeamDif(LocalPlayer) then
 								game.ReplicatedStorage.Events.HitPart:FireServer(unpack(slowPlayer(v.Name)))
 							end
 						end
@@ -4083,10 +3823,19 @@ local ReportCat = ReportTab:AddCategory("Report", 1)
 
 local ChatScript = getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
 local CheaterColor = Color3.fromRGB(150, 0, 0)
+local WarningColor = Color3.fromRGB(255, 255, 0)
 
 local HexFolrmosCooldown = Instance.new("NumberValue", HexagonFolder)
 HexFolrmosCooldown.Name = "MessageOnlineSkidsCooldown"
 HexFolrmosCooldown.Value = 0
+
+local HexFolrmosSentCooldown = Instance.new("BoolValue", HexagonFolder)
+HexFolrmosSentCooldown.Name = "MessageOnlineSkidsSentCooldown"
+HexFolrmosSentCooldown.Value = false
+
+local HexFolrmosGameOver = Instance.new("NumberValue", HexagonFolder)
+HexFolrmosGameOver.Name = "MessageOnlineSkidsGameOver"
+HexFolrmosGameOver.Value = 0
 
 local function reportTableFind(reporttable, value, field)
 	local succes = table.foreach(reporttable, function(i, v)
@@ -4226,19 +3975,32 @@ local function reportListUsernameFromId(reporttable, id)
 	end
 end
 
+local function reportHttpGet(id)
+	local success, response
+	while not success do
+		success, response = pcall(function()
+			return HttpService:JSONDecode(game:HttpGetAsync("https://api.roblox.com/users/"..id.."/onlinestatus/"))
+		end)
+		
+		wait()
+	end
+
+	return response
+end
+
 local function reportListOnlineSkids(player)
 	if player then
 		if reportListIdFromUsername(CheatingSkids, player) then
-			local tabletemp = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..reportListIdFromUsername(CheatingSkids, player).."/onlinestatus/"))
-			if tabletemp then
-				return tabletemp
-			end
+			return reportHttpGet(reportListIdFromUsername(CheatingSkids, player))
 		end
 	else
 		local temp = {"-"}
 		for i,v in pairs(reportListUserIds(CheatingSkids)) do
-			local tabletemp = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://api.roblox.com/users/"..v.."/onlinestatus/"))
-			if tabletemp["IsOnline"] and tabletemp.IsOnline == true then
+			local response
+
+			response = reportHttpGet(v)
+
+			if response["IsOnline"] and response.IsOnline == true then
 				table.insert(temp, reportListUsernameFromId(CheatingSkids, v))
 			end
 		end
@@ -4249,14 +4011,48 @@ local function reportListOnlineSkids(player)
 	return false
 end
 
-local function reportMessageOnlineSkids()
-	if HexFolrmosCooldown.Value == 0 then
-		HexFolrmosCooldown.Value = 5000
+local function reportUpdateLabels(method, table)
+	if method == "live" and table then
+		if library.pointers["InfoCatOnlineStatus"] then
+			library.pointers.InfoCatOnlineStatus:Set("Online: "..tostring(table["IsOnline"]))
+		end
+
+		if library.pointers["InfoCatPlayingStatus"] then
+			library.pointers.InfoCatPlayingStatus:Set("Playing: "..tostring(table["LastLocation"]))
+		end
+
+		return true
+	elseif method == "live_reset" then
+		if library.pointers["InfoCatOnlineStatus"] then
+			library.pointers.InfoCatOnlineStatus:Set("Online:")
+		end
+
+		if library.pointers["InfoCatPlayingStatus"] then
+			library.pointers.InfoCatPlayingStatus:Set("Playing:")
+		end
+
+		return true
+	elseif method == "offline" then
+		if library.pointers["InfoCatCount"] then
+			library.pointers.InfoCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
+		end
+
+		return true
+	end
+	
+	return false
+end
+
+local function reportMessageOnlineSkids(method)
+	if HexFolrmosCooldown.Value == 0 or method == "forced" then
+		HexFolrmosSentCooldown.Value = false
+		HexFolrmosCooldown.Value = 5000 + ((#reportListUsernames(CheatingSkids) - 1) * 100)
 		local temp = reportListOnlineSkids()
 		table.remove(temp, 1)
 		local iteration = 0
 		local page = 1
 		local string = ""
+		local limit = 5
 
 		if #temp == 0 then
 			ChatScript.moveOldMessages()
@@ -4273,18 +4069,19 @@ local function reportMessageOnlineSkids()
 					string = string..", "..v
 				end
 
-				if #temp > 6 and iteration == (page * 6) or #temp > 6 and iteration == #temp then
+				if #temp > limit and iteration == (page * limit) or #temp > limit and iteration == #temp then
 					ChatScript.moveOldMessages()
 					ChatScript.createNewMessage("["..#temp.."] <"..page.."> Cheaters Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 					page = page + 1
 					string = ""
-				elseif #temp < 7 and iteration == #temp then
+				elseif #temp < (limit + 1) and iteration == #temp then
 					ChatScript.moveOldMessages()
 					ChatScript.createNewMessage("["..#temp.."] Cheaters Online", string, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 				end
 			end
 		end
-	else
+	elseif HexFolrmosSentCooldown.Value == false then
+		HexFolrmosSentCooldown.Value = true
 		ChatScript.moveOldMessages()
 		ChatScript.createNewMessage("Cheater(s) Online", "Is On A Cooldown.", CheaterColor, Color3.new(1,1,1), 0.01, nil)
 	end
@@ -4302,21 +4099,19 @@ ReportCat:AddButton("Add Player", function()
 			ChatScript.moveOldMessages()
 			ChatScript.createNewMessage("Cheater Added", library.pointers.ReportPlayer.value, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 
+			library.pointers.ReportPlayer:Set("-")
+
+			library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+			library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
+
+			reportUpdateLabels("offline")
+
 			checkCheaterSkidsInGame()
 
 			if library.pointers["ReportCatCheckOnline"] and library.pointers.ReportCatCheckOnline.value == true then
-				reportMessageOnlineSkids()
+				reportMessageOnlineSkids("forced")
 			end
 		end
-	end
-
-	library.pointers.ReportPlayer:Set("-")
-
-	library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
-	library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
-
-	if library.pointers["ReportCatCount"] then
-		library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
 	end
 end)
 ReportCat:AddButton("Remove Player", function()
@@ -4330,6 +4125,13 @@ ReportCat:AddButton("Remove Player", function()
 			ChatScript.moveOldMessages()
 			ChatScript.createNewMessage("Cheater Removed", library.pointers.ReportList.value, CheaterColor, Color3.new(1,1,1), 0.01, nil)
 
+			library.pointers.ReportList:Set("-")
+
+			library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
+			library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
+
+			reportUpdateLabels("offline")
+
 			checkCheaterSkidsInGame()
 
 			if library.pointers["ReportCatCheckOnline"] and library.pointers.ReportCatCheckOnline.value == true then
@@ -4337,20 +4139,16 @@ ReportCat:AddButton("Remove Player", function()
 			end
 		end
 	end
-
-	library.pointers.ReportList:Set("-")
-
-	library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
-	library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
-
-	if library.pointers["ReportCatCount"] then
-		library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
-	end
 end)
 ReportCat:AddButton("Copy Username", function()
 	if library.pointers.ReportList.value ~= "-" then
-		syn.write_clipboard(library.pointers.ReportList.value)
+		setclipboard(library.pointers.ReportList.value)
 	end
+end)
+ReportCat:AddButton("Refresh List", function()
+	CheatingSkids = loadstring("return "..readfile("hexagon/cheatingskids.cfg"))()
+
+	reportUpdateLabels("offline")
 end)
 ReportCat:AddToggle("Notify Cheaters", false, "ReportNotify", function(val)
 	if val == true then
@@ -4403,7 +4201,7 @@ ReportCat:AddToggle("Notify Everyone All", false, "ReportCatNEA")
 ReportCat:AddToggle("Check Online", false, "ReportCatCheckOnline", function(val)
 	if val == true then
 		ReportOnlineJoinLoop = game.Players.PlayerAdded:Connect(function(plr)
-			if library.pointers.ReportCatCheckOnJL.value == "Cheaters" and reportTableFind(CheatingSkids, plr.UserId, "id") or library.pointers.ReportCatCheckOnJL.value == "Everyone" then
+			if library.pointers.ReportCatCheckOnJL.value == "Cheaters J/L" and reportTableFind(CheatingSkids, plr.UserId, "id") or library.pointers.ReportCatCheckOnJL.value == "Everyone J/L" then
 				reportMessageOnlineSkids()
 			end
 		end)
@@ -4414,18 +4212,29 @@ ReportCat:AddToggle("Check Online", false, "ReportCatCheckOnline", function(val)
 			end
 		end)
 
+		ReportOnlineRoundLoop = workspace:FindFirstChild("Status").RoundOver:GetPropertyChangedSignal("Value"):Connect(function()
+			if library.pointers.ReportCatCheckOnJL.value == "Round End" and workspace.Status.RoundOver.Value == true and checkGamemode() == "casual" or library.pointers.ReportCatCheckOnJL.value == "Round End" and workspace.Status.RoundOver.Value == true and checkGamemode() == "unranked" then
+				reportMessageOnlineSkids()
+			end
+		end)
+
+		ReportOnlineGameLoop = HexFolrmosGameOver:GetPropertyChangedSignal("Value"):Connect(function()
+			if library.pointers.ReportCatCheckOnJL.value == "Game End" then
+				reportMessageOnlineSkids("forced")
+			end
+		end)
+
 		reportMessageOnlineSkids()
-	elseif val == false and ReportOnlineJoinLoop or val == false and ReportOnlineLeaveLoop then
+	elseif val == false and ReportOnlineJoinLoop or val == false and ReportOnlineLeaveLoop or val == false and ReportOnlineRoundLoop or val == false and ReportOnlineGameLoop then
 		ReportOnlineJoinLoop:Disconnect()
 		ReportOnlineLeaveLoop:Disconnect()
+		ReportOnlineRoundLoop:Disconnect()
+		ReportOnlineGameLoop:Disconnect()
 	end
 end)
-ReportCat:AddDropdown("Check On Join/Leave", {"Cheaters", "Everyone"}, "Cheaters", "ReportCatCheckOnJL")
-ReportCat:AddLabel("If you see this, something went wrong.", "ReportCatCount")
+ReportCat:AddDropdown("Check On", {"Cheaters J/L", "Everyone J/L", "Round End", "Game End"}, "Cheaters", "ReportCatCheckOnJL")
 
 library.pointers.ReportList.options = reportListUsernames(CheatingSkids)
-
-library.pointers.ReportCatCount:Set("Cheaters In The List: "..(#reportListUsernames(CheatingSkids) - 1))
 
 game:GetService("RunService").RenderStepped:Connect(function()
 	pcall(function()
@@ -4439,38 +4248,22 @@ local InfoCat = ReportTab:AddCategory("Information", 2)
 
 InfoCat:AddDropdown("Selection", {"-"}, "-", "InfoCatSelection", function(val)
 	if val ~= "-" and reportTableFind(CheatingSkids, val, "name") then
-		if library.pointers["InfoCatOnlineStatus"] then
-			library.pointers.InfoCatOnlineStatus:Set("Online:")
-		end
-
-		if library.pointers["InfoCatPlayingStatus"] then
-			library.pointers.InfoCatPlayingStatus:Set("Playing:")
-		end
+		reportUpdateLabels("live_reset")
 
 		local values = reportListOnlineSkids(val)
-		if library.pointers["InfoCatOnlineStatus"] then
-			library.pointers.InfoCatOnlineStatus:Set("Online:")
-			library.pointers.InfoCatOnlineStatus:Set("Online: "..tostring(values["IsOnline"]))
-		end
-
-		if library.pointers["InfoCatPlayingStatus"] then
-			library.pointers.InfoCatPlayingStatus:Set("Playing:")
-			library.pointers.InfoCatPlayingStatus:Set("Playing: "..tostring(values["LastLocation"]))
-		end
+		
+		reportUpdateLabels("live", values)
 	else
-		if library.pointers["InfoCatOnlineStatus"] then
-			library.pointers.InfoCatOnlineStatus:Set("Online:")
-		end
-
-		if library.pointers["InfoCatPlayingStatus"] then
-			library.pointers.InfoCatPlayingStatus:Set("Playing:")
-		end
+		reportUpdateLabels("live_reset")
 	end
 end)
+InfoCat:AddLabel("", "InfoCatCount")
 InfoCat:AddLabel("Online:", "InfoCatOnlineStatus")
 --InfoCat:AddLabel("Playing:", "InfoCatPlayingStatus")
 
 library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
+
+reportUpdateLabels("offline")
 
 -- Other
 game.Players.LocalPlayer.Additionals.TotalDamage.Changed:Connect(function(val)
@@ -4548,7 +4341,7 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 		LGlove = LArm:FindFirstChild("Glove") or LArm:FindFirstChild("LGlove")      
 		if library.pointers.SkinsTabGloveEnable.value and cbClient.gun ~= "none" and library.pointers.SkinsTabGloveSkin.value ~= "Stock" then      
 			if LGlove then LGlove:Destroy() end      
-			LGlove = game:GetService("ReplicatedStorage").Gloves.Models[library.pointers.SkinsTabGloveGlove.value].RGlove:Clone()       
+			LGlove = game:GetService("ReplicatedStorage").Gloves.Models[library.pointers.SkinsTabGloveGlove.value].LGlove:Clone()       
 			LGlove.Mesh.TextureId = game:GetService("ReplicatedStorage").Gloves[library.pointers.SkinsTabGloveGlove.value][library.pointers.SkinsTabGloveSkin.value].Textures.TextureId      
 			LGlove.Transparency = 0      
 			LGlove.Parent = LArm      
@@ -4574,47 +4367,68 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 							RightArm.Mesh.TextureId = ""
 							RightArm.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsArmsTransparency.value
 							RightArm.Color = library.pointers.VisualsTabCategoryViewmodelColorsArmsColor.value
+							RightArm.Material = library.pointers.VisualsTabCategoryViewmodelColorsArmsMaterial.value
 						end
 						if LeftArm ~= nil then
 							LeftArm.Mesh.TextureId = ""
 							LeftArm.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsArmsTransparency.value
 							LeftArm.Color = library.pointers.VisualsTabCategoryViewmodelColorsArmsColor.value
+							LeftArm.Material = library.pointers.VisualsTabCategoryViewmodelColorsArmsMaterial.value
 						end
 					end
 					
 					if library.pointers.VisualsTabCategoryViewmodelColorsGloves.value == true then
 						if RightGlove ~= nil then
-							RightGlove.Mesh.TextureId = ""
+							if library.pointers.VisualsTabCategoryViewmodelColorsGlovesVisible.value ~= "Texture" then
+								RightGlove.Mesh.TextureId = ""
+							end
+							
+							if library.pointers.VisualsTabCategoryViewmodelColorsGlovesVisible.value == "Color" then
+								RightGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
+							end
+
 							RightGlove.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsGlovesTransparency.value
-							RightGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
+							RightGlove.Material = library.pointers.VisualsTabCategoryViewmodelColorsGlovesMaterial.value
 						end
 						if LeftGlove ~= nil then
-							LeftGlove.Mesh.TextureId = ""
+							if library.pointers.VisualsTabCategoryViewmodelColorsGlovesVisible.value ~= "Texture" then
+								LeftGlove.Mesh.TextureId = ""
+							end
+							
+							if library.pointers.VisualsTabCategoryViewmodelColorsGlovesVisible.value == "Color" then
+								LeftGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
+							end
+
 							LeftGlove.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsGlovesTransparency.value
-							LeftGlove.Color = library.pointers.VisualsTabCategoryViewmodelColorsGlovesColor.value
+							LeftGlove.Material = library.pointers.VisualsTabCategoryViewmodelColorsGlovesMaterial.value
 						end
 					end
 
 					if library.pointers.VisualsTabCategoryViewmodelColorsSleeves.value == true then
 						if RightSleeve ~= nil then
 							RightSleeve.Mesh.TextureId = ""
-							RightSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
 							RightSleeve.Color = library.pointers.VisualsTabCategoryViewmodelColorsSleevesColor.value
-							RightSleeve.Material = "ForceField"
+							RightSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
+							RightSleeve.Material = library.pointers.VisualsTabCategoryViewmodelColorsSleevesMaterial.value
 						end
 						if LeftSleeve ~= nil then
 							LeftSleeve.Mesh.TextureId = ""
-							LeftSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
 							LeftSleeve.Color = library.pointers.VisualsTabCategoryViewmodelColorsSleevesColor.value
-							LeftSleeve.Material = "ForceField"
+							LeftSleeve.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsSleevesTransparency.value
+							LeftSleeve.Material = library.pointers.VisualsTabCategoryViewmodelColorsSleevesMaterial.value
 						end
 					end
 				elseif library.pointers.VisualsTabCategoryViewmodelColorsWeapons.value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
-					if v:IsA("MeshPart") then v.TextureID = "" end
-					if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
+					if library.pointers.VisualsTabCategoryViewmodelColorsWeaponsVisible.value ~= "Texture" then
+						if v:IsA("MeshPart") then v.TextureID = "" end
+						if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
+					end
+
+					if library.pointers.VisualsTabCategoryViewmodelColorsWeaponsVisible.value == "Color" then
+						v.Color = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsColor.value
+					end
 
 					v.Transparency = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsTransparency.value
-					v.Color = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsColor.value
 					v.Material = library.pointers.VisualsTabCategoryViewmodelColorsWeaponsMaterial.value
 				end
 			end
@@ -4805,6 +4619,10 @@ game.ReplicatedStorage.Events.SendMsg.OnClientEvent:Connect(function(message)
 		
 		if game.Players:FindFirstChild(msg[1]) and msg[7] == "1" and msg[12] == game.Players.LocalPlayer.Name then
 			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+		elseif game.Players:FindFirstChild(msg[1]) and msg[7] == "2" and msg[12] == game.Players.LocalPlayer.Name then
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+		elseif game.Players:FindFirstChild(msg[1]) and msg[7] == "-1" and msg[12] == game.Players.LocalPlayer.Name then
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
 		end
 	end
 end)
@@ -4891,7 +4709,7 @@ function sayMessage(mess, plr)
 		end)
 		if var ~= false then
 			if library.pointers.TrollTabPlayerRAMO.value == "Everyone" then
-				if GetTeam(LocalPlayer) ~= "Spectator" then
+				if GetTeamDif(LocalPlayer) ~= "Spectator" then
 					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
 						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 							"<"..plr.Name.."> "..mess,
@@ -4912,7 +4730,7 @@ function sayMessage(mess, plr)
 				end
 			elseif library.pointers.TrollTabPlayerRAMO.value == "Specific" then
 				if plr.Name == library.pointers.TrollTabPlayerRAMP.value then
-					if GetTeam(LocalPlayer) ~= "Spectator" then
+					if GetTeamDif(LocalPlayer) ~= "Spectator" then
 						if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
 							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 								"<"..plr.Name.."> "..mess,
@@ -4933,7 +4751,7 @@ function sayMessage(mess, plr)
 					end
 				end
 			elseif library.pointers.TrollTabPlayerRAMO.value == "Teammates" then
-				if GetTeam(LocalPlayer) ~= "Spectator" and GetTeam(LocalPlayer) == GetTeam(plr) then
+				if GetTeamDif(LocalPlayer) ~= "Spectator" and GetTeamDif(LocalPlayer) == GetTeamDif(plr) then
 					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
 						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 							"<"..plr.Name.."> "..mess,
@@ -4953,7 +4771,7 @@ function sayMessage(mess, plr)
 					end
 				end
 			elseif library.pointers.TrollTabPlayerRAMO.value == "Enemies" then
-				if GetTeam(LocalPlayer) ~= "Spectator" and GetTeam(LocalPlayer) ~= GetTeam(plr) then
+				if GetTeamDif(LocalPlayer) ~= "Spectator" and GetTeamDif(LocalPlayer) ~= GetTeamDif(plr) then
 					if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
 						game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 							"<"..plr.Name.."> "..mess,
@@ -4974,7 +4792,7 @@ function sayMessage(mess, plr)
 				end
 			elseif library.pointers.TrollTabPlayerRAMO.value == "Alive" then
 				if IsAlive(plr) then
-					if GetTeam(LocalPlayer) ~= "Spectator" then
+					if GetTeamDif(LocalPlayer) ~= "Spectator" then
 						if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
 							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 								"<"..plr.Name.."> "..mess,
@@ -4996,7 +4814,7 @@ function sayMessage(mess, plr)
 				end
 			elseif library.pointers.TrollTabPlayerRAMO.value == "Dead" then
 				if not IsAlive(plr) then
-					if GetTeam(LocalPlayer) ~= "Spectator" then
+					if GetTeamDif(LocalPlayer) ~= "Spectator" then
 						if IsAlive(LocalPlayer) or library.pointers.TrollTabPlayerCA.value == true then
 							game:GetService("ReplicatedStorage").Events.PlayerChatted:FireServer(
 								"<"..plr.Name.."> "..mess,
@@ -5143,6 +4961,10 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				return wait(99e99)
 			elseif self.Name == "Hugh" then
 				return wait(99e99)
+			elseif self.Name == "SheHeckMe" and library.pointers.ReportCatCheckOnJL.value == "Game End" then
+				HexFolrmosGameOver.Value = HexFolrmosGameOver.Value + 1
+
+				return oldNamecall(self, unpack(args))
 			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
 				if args[2] == LocalPlayer then
 					if library.pointers.MiscellaneousTabCategoryMainNoChatFilter.value == true then
@@ -5153,8 +4975,13 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						if IsAlive(LocalPlayer) then
 							if not IsAlive(args[2]) then
 								spawn(function()
-									ChatScript.moveOldMessages()
-									ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], AliveChatColor, Color3.new(1,1,1), 0.01, nil)
+									if reportTableFind(CheatingSkids, args[2].UserId, "id") then
+										ChatScript.moveOldMessages()
+										ChatScript.createNewMessage("<Alive Chat> <Cheater> "..args[2].Name, args[1], CheaterColor, Color3.new(1,1,1), 0.01, nil)
+									else
+										ChatScript.moveOldMessages()
+										ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], AliveChatColor, Color3.new(1,1,1), 0.01, nil)
+									end
 								end)
 							end
 						end
@@ -5235,25 +5062,29 @@ end))
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
 	if LocalPlayer.Name == plr then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	elseif teamcolor == AliveChatColor and msgcolor == Color3.new(1,1,1) then
+	elseif teamcolor == WarningColor then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	elseif teamcolor == CheaterColor and msgcolor == Color3.new(1,1,1) then
+	elseif teamcolor == AliveChatColor then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	elseif game.Players[plr] then
-		if reportTableFind(CheatingSkids, plr, "name") then
-			return createNewMessage("[Tagged] <Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
+	elseif teamcolor == CheaterColor then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	elseif game.Players:FindFirstChild(plr) then
+		if reportTableFind(CheatingSkids, game.Players[plr].UserId, "id") then
+			return createNewMessage("<Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
 		elseif IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
+			return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
 		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == true and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 		elseif game.Workspace.Status.RoundOver.Value == true and warmupCheck() == false then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-		elseif warmupCheck() then
+		elseif warmupCheck() or game.Workspace.Status.Preparation.Value == true or checkGamemode() == "deathmatch" then
 			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 		else
-			return createNewMessage("<Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
+			return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
 		end
 	end
 
@@ -5350,20 +5181,25 @@ Hint:Destroy()
 		-Auto kill enemy when visible [Done]
 		-Random gun dropdown between melee and ranged weapons [Done]
 		-Have a table for saving the names of cheaters and upon them joining getting a message saying they are a cheater [Done]
-		-Save/load skins differently (preferable from a table) [Done]
-        -Anti AFK [Done] <Low>
+		-Save/load skins differently (preferably from a table) [Done]
+        -Anti AFK [Done]
+		-Automatically check what gamemode youre in [Done]
+		-Chat spam to be annoying [Done]
+		-Auto kill delay stuff [Done]
+		-Report messages should be limited [Done]
 		-Complete new code for chat messages showing up (if not working as expected now) [Done?]
 
 	[Highest]
-		-Make code more efficient (wherever possible) <Mid>
+		-Make code more efficient (wherever possible) <Mid> [Started/Working?]
 		-Fix Repeat After Me <Mid>
+		-Convert/CopyPaste code to the Orion Library <High>
 
 	[Mid]
-		-Chat spam to be annoying <Low>
+		-Sort all code/start from scratch <Mid>
 
 	[Lowest]
 		-Auto buy weapons (if possible) <Unsure>
 		-Start code for chat drop downs when messages are supposed to show (if possible) <High>
 		-Anti Chat Spam <High>
-		-Sort all code/start from scratch <Mid>
+		-Auto Cheat Detection <High>
 ]]--

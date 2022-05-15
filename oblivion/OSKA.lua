@@ -457,3 +457,4 @@ end
 OblivionRan.Value = true
 OrionLib:Init()
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion has succesfully loaded.", Image = "rbxassetid://4400702457", Time = 3})
+OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 5})

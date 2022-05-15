@@ -6,10 +6,6 @@
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
 
--- Services
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
 -- Environment 
 local getrawmetatable = getrawmetatable or false
 local getsenv = getsenv or false
@@ -34,6 +30,7 @@ writefile("oblivion/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.git
 
 -- Main
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
 local weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end)
 local knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end)
 local glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end)
@@ -203,70 +200,82 @@ local function skinsList(knife, list)
 	return temp
 end
 
+function Serverhop()
+	local x = {}
+	for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100")).data) do
+		if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+			x[#x + 1] = v.id
+		end
+	end
+	if #x > 0 then
+		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
+	else
+		return "Protocol:cantfind"
+	end
+end
+
 -- GUI
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4483345998", PremiumOnly = false})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://4483345998", PremiumOnly = false})
 
-SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "weapon",
-	Callback = function(val)
-		if val ~= "-" and OrionLib.Flags["weapon_skin"] then
-			OrionLib.Flags["weapon_skin"]:Refresh(weapon_data[val]["list"], true)
-			OrionLib.Flags["weapon_skin"]:Set(Settings.CurrentSkins[val])
+SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "weapon", Callback = function(val)
+	if val ~= "-" and OrionLib.Flags["weapon_skin"] then
+		OrionLib.Flags["weapon_skin"]:Refresh(weapon_data[val]["list"], true)
+		OrionLib.Flags["weapon_skin"]:Set(Settings.CurrentSkins[val])
+	end
+end})
+SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin", Callback = function(val)
+	Settings.CurrentSkins[OrionLib.Flags["weapon"].Value] = val
+	table.foreach(Settings.CurrentSkins, function(i,v)
+		if i ~= "-" then
+			table.foreach(weapon_data[i]["teams"], function(i2,v2)
+				if v2 == "T" then
+					LocalPlayer.SkinFolder.TFolder[weapon_data[i]["name"]].Value = v
+				elseif v2 == "CT" then
+					LocalPlayer.SkinFolder.CTFolder[weapon_data[i]["name"]].Value = v
+				end
+			end)
 		end
+	end)
+end})
+SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "knife", Callback = function(val)
+	if val == "-" and OrionLib.Flags["knife_skin"] then
+		modelChange("v_T Knife", "v_T Knife")
+		modelChange("v_CT Knife", "v_CT Knife")
+		OrionLib.Flags["knife_skin"]:Set("Stock")
+		OrionLib.Flags["knife_skin"]:Refresh({"Stock"}, true)
+	elseif val ~= "-" and OrionLib.Flags["knife_skin"] then
+		modelChange("v_T Knife", "v_"..val)
+		modelChange("v_CT Knife", "v_"..val)
+		OrionLib.Flags["knife_skin"]:Set("Stock")
+		OrionLib.Flags["knife_skin"]:Refresh(skinsList(val, knife_data), true)
 	end
-})
-
-SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin",
-	Callback = function(val)
-		Settings.CurrentSkins[OrionLib.Flags["weapon"].Value] = val
-
-		table.foreach(Settings.CurrentSkins, function(i,v)
-			if i ~= "-" then
-				table.foreach(weapon_data[i]["teams"], function(i2,v2)
-					if v2 == "T" then
-						LocalPlayer.SkinFolder.TFolder[weapon_data[i]["name"]].Value = v
-					elseif v2 == "CT" then
-						LocalPlayer.SkinFolder.CTFolder[weapon_data[i]["name"]].Value = v
-					end
-				end)
-			end
-		end)
-	end
-})
-
-SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "knife",
-	Callback = function(val)
-		if val == "-" and OrionLib.Flags["knife_skin"] then
-			modelChange("v_T Knife", "v_T Knife")
-			modelChange("v_CT Knife", "v_CT Knife")
-
-			OrionLib.Flags["knife_skin"]:Set("Stock")
-			OrionLib.Flags["knife_skin"]:Refresh({"Stock"}, true)
-		elseif val ~= "-" and OrionLib.Flags["knife_skin"] then
-			modelChange("v_T Knife", "v_"..val)
-			modelChange("v_CT Knife", "v_"..val)
-
-			OrionLib.Flags["knife_skin"]:Set("Stock")
-			OrionLib.Flags["knife_skin"]:Refresh(skinsList(val, knife_data), true)
-		end
-	end
-})
-
+end})
 SkinsTab:AddDropdown({Name = "Knife Skin", Default = "-", Options = {"-"}, Flag = "knife_skin"})
-
-SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "glove", 
-	Callback = function(val)
-		if val == "-" and OrionLib.Flags["glove_skin"] then
-			OrionLib.Flags["glove_skin"]:Set("Stock")
-			OrionLib.Flags["glove_skin"]:Refresh({"Stock"}, true)
-		elseif val ~= "-" and OrionLib.Flags["glove_skin"] then
-			OrionLib.Flags["glove_skin"]:Set("Stock")
-			OrionLib.Flags["glove_skin"]:Refresh(skinsList(val, glove_data), true)
-		end
+SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "glove", Callback = function(val)
+	if val == "-" and OrionLib.Flags["glove_skin"] then
+		OrionLib.Flags["glove_skin"]:Set("Stock")
+		OrionLib.Flags["glove_skin"]:Refresh({"Stock"}, true)
+	elseif val ~= "-" and OrionLib.Flags["glove_skin"] then
+		OrionLib.Flags["glove_skin"]:Set("Stock")
+		OrionLib.Flags["glove_skin"]:Refresh(skinsList(val, glove_data), true)
 	end
-})
-
+end})
 SkinsTab:AddDropdown({Name = "Glove Skin", Default = "-", Options = {"-"}, Flag = "glove_skin"})
+
+SettingsTab:AddButton({Name = "Rejoin Server", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
+SettingsTab:AddButton({Name = "Random Server", Callback = function() Serverhop() end})
+SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)
+	if OrionLib.Flags["build"] then
+		OrionLib.Flags["build"]:Set(versions["data"][val]["tables"][1])
+		OrionLib.Flags["build"]:Refresh(versions["data"][val]["tables"], true)
+	end
+end})
+SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
+SettingsTab:AddButton({Name = "Save", Callback = function()
+	writefile("hexagon/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
+	game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
+end})
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)
@@ -373,6 +382,8 @@ end
 OrionLib.Flags["weapon"]:Refresh(getAllNames(weapon_data), true)
 OrionLib.Flags["knife"]:Refresh(getAllNames(knife_data), true)
 OrionLib.Flags["glove"]:Refresh(getAllNames(glove_data), true)
+OrionLib.Flags["branch"]:Set(versions["tables"][1])
+OrionLib.Flags["branch"]:Refresh(versions["tables"])
 
 OrionLib:Init()
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion has succesfully loaded.", Image = "rbxassetid://4483345998", Time = 3})

@@ -26,7 +26,7 @@ writefile("oblivion/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.git
 
 -- Main
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local versions = loadstring("return "..readfile("hexagon/versions.cfg"))()
+local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
 local Settings = {CurrentSkins = {}, data = {}, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end)}
 Settings.CurrentSkins["-"] = "-"
@@ -312,7 +312,7 @@ SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag =
 end})
 SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
 SettingsTab:AddButton({Name = "Save", Callback = function()
-	writefile("hexagon/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
+	writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
 end})
 
 -- Meta

@@ -344,8 +344,12 @@ VisualsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = 
 VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_weapon_transparency", Callback = function() saveData() end})
 VisualsTab:AddToggle({Name = "Buller Tracers", Default = false, Flag = "visuals_bullet_tracer_enable", Callback = function() saveData() end})
 VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_bullet_tracer_color", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_bullet_tracer_material", Callback = function() saveData() end})
+VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_bullet_tracer_transparency", Callback = function() saveData() end})
 VisualsTab:AddToggle({Name = "Bullet Impacts", Default = false, Flag = "visuals_bullet_impact_enable", Callback = function() saveData() end})
 VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_bullet_impact_color", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_bullet_impact_material", Callback = function() saveData() end})
+VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_bullet_impact_transparency", Callback = function() saveData() end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -521,8 +525,9 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						local BulletTracers = Instance.new("Part")
 						BulletTracers.Anchored = true
 						BulletTracers.CanCollide = false
-						BulletTracers.Material = "ForceField"
+						BulletTracers.Material = OrionLib.Flags["visuals_bullet_tracer_material"].Value
 						BulletTracers.Color = OrionLib.Flags["visuals_bullet_tracer_color"].Value
+                        BulletTracers.Transparency = (OrionLib.Flags["visuals_bullet_tracer_transparency"].Value / 100)
 						BulletTracers.Size = Vector3.new(0.1, 0.1, (LocalPlayer.Character.Head.CFrame.p - args[2]).magnitude)
 						BulletTracers.CFrame = CFrame.new(LocalPlayer.Character.Head.CFrame.p, args[2]) * CFrame.new(0, 0, -BulletTracers.Size.Z / 2)
 						BulletTracers.Name = "BulletTracers"
@@ -536,8 +541,9 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						local BulletImpacts = Instance.new("Part")
 						BulletImpacts.Anchored = true
 						BulletImpacts.CanCollide = false
-						BulletImpacts.Material = "ForceField"
+						BulletImpacts.Material = OrionLib.Flags["visuals_bullet_impact_material"].Value
 						BulletImpacts.Color = OrionLib.Flags["visuals_bullet_impact_color"].Value
+                        BulletImpacts.Transparency = (OrionLib.Flags["visuals_bullet_impact_transparency"].Value / 100)
 						BulletImpacts.Size = Vector3.new(0.25, 0.25, 0.25)
 						BulletImpacts.CFrame = CFrame.new(args[2])
 						BulletImpacts.Name = "BulletImpacts"

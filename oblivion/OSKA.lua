@@ -28,7 +28,7 @@ writefile("oblivion/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.git
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end)}
+local Settings = {CurrentSkins = {}, data = {}, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -37,6 +37,7 @@ end
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local Client = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
+Settings.OldInventory = Client.CurrentInventory
 
 local IgnoredFlags = {"branch", "build", "weapon", "weapon_skin"}
 
@@ -254,6 +255,7 @@ end
 
 -- GUI
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4384393547", PremiumOnly = false})
+local VisualsTab = Window:MakeTab({Name = "Visuals", Icon = "rbxassetid://4483363084", PremiumOnly = false})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185", PremiumOnly = false})
 
 SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "weapon", Callback = function(val)
@@ -302,9 +304,47 @@ SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "gl
 	end
 end})
 SkinsTab:AddDropdown({Name = "Glove Skin", Default = "-", Options = {"-"}, Flag = "glove_skin", Callback = function() saveData() end})
+SkinsTab:AddDropdown({Name = "Inventory Spoof", Default = "-", Options = {"-", "Stock Weapons"}, Flag = "additionals", Callback = function(val)
+	local InventoryLoadout, SkinsTable = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"], {}
+	if val == "-" then
+		Client.CurrentInventory = Settings.OldInventory
+	elseif val == "Stock Weapons" then
+		for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
+			if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
+				table.insert(SkinsTable, {v.Name.."_Stock"})
+			end
+		end
+		Client.CurrentInventory = SkinsTable
+	end
+	if InventoryLoadout.Visible == true then
+	    InventoryLoadout.Visible = false
+	    InventoryLoadout.Visible = true
+	end
+	saveData()
+end})
 
-SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
+VisualsTab:AddToggle({Name = "Enable", Default = false, Flag = "visuals_enable", Callback = function() saveData() end})
+VisualsTab:AddToggle({Name = "Toggle Arms", Default = false, Flag = "visuals_arms_enable", Callback = function() saveData() end})
+VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_arms_color", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_arms_material", Callback = function() saveData() end})
+VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_arms_transparency", Callback = function() saveData() end})
+VisualsTab:AddToggle({Name = "Toggle Gloves", Default = false, Flag = "visuals_gloves_enable", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "visuals_gloves_show", Callback = function() saveData() end})
+VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_gloves_color", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_gloves_material", Callback = function() saveData() end})
+VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_gloves_transparency", Callback = function() saveData() end})
+VisualsTab:AddToggle({Name = "Toggle Sleeves", Default = false, Flag = "visuals_sleeves_enable", Callback = function() saveData() end})
+VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_sleeves_color", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_sleeves_material", Callback = function() saveData() end})
+VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_sleeves_transparency", Callback = function() saveData() end})
+VisualsTab:AddToggle({Name = "Toggle Weapon", Default = false, Flag = "visuals_weapon_enable", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "visuals_weapon_show", Callback = function() saveData() end})
+VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_weapon_color", Callback = function() saveData() end})
+VisualsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_weapon_material", Callback = function() saveData() end})
+VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_weapon_transparency", Callback = function() saveData() end})
+
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
+SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
 SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)
 	if OrionLib.Flags["build"] then
         dropdownRefresh("build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty"))
@@ -355,6 +395,87 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 			LGlove.Welded.Part0 = LArm      
 		end   
 	end
+
+	spawn(function()
+		if new.Name == "Arms" and new:IsA("Model") and OrionLib.Flags["visuals_enable"].Value == true then
+			for i,v in pairs(new:GetChildren()) do
+				if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
+					local RightArm = v:FindFirstChild("Right Arm") or nil
+					local LeftArm = v:FindFirstChild("Left Arm") or nil
+					local RightGlove = (RightArm and (RightArm:FindFirstChild("Glove") or RightArm:FindFirstChild("RGlove"))) or nil
+					local LeftGlove = (LeftArm and (LeftArm:FindFirstChild("Glove") or LeftArm:FindFirstChild("LGlove"))) or nil
+					local RightSleeve = RightArm and RightArm:FindFirstChild("Sleeve") or nil
+					local LeftSleeve = LeftArm and LeftArm:FindFirstChild("Sleeve") or nil
+					if OrionLib.Flags["visuals_arms_enable"].Value == true then
+						if RightArm ~= nil then
+							RightArm.Mesh.TextureId = ""
+							RightArm.Transparency = (OrionLib.Flags["visuals_arms_transparency"].Value / 100)
+							RightArm.Color = OrionLib.Flags["visuals_arms_color"].Value
+							RightArm.Material = OrionLib.Flags["visuals_arms_material"].Value
+						end
+						if LeftArm ~= nil then
+							LeftArm.Mesh.TextureId = ""
+							LeftArm.Transparency = (OrionLib.Flags["visuals_arms_transparency"].Value / 100)
+							LeftArm.Color = OrionLib.Flags["visuals_arms_color"].Value
+							LeftArm.Material = OrionLib.Flags["visuals_arms_material"].Value
+						end
+					end
+					if OrionLib.Flags["visuals_gloves_enable"].Value == true then
+						if RightGlove ~= nil then
+							if OrionLib.Flags["visuals_gloves_show"].Value ~= "Skin" then
+								RightGlove.Mesh.TextureId = ""
+							end
+							
+							if OrionLib.Flags["visuals_gloves_show"].Value == "Color" then
+								RightGlove.Color = OrionLib.Flags["visuals_gloves_color"].Value
+							end
+
+							RightGlove.Transparency = (OrionLib.Flags["visuals_gloves_transparency"].Value / 100)
+							RightGlove.Material = OrionLib.Flags["visuals_gloves_material"].Value
+						end
+						if LeftGlove ~= nil then
+							if OrionLib.Flags["visuals_gloves_show"].Value ~= "Skin" then
+								LeftGlove.Mesh.TextureId = ""
+							end
+							
+							if OrionLib.Flags["visuals_gloves_show"].Value == "Color" then
+								LeftGlove.Color = OrionLib.Flags["visuals_gloves_color"].Value
+							end
+
+							LeftGlove.Transparency = (OrionLib.Flags["visuals_gloves_transparency"].Value / 100)
+							LeftGlove.Material = OrionLib.Flags["visuals_gloves_material"].Value
+						end
+					end
+					if OrionLib.Flags["visuals_sleeves_enable"].Value == true then
+						if RightSleeve ~= nil then
+							RightSleeve.Mesh.TextureId = ""
+							RightSleeve.Color = OrionLib.Flags["visuals_sleeves_color"].Value
+							RightSleeve.Transparency = (OrionLib.Flags["visuals_sleeves_transparency"].Value / 100)
+							RightSleeve.Material = OrionLib.Flags["visuals_sleeves_material"].Value
+						end
+						if LeftSleeve ~= nil then
+							LeftSleeve.Mesh.TextureId = ""
+							LeftSleeve.Color = OrionLib.Flags["visuals_sleeves_color"].Value
+							LeftSleeve.Transparency = (OrionLib.Flags["visuals_sleeves_transparency"].Value / 100)
+							LeftSleeve.Material = OrionLib.Flags["visuals_sleeves_material"].Value
+						end
+					end
+				elseif OrionLib.Flags["visuals_weapon_enable"].Value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
+					if OrionLib.Flags["visuals_weapon_show"].Value ~= "Skin" then
+						if v:IsA("MeshPart") then v.TextureID = "" end
+						if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
+					end
+	
+					if OrionLib.Flags["visuals_weapon_show"].Value == "Color" then
+						v.Color = OrionLib.Flags["visuals_weapon_color"].Value
+					end
+	
+					v.Transparency = (OrionLib.Flags["visuals_weapon_transparency"].Value / 100)
+					v.Material = OrionLib.Flags["visuals_weapon_material"].Value
+				end
+			end
+		end
+	end)
 end)
 
 hookfunc(getrenv().xpcall, function() end)
@@ -431,9 +552,7 @@ if isfile("oblivion/skin_changer/data.cfg") then
 	if a == true then
 		for i,v in pairs(output["data"]) do
 			for i2,v2 in pairs(v) do 
-				if v2["Type"] == "Dropdown" then
-					OrionLib.Flags[i2]:Set(v2["Value"])
-				end
+				OrionLib.Flags[i2]:Set(v2["Value"])
 			end
 		end
 		Settings.CurrentSkins = output["skins"]
@@ -457,4 +576,4 @@ end
 OblivionRan.Value = true
 OrionLib:Init()
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion has succesfully loaded.", Image = "rbxassetid://4400702457", Time = 5})
-OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 5})
+OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 10})

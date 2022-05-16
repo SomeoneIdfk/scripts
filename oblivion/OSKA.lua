@@ -423,7 +423,7 @@ dropdownRefresh("glove", "-", getAllNames(Settings.glove_data))
 dropdownRefresh("branch", versions["tables"][1], versions["tables"])
 
 if isfile("oblivion/skin_changer/data.cfg") then
-	OrionLib:MakeNotification({Name = "Oblivion", Content = "Trying to load save.", Image = "rbxassetid://4384402413", Time = 3})
+	OrionLib:MakeNotification({Name = "Oblivion", Content = "Trying to load save.", Image = "rbxassetid://4384402413", Time = 5})
 	local output
 	local a,b = pcall(function()
 		output = loadstring("return"..readfile("oblivion/skin_changer/data.cfg"))()
@@ -448,7 +448,7 @@ if isfile("oblivion/skin_changer/data.cfg") then
 				end)
 			end
 		end)
-		OrionLib:MakeNotification({Name = "Oblivion", Content = "Succesfully loaded save.", Image = "rbxassetid://4384403532", Time = 3})
+		OrionLib:MakeNotification({Name = "Oblivion", Content = "Succesfully loaded save.", Image = "rbxassetid://4384403532", Time = 5})
 	elseif a == false then
 		OrionLib:MakeNotification({Name = "Oblivion", Content = "Error loading save.", Image = "rbxassetid://4384402990", Time = 10})
 	end
@@ -456,5 +456,5 @@ end
 
 OblivionRan.Value = true
 OrionLib:Init()
-OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion has succesfully loaded.", Image = "rbxassetid://4400702457", Time = 3})
+OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion has succesfully loaded.", Image = "rbxassetid://4400702457", Time = 5})
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 5})

@@ -28,7 +28,7 @@ writefile("oblivion/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.git
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {antiafkloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {antiafkloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -41,7 +41,7 @@ Settings.OldInventory = Client.CurrentInventory
 
 local IgnoredFlags = {"branch", "build", "weapon", "weapon_skin"}
 
-OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
+OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
 
 local Window = OrionLib:MakeWindow({Name = "Oblivion Skin Changer", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion/skin_changer"})
 
@@ -342,6 +342,10 @@ VisualsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Col
 VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_weapon_color", Callback = function() saveData() end})
 VisualsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_weapon_material", Callback = function() saveData() end})
 VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_weapon_transparency", Callback = function() saveData() end})
+VisualsTab:AddToggle({Name = "Buller Tracers", Default = false, Flag = "visuals_bullet_tracer_enable", Callback = function() saveData() end})
+VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_bullet_tracer_color", Callback = function() saveData() end})
+VisualsTab:AddToggle({Name = "Bullet Impacts", Default = false, Flag = "visuals_bullet_impact_enable", Callback = function() saveData() end})
+VisualsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_bullet_impact_color", Callback = function() saveData() end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -511,6 +515,37 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 		elseif method == "FireServer" then
 			if string.len(self.Name) == 38 then
 				return wait(99e99)
+            elseif self.Name == "HitPart" then
+                if OrionLib.Flags["visuals_bullet_tracer_enable"].Value == true then
+					spawn(function()
+						local BulletTracers = Instance.new("Part")
+						BulletTracers.Anchored = true
+						BulletTracers.CanCollide = false
+						BulletTracers.Material = "ForceField"
+						BulletTracers.Color = OrionLib.Flags["visuals_bullet_tracer_color"].Value
+						BulletTracers.Size = Vector3.new(0.1, 0.1, (LocalPlayer.Character.Head.CFrame.p - args[2]).magnitude)
+						BulletTracers.CFrame = CFrame.new(LocalPlayer.Character.Head.CFrame.p, args[2]) * CFrame.new(0, 0, -BulletTracers.Size.Z / 2)
+						BulletTracers.Name = "BulletTracers"
+						BulletTracers.Parent = workspace.CurrentCamera
+						wait(3)
+						BulletTracers:Destroy()
+					end)
+				end
+                if OrionLib.Flags["visuals_bullet_impact_enable"].Value == true then
+					spawn(function()
+						local BulletImpacts = Instance.new("Part")
+						BulletImpacts.Anchored = true
+						BulletImpacts.CanCollide = false
+						BulletImpacts.Material = "ForceField"
+						BulletImpacts.Color = OrionLib.Flags["visuals_bullet_impact_color"].Value
+						BulletImpacts.Size = Vector3.new(0.25, 0.25, 0.25)
+						BulletImpacts.CFrame = CFrame.new(args[2])
+						BulletImpacts.Name = "BulletImpacts"
+						BulletImpacts.Parent = workspace.CurrentCamera
+						wait(3)
+						BulletImpacts:Destroy()
+					end)
+				end
 			elseif self.Name == "ApplyGun" and args[1] == game.ReplicatedStorage.Weapons.Banana or args[1] == game.ReplicatedStorage.Weapons["Flip Knife"] then
 				args[1] = game.ReplicatedStorage.Weapons.Karambit
 			elseif self.Name == "test" then
@@ -560,15 +595,19 @@ dropdownRefresh("glove", "-", getAllNames(Settings.glove_data))
 dropdownRefresh("branch", versions["tables"][1], versions["tables"])
 
 if isfile("oblivion/skin_changer/data.cfg") then
-	OrionLib:MakeNotification({Name = "Oblivion", Content = "Trying to load save.", Image = "rbxassetid://4384402413", Time = 5})
+	OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Trying to load save.", Image = "rbxassetid://4384402413", Time = 5})
 	local output
 	local a,b = pcall(function()
 		output = loadstring("return"..readfile("oblivion/skin_changer/data.cfg"))()
 	end)
 	if a == true then
 		for i,v in pairs(output.data) do
-			for i2,v2 in pairs(v) do 
-				OrionLib.Flags[i2]:Set(v2.Value)
+			for i2,v2 in pairs(v) do
+                if OrionLib.Flags[i2] then
+				    OrionLib.Flags[i2]:Set(v2.Value)
+                else
+                    Settings.saveerror = true
+                end
 			end
 		end
 		Settings.CurrentSkins = output.skins
@@ -583,13 +622,17 @@ if isfile("oblivion/skin_changer/data.cfg") then
 				end)
 			end
 		end)
-		OrionLib:MakeNotification({Name = "Oblivion", Content = "Succesfully loaded save.", Image = "rbxassetid://4384403532", Time = 5})
+        if Settings.saveerror == true then
+            OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Some values might be corrupted in the save.", Image = "rbxassetid://4384402990", Time = 5})
+        elseif Settings.saveerror == false then
+            OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Succesfully loaded save.", Image = "rbxassetid://4384403532", Time = 5})
+        end
 	elseif a == false then
-		OrionLib:MakeNotification({Name = "Oblivion", Content = "Error loading save.", Image = "rbxassetid://4384402990", Time = 10})
+		OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Error loading save.", Image = "rbxassetid://4384402990", Time = 10})
 	end
 end
 
 OblivionRan.Value = true
 OrionLib:Init()
-OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion has succesfully loaded.", Image = "rbxassetid://4400702457", Time = 5})
-OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 10})
+OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Succesfully loaded.", Image = "rbxassetid://4400702457", Time = 5})
+OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Welcome "..LocalPlayer.Name..".", Image = "rbxassetid://4431165334", Time = 10})

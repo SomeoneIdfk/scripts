@@ -254,7 +254,7 @@ local function dropdownRefresh(flag, value, list)
 end
 
 -- GUI
-local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4384393547", PremiumOnly = false})
+local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762", PremiumOnly = false})
 local VisualsTab = Window:MakeTab({Name = "Visuals", Icon = "rbxassetid://4483363084", PremiumOnly = false})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185", PremiumOnly = false})
 

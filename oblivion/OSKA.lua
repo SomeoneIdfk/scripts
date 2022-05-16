@@ -303,8 +303,8 @@ SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "gl
 end})
 SkinsTab:AddDropdown({Name = "Glove Skin", Default = "-", Options = {"-"}, Flag = "glove_skin", Callback = function() saveData() end})
 
-SettingsTab:AddButton({Name = "Rejoin Server", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-SettingsTab:AddButton({Name = "Random Server", Callback = function() Serverhop() end})
+SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
+SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)
 	if OrionLib.Flags["build"] then
         dropdownRefresh("build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty"))

@@ -345,13 +345,24 @@ VisualsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, C
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
+SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val)
+    saveData()
+    if val == true then
+        while OrionLib.Flags["anti_afk"].Value == true do
+            for i,v in pairs(getconnections(LocalPlayer.Idled)) do
+                v:Disable()
+            end
+            wait(1)
+        end
+    end
+end})
 SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)
 	if OrionLib.Flags["build"] then
         dropdownRefresh("build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty"))
 	end
 end})
 SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
-SettingsTab:AddButton({Name = "Save", Callback = function()
+SettingsTab:AddButton({Name = "Set", Callback = function()
 	writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
 end})
 

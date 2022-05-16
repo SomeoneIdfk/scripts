@@ -4972,13 +4972,13 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 					end
                 elseif args[2] ~= LocalPlayer then
 					if library.pointers.TrollTabPlayerAC.value == true and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
-						if IsAlive(LocalPlayer) then
+						if IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" then
 							if not IsAlive(args[2]) then
 								spawn(function()
 									if reportTableFind(CheatingSkids, args[2].UserId, "id") then
 										ChatScript.moveOldMessages()
 										ChatScript.createNewMessage("<Alive Chat> <Cheater> "..args[2].Name, args[1], CheaterColor, Color3.new(1,1,1), 0.01, nil)
-									else
+                                    else
 										ChatScript.moveOldMessages()
 										ChatScript.createNewMessage("<Alive Chat> "..args[2].Name, args[1], AliveChatColor, Color3.new(1,1,1), 0.01, nil)
 									end
@@ -5060,6 +5060,7 @@ oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client)._
 end))
 
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
+    print(offset)
 	if LocalPlayer.Name == plr then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif teamcolor == WarningColor then
@@ -5069,24 +5070,18 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 	elseif teamcolor == CheaterColor then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif game.Players:FindFirstChild(plr) then
-		if reportTableFind(CheatingSkids, game.Players[plr].UserId, "id") then
+        if reportTableFind(CheatingSkids, game.Players[plr].UserId, "id") then
 			return createNewMessage("<Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
-		elseif IsAlive(LocalPlayer) and IsAlive(game.Players[plr]) and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
-			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-		elseif IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
-			return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
-		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
-			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-		elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == true and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false then
-			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-		elseif game.Workspace.Status.RoundOver.Value == true and warmupCheck() == false then
-			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-		elseif warmupCheck() or game.Workspace.Status.Preparation.Value == true or checkGamemode() == "deathmatch" then
-			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-		else
-			return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
-		end
-	end
+        elseif IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
+            return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
+        elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
+            return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
+        elseif IsAlive(LocalPlayer) == false and GetTeamDif(LocalPlayer) ~= "Spectator" or game.Workspace.Status.RoundOver.Value == true or warmupCheck() == true or checkGamemode() == "deathmatch" or GetTeamDif(LocalPlayer) == "Spectator" then
+            return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+        else
+            return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
+        end
+    end
 
 	return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 end

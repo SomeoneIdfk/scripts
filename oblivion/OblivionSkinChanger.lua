@@ -28,7 +28,7 @@ writefile("oblivion/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.git
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}}
+local Settings = {CurrentSkins = {}, data = {}, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {antiafkloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -262,7 +262,7 @@ SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "w
     if val == "-" and OrionLib.Flags["weapon_skin"] then
         dropdownRefresh("weapon_skin", "-", {"-"})
     elseif val ~= "-" and OrionLib.Flags["weapon_skin"] then
-        dropdownRefresh("weapon_skin", Settings.CurrentSkins[val], Settings.weapon_data[val]["list"])
+        dropdownRefresh("weapon_skin", Settings.CurrentSkins[val], Settings.weapon_data[val].list)
     end
 end})
 SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin", Callback = function(val)
@@ -270,11 +270,11 @@ SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag
     saveData()
 	table.foreach(Settings.CurrentSkins, function(i,v)
 		if i ~= "-" then
-			table.foreach(Settings.weapon_data[i]["teams"], function(i2,v2)
+			table.foreach(Settings.weapon_data[i].teams, function(i2,v2)
 				if v2 == "T" then
-					LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i]["name"]].Value = v
+					LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i].name].Value = v
 				elseif v2 == "CT" then
-					LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i]["name"]].Value = v
+					LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i].name].Value = v
 				end
 			end)
 		end
@@ -348,11 +348,16 @@ SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetSer
 SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val)
     saveData()
     if val == true then
-        while OrionLib.Flags["anti_afk"].Value == true do
-            for i,v in pairs(getconnections(LocalPlayer.Idled)) do
-                v:Disable()
-            end
-            wait(1)
+        if val == true then
+            Settings.loops.antiafkloop = game:GetService("RunService").Heartbeat:Connect(function()
+                pcall(function()
+                    for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
+                        v:Disable()
+                    end
+                end)
+            end)
+        elseif val == false and Settings.loops.antiafkloop then
+            Settings.loops.antiafkloop:Disconnect()
         end
     end
 end})
@@ -561,19 +566,19 @@ if isfile("oblivion/skin_changer/data.cfg") then
 		output = loadstring("return"..readfile("oblivion/skin_changer/data.cfg"))()
 	end)
 	if a == true then
-		for i,v in pairs(output["data"]) do
+		for i,v in pairs(output.data) do
 			for i2,v2 in pairs(v) do 
-				OrionLib.Flags[i2]:Set(v2["Value"])
+				OrionLib.Flags[i2]:Set(v2.Value)
 			end
 		end
-		Settings.CurrentSkins = output["skins"]
+		Settings.CurrentSkins = output.skins
 		table.foreach(Settings.CurrentSkins, function(i,v)
 			if i ~= "-" then
-				table.foreach(Settings.weapon_data[i]["teams"], function(i2,v2)
+				table.foreach(Settings.weapon_data[i].teams, function(i2,v2)
 					if v2 == "T" then
-						LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i]["name"]].Value = v
+						LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i].name].Value = v
 					elseif v2 == "CT" then
-						LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i]["name"]].Value = v
+						LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i].name].Value = v
 					end
 				end)
 			end

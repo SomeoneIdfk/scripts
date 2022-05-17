@@ -5072,11 +5072,11 @@ getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNew
 	elseif game.Players:FindFirstChild(plr) then
         if reportTableFind(CheatingSkids, game.Players[plr].UserId, "id") then
 			return createNewMessage("<Cheater> "..plr, msg, CheaterColor, msgcolor, offset, line)
-        elseif IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
+        elseif IsAlive(LocalPlayer) and GetTeamDif(LocalPlayer) ~= "Spectator" and IsAlive(game.Players[plr]) == false and workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
             return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
-        elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and game.Workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
+        elseif IsAlive(LocalPlayer) == false and IsAlive(game.Players[plr]) == false and workspace.Status.RoundOver.Value == false and warmupCheck() == false and offset == 0.01 then
             return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)
-        elseif IsAlive(LocalPlayer) == false and GetTeamDif(LocalPlayer) ~= "Spectator" or game.Workspace.Status.RoundOver.Value == true or warmupCheck() == true or checkGamemode() == "deathmatch" or GetTeamDif(LocalPlayer) == "Spectator" then
+        elseif IsAlive(LocalPlayer) == false and GetTeamDif(LocalPlayer) ~= "Spectator" or workspace.Status.RoundOver.Value == true or warmupCheck() == true or checkGamemode() == "deathmatch" or GetTeamDif(LocalPlayer) == "Spectator" or workspace.Status.Preparation.Value == true then
             return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
         else
             return createNewMessage("<Warning> "..plr, msg, WarningColor, msgcolor, offset, line)

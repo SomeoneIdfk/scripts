@@ -90,7 +90,7 @@ elseif checkId() and checkFile() == false then
         end
     end})
     SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
-    SettingsTab:AddButton({Name = "Save", Callback = function()
+    SettingsTab:AddButton({Name = "Set", Callback = function()
         writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
         OrionLib:MakeNotification({Name = "Oblivion", Content = "Loading "..checkFile("check")..".", Image = "rbxassetid://4483362458", Time = 5})
         loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/"..readfile("oblivion/load_version.txt")))();

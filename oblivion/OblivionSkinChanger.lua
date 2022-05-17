@@ -356,17 +356,14 @@ SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetSer
 SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val)
     saveData()
     if val == true then
-        if val == true then
-            Settings.loops.antiafkloop = game:GetService("RunService").Heartbeat:Connect(function()
-                pcall(function()
-                    for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
-                        v:Disable()
-                    end
-                end)
-            end)
-        elseif val == false and Settings.loops.antiafkloop then
-            Settings.loops.antiafkloop:Disconnect()
-        end
+        spawn(function()
+            while OrionLib.Flags["anti_afk"].Value == true do
+                for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
+                    v:Disable()
+                end
+                wait(1)
+            end
+        end)
     end
 end})
 SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)

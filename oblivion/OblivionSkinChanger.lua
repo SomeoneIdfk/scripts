@@ -323,33 +323,32 @@ SkinsTab:AddDropdown({Name = "Inventory Spoof", Default = "-", Options = {"-", "
 	saveData()
 end})
 
-ViewmodelsTab:AddToggle({Name = "Enable", Default = false, Flag = "visuals_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Arms", Default = false, Flag = "visuals_arms_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_arms_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_arms_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_arms_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Gloves", Default = false, Flag = "visuals_gloves_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "visuals_gloves_show", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_gloves_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_gloves_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_gloves_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Sleeves", Default = false, Flag = "visuals_sleeves_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_sleeves_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_sleeves_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_sleeves_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Weapon", Default = false, Flag = "visuals_weapon_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "visuals_weapon_show", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_weapon_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_weapon_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_weapon_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Buller Tracers", Default = false, Flag = "visuals_bullet_tracer_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_bullet_tracer_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_bullet_tracer_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_bullet_tracer_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Bullet Impacts", Default = false, Flag = "visuals_bullet_impact_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "visuals_bullet_impact_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "visuals_bullet_impact_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "visuals_bullet_impact_transparency", Callback = function() saveData() end})
+ViewmodelsTab:AddToggle({Name = "Toggle Arms", Default = false, Flag = "viewmodels_arms_enable", Callback = function() saveData() end})
+ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_arms_color", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_arms_material", Callback = function() saveData() end})
+ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_arms_transparency", Callback = function() saveData() end})
+ViewmodelsTab:AddToggle({Name = "Toggle Gloves", Default = false, Flag = "viewmodels_gloves_enable", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "viewmodels_gloves_show", Callback = function() saveData() end})
+ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_gloves_color", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_gloves_material", Callback = function() saveData() end})
+ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_gloves_transparency", Callback = function() saveData() end})
+ViewmodelsTab:AddToggle({Name = "Toggle Sleeves", Default = false, Flag = "viewmodels_sleeves_enable", Callback = function() saveData() end})
+ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_sleeves_color", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_sleeves_material", Callback = function() saveData() end})
+ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_sleeves_transparency", Callback = function() saveData() end})
+ViewmodelsTab:AddToggle({Name = "Toggle Weapon", Default = false, Flag = "viewmodels_weapon_enable", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "viewmodels_weapon_show", Callback = function() saveData() end})
+ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_weapon_color", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_weapon_material", Callback = function() saveData() end})
+ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_weapon_transparency", Callback = function() saveData() end})
+ViewmodelsTab:AddToggle({Name = "Buller Tracers", Default = false, Flag = "viewmodels_bullet_tracer_enable", Callback = function() saveData() end})
+ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_bullet_tracer_color", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_tracer_material", Callback = function() saveData() end})
+ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_tracer_transparency", Callback = function() saveData() end})
+ViewmodelsTab:AddToggle({Name = "Bullet Impacts", Default = false, Flag = "viewmodels_bullet_impact_enable", Callback = function() saveData() end})
+ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_bullet_impact_color", Callback = function() saveData() end})
+ViewmodelsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_impact_material", Callback = function() saveData() end})
+ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_impact_transparency", Callback = function() saveData() end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -418,7 +417,7 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 	end
 
 	spawn(function()
-		if new.Name == "Arms" and new:IsA("Model") and OrionLib.Flags["visuals_enable"].Value == true then
+		if new.Name == "Arms" and new:IsA("Model") then
 			for i,v in pairs(new:GetChildren()) do
 				if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
 					local RightArm = v:FindFirstChild("Right Arm") or nil
@@ -427,72 +426,72 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 					local LeftGlove = (LeftArm and (LeftArm:FindFirstChild("Glove") or LeftArm:FindFirstChild("LGlove"))) or nil
 					local RightSleeve = RightArm and RightArm:FindFirstChild("Sleeve") or nil
 					local LeftSleeve = LeftArm and LeftArm:FindFirstChild("Sleeve") or nil
-					if OrionLib.Flags["visuals_arms_enable"].Value == true then
+					if OrionLib.Flags["viewmodels_arms_enable"].Value == true then
 						if RightArm ~= nil then
 							RightArm.Mesh.TextureId = ""
-							RightArm.Transparency = (OrionLib.Flags["visuals_arms_transparency"].Value / 100)
-							RightArm.Color = OrionLib.Flags["visuals_arms_color"].Value
-							RightArm.Material = OrionLib.Flags["visuals_arms_material"].Value
+							RightArm.Transparency = (OrionLib.Flags["viewmodels_arms_transparency"].Value / 100)
+							RightArm.Color = OrionLib.Flags["viewmodels_arms_color"].Value
+							RightArm.Material = OrionLib.Flags["viewmodels_arms_material"].Value
 						end
 						if LeftArm ~= nil then
 							LeftArm.Mesh.TextureId = ""
-							LeftArm.Transparency = (OrionLib.Flags["visuals_arms_transparency"].Value / 100)
-							LeftArm.Color = OrionLib.Flags["visuals_arms_color"].Value
-							LeftArm.Material = OrionLib.Flags["visuals_arms_material"].Value
+							LeftArm.Transparency = (OrionLib.Flags["viewmodels_arms_transparency"].Value / 100)
+							LeftArm.Color = OrionLib.Flags["viewmodels_arms_color"].Value
+							LeftArm.Material = OrionLib.Flags["viewmodels_arms_material"].Value
 						end
 					end
-					if OrionLib.Flags["visuals_gloves_enable"].Value == true then
+					if OrionLib.Flags["viewmodels_gloves_enable"].Value == true then
 						if RightGlove ~= nil then
-							if OrionLib.Flags["visuals_gloves_show"].Value ~= "Skin" then
+							if OrionLib.Flags["viewmodels_gloves_show"].Value ~= "Skin" then
 								RightGlove.Mesh.TextureId = ""
 							end
 							
-							if OrionLib.Flags["visuals_gloves_show"].Value == "Color" then
-								RightGlove.Color = OrionLib.Flags["visuals_gloves_color"].Value
+							if OrionLib.Flags["viewmodels_gloves_show"].Value == "Color" then
+								RightGlove.Color = OrionLib.Flags["viewmodels_gloves_color"].Value
 							end
 
-							RightGlove.Transparency = (OrionLib.Flags["visuals_gloves_transparency"].Value / 100)
-							RightGlove.Material = OrionLib.Flags["visuals_gloves_material"].Value
+							RightGlove.Transparency = (OrionLib.Flags["viewmodels_gloves_transparency"].Value / 100)
+							RightGlove.Material = OrionLib.Flags["viewmodels_gloves_material"].Value
 						end
 						if LeftGlove ~= nil then
-							if OrionLib.Flags["visuals_gloves_show"].Value ~= "Skin" then
+							if OrionLib.Flags["viewmodels_gloves_show"].Value ~= "Skin" then
 								LeftGlove.Mesh.TextureId = ""
 							end
 							
-							if OrionLib.Flags["visuals_gloves_show"].Value == "Color" then
-								LeftGlove.Color = OrionLib.Flags["visuals_gloves_color"].Value
+							if OrionLib.Flags["viewmodels_gloves_show"].Value == "Color" then
+								LeftGlove.Color = OrionLib.Flags["viewmodels_gloves_color"].Value
 							end
 
-							LeftGlove.Transparency = (OrionLib.Flags["visuals_gloves_transparency"].Value / 100)
-							LeftGlove.Material = OrionLib.Flags["visuals_gloves_material"].Value
+							LeftGlove.Transparency = (OrionLib.Flags["viewmodels_gloves_transparency"].Value / 100)
+							LeftGlove.Material = OrionLib.Flags["viewmodels_gloves_material"].Value
 						end
 					end
-					if OrionLib.Flags["visuals_sleeves_enable"].Value == true then
+					if OrionLib.Flags["viewmodels_sleeves_enable"].Value == true then
 						if RightSleeve ~= nil then
 							RightSleeve.Mesh.TextureId = ""
-							RightSleeve.Color = OrionLib.Flags["visuals_sleeves_color"].Value
-							RightSleeve.Transparency = (OrionLib.Flags["visuals_sleeves_transparency"].Value / 100)
-							RightSleeve.Material = OrionLib.Flags["visuals_sleeves_material"].Value
+							RightSleeve.Color = OrionLib.Flags["viewmodels_sleeves_color"].Value
+							RightSleeve.Transparency = (OrionLib.Flags["viewmodels_sleeves_transparency"].Value / 100)
+							RightSleeve.Material = OrionLib.Flags["viewmodels_sleeves_material"].Value
 						end
 						if LeftSleeve ~= nil then
 							LeftSleeve.Mesh.TextureId = ""
-							LeftSleeve.Color = OrionLib.Flags["visuals_sleeves_color"].Value
-							LeftSleeve.Transparency = (OrionLib.Flags["visuals_sleeves_transparency"].Value / 100)
-							LeftSleeve.Material = OrionLib.Flags["visuals_sleeves_material"].Value
+							LeftSleeve.Color = OrionLib.Flags["viewmodels_sleeves_color"].Value
+							LeftSleeve.Transparency = (OrionLib.Flags["viewmodels_sleeves_transparency"].Value / 100)
+							LeftSleeve.Material = OrionLib.Flags["viewmodels_sleeves_material"].Value
 						end
 					end
-				elseif OrionLib.Flags["visuals_weapon_enable"].Value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
-					if OrionLib.Flags["visuals_weapon_show"].Value ~= "Skin" then
+				elseif OrionLib.Flags["viewmodels_weapon_enable"].Value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
+					if OrionLib.Flags["viewmodels_weapon_show"].Value ~= "Skin" then
 						if v:IsA("MeshPart") then v.TextureID = "" end
 						if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
 					end
 	
-					if OrionLib.Flags["visuals_weapon_show"].Value == "Color" then
-						v.Color = OrionLib.Flags["visuals_weapon_color"].Value
+					if OrionLib.Flags["viewmodels_weapon_show"].Value == "Color" then
+						v.Color = OrionLib.Flags["viewmodels_weapon_color"].Value
 					end
 	
-					v.Transparency = (OrionLib.Flags["visuals_weapon_transparency"].Value / 100)
-					v.Material = OrionLib.Flags["visuals_weapon_material"].Value
+					v.Transparency = (OrionLib.Flags["viewmodels_weapon_transparency"].Value / 100)
+					v.Material = OrionLib.Flags["viewmodels_weapon_material"].Value
 				end
 			end
 		end
@@ -517,14 +516,14 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 			if string.len(self.Name) == 38 then
 				return wait(99e99)
             elseif self.Name == "HitPart" then
-                if OrionLib.Flags["visuals_bullet_tracer_enable"].Value == true then
+                if OrionLib.Flags["viewmodels_bullet_tracer_enable"].Value == true then
 					spawn(function()
 						local BulletTracers = Instance.new("Part")
 						BulletTracers.Anchored = true
 						BulletTracers.CanCollide = false
-						BulletTracers.Material = OrionLib.Flags["visuals_bullet_tracer_material"].Value
-						BulletTracers.Color = OrionLib.Flags["visuals_bullet_tracer_color"].Value
-                        BulletTracers.Transparency = (OrionLib.Flags["visuals_bullet_tracer_transparency"].Value / 100)
+						BulletTracers.Material = OrionLib.Flags["viewmodels_bullet_tracer_material"].Value
+						BulletTracers.Color = OrionLib.Flags["viewmodels_bullet_tracer_color"].Value
+                        BulletTracers.Transparency = (OrionLib.Flags["viewmodels_bullet_tracer_transparency"].Value / 100)
 						BulletTracers.Size = Vector3.new(0.1, 0.1, (LocalPlayer.Character.Head.CFrame.p - args[2]).magnitude)
 						BulletTracers.CFrame = CFrame.new(LocalPlayer.Character.Head.CFrame.p, args[2]) * CFrame.new(0, 0, -BulletTracers.Size.Z / 2)
 						BulletTracers.Name = "BulletTracers"
@@ -533,14 +532,14 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						BulletTracers:Destroy()
 					end)
 				end
-                if OrionLib.Flags["visuals_bullet_impact_enable"].Value == true then
+                if OrionLib.Flags["viewmodels_bullet_impact_enable"].Value == true then
 					spawn(function()
 						local BulletImpacts = Instance.new("Part")
 						BulletImpacts.Anchored = true
 						BulletImpacts.CanCollide = false
-						BulletImpacts.Material = OrionLib.Flags["visuals_bullet_impact_material"].Value
-						BulletImpacts.Color = OrionLib.Flags["visuals_bullet_impact_color"].Value
-                        BulletImpacts.Transparency = (OrionLib.Flags["visuals_bullet_impact_transparency"].Value / 100)
+						BulletImpacts.Material = OrionLib.Flags["viewmodels_bullet_impact_material"].Value
+						BulletImpacts.Color = OrionLib.Flags["viewmodels_bullet_impact_color"].Value
+                        BulletImpacts.Transparency = (OrionLib.Flags["viewmodels_bullet_impact_transparency"].Value / 100)
 						BulletImpacts.Size = Vector3.new(0.25, 0.25, 0.25)
 						BulletImpacts.CFrame = CFrame.new(args[2])
 						BulletImpacts.Name = "BulletImpacts"

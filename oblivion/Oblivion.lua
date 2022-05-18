@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {antiafkloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, aimbot = {enable = false, method = "distance", aim = false}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -300,11 +300,73 @@ local function dropdownRefresh(flag, value, list)
     OrionLib.Flags[flag]:Set(value)
 end
 
+local function GetCharacter(player)
+    local character = player.Character
+    return character, character and game.FindFirstChild(character, "HumanoidRootPart")
+end
+
+local function IsVisible(pos, ignoreList)
+	return #workspace.CurrentCamera:GetPartsObscuringTarget({LocalPlayer.Character.Head.Position, pos}, ignoreList) == 0 and true or false
+end
+
+local function VisibleCheck(character, position)
+    local origin = workspace.CurrentCamera.CFrame.Position
+    local part = workspace.FindPartOnRayWithIgnoreList(workspace, Ray.new(origin, position - origin), { GetCharacter(LocalPlayer), workspace.CurrentCamera, character }, false, true)
+    return part == nil
+end
+
+local function GetTeam(plr)
+	if plr:FindFirstChild("Status") and plr.Status:FindFirstChild("Team") then
+		return plr.Status.Team.Value
+	end
+
+	return "s"
+end
+
+local function checkGamemode(mode)
+	if mode == "team" and game.PlaceId == 301549746 or mode == "team" and game.PlaceId == 1480424328 then
+		return true
+	elseif mode == "ffa" and game.PlaceId == 1869597719 then
+		return true
+	end
+
+	return false
+end
+
+local function IsAlive(plr)
+	if plr and plr.Character and plr.Character.FindFirstChild(plr.Character, "Humanoid") and plr.Character.Humanoid.Health > 0 and GetTeam(plr) ~= "s" then
+		return true
+	end
+
+	return false
+end
+
+local function getClosestPlayer()
+    local closestDistance = math.huge
+    local closestPlayer = nil
+    for i,v in pairs(game.Players:GetChildren()) do
+        if v ~= LocalPlayer and IsAlive(v) and checkGamemode("ffa") or v ~= LocalPlayer and IsAlive(v) and checkGamemode("team") and GetTeam(LocalPlayer) ~= GetTeam(v) then
+            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+            if distance < closestDistance then
+                closestDistance = distance
+                closestPlayer = v
+            end
+        end
+    end
+    return closestPlayer
+end
+
 -- GUI
+local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998", PremiumOnly = false})
 local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458", PremiumOnly = false})
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762", PremiumOnly = false})
 local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084", PremiumOnly = false})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185", PremiumOnly = false})
+
+AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function(val) saveData() if val == true then Settings.loops.aimbotloop = game:GetService("RunService").RenderStepped:Connect(function() pcall(function() if IsAlive(LocalPlayer) then local target = Settings.aimbot.method == "distance" and getClosestPlayer() or nil local character, torso = GetCharacter(target) if target and IsAlive(target) then if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Character.Head.Position) end end end end end) end) elseif val == false and Settings.loops.aimbotloop then Settings.loops.aimbotloop:Disconnect() end end})
+AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
+AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function() saveData() end})
+AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
 EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
@@ -323,70 +385,13 @@ EspTab:AddSlider({Name = "Tracer Transparency", Min = 0, Max = 100, Default = 10
 EspTab:AddColorpicker({Name = "Tracer Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_tracer_color", Callback = function(val) saveData() espLib.options.tracerColor = val end})
 EspTab:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bottom", "Top", "Mouse"}, Flag = "esp_tracerorigin", Callback = function(val) saveData() espLib.options.tracerOrigin = val end})
 
-SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "weapon", Callback = function(val)
-    if val == "-" and OrionLib.Flags["weapon_skin"] then
-        dropdownRefresh("weapon_skin", "-", {"-"})
-    elseif val ~= "-" and OrionLib.Flags["weapon_skin"] then
-        dropdownRefresh("weapon_skin", Settings.CurrentSkins[val], Settings.weapon_data[val].list)
-    end
-end})
-SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin", Callback = function(val)
-	Settings.CurrentSkins[OrionLib.Flags["weapon"].Value] = val
-    saveData()
-	table.foreach(Settings.CurrentSkins, function(i,v)
-		if i ~= "-" then
-			table.foreach(Settings.weapon_data[i].teams, function(i2,v2)
-				if v2 == "T" then
-					LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i].name].Value = v
-				elseif v2 == "CT" then
-					LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i].name].Value = v
-				end
-			end)
-		end
-	end)
-end})
-SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "knife", Callback = function(val)
-	if val == "-" and OrionLib.Flags["knife_skin"] then
-		modelChange("v_T Knife", "v_T Knife")
-		modelChange("v_CT Knife", "v_CT Knife")
-        dropdownRefresh("knife_skin", "-", {"-"})
-        saveData()
-	elseif val ~= "-" and OrionLib.Flags["knife_skin"] then
-		modelChange("v_T Knife", "v_"..val)
-		modelChange("v_CT Knife", "v_"..val)
-        dropdownRefresh("knife_skin", "Stock", skinsList(val, Settings.knife_data))
-        saveData()
-	end
-end})
+SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "weapon", Callback = function(val) if val == "-" and OrionLib.Flags["weapon_skin"] then dropdownRefresh("weapon_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["weapon_skin"] then dropdownRefresh("weapon_skin", Settings.CurrentSkins[val], Settings.weapon_data[val].list) end end})
+SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin", Callback = function(val) Settings.CurrentSkins[OrionLib.Flags["weapon"].Value] = val saveData() table.foreach(Settings.CurrentSkins, function(i,v) if i ~= "-" then table.foreach(Settings.weapon_data[i].teams, function(i2,v2) if v2 == "T" then LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i].name].Value = v elseif v2 == "CT" then LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i].name].Value = v end end) end end) end})
+SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "knife", Callback = function(val) if val == "-" and OrionLib.Flags["knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("knife_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownRefresh("knife_skin", "Stock", skinsList(val, Settings.knife_data)) saveData() end end})
 SkinsTab:AddDropdown({Name = "Knife Skin", Default = "-", Options = {"-"}, Flag = "knife_skin", Callback = function() saveData() end})
-SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "glove", Callback = function(val)
-	if val == "-" and OrionLib.Flags["glove_skin"] then
-        dropdownRefresh("glove_skin", "-", {"-"})
-        saveData()
-	elseif val ~= "-" and OrionLib.Flags["glove_skin"] then
-        dropdownRefresh("glove_skin", "Stock", skinsList(val, Settings.glove_data))
-        saveData()
-	end
-end})
+SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "glove", Callback = function(val) if val == "-" and OrionLib.Flags["glove_skin"] then dropdownRefresh("glove_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["glove_skin"] then dropdownRefresh("glove_skin", "Stock", skinsList(val, Settings.glove_data)) saveData() end end})
 SkinsTab:AddDropdown({Name = "Glove Skin", Default = "-", Options = {"-"}, Flag = "glove_skin", Callback = function() saveData() end})
-SkinsTab:AddDropdown({Name = "Inventory Spoof", Default = "-", Options = {"-", "Stock Weapons"}, Flag = "additionals", Callback = function(val)
-	local InventoryLoadout, SkinsTable = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"], {}
-	if val == "-" then
-		Client.CurrentInventory = Settings.OldInventory
-	elseif val == "Stock Weapons" then
-		for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do
-			if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then
-				table.insert(SkinsTable, {v.Name.."_Stock"})
-			end
-		end
-		Client.CurrentInventory = SkinsTable
-	end
-	if InventoryLoadout.Visible == true then
-	    InventoryLoadout.Visible = false
-	    InventoryLoadout.Visible = true
-	end
-	saveData()
-end})
+SkinsTab:AddDropdown({Name = "Inventory Spoof", Default = "-", Options = {"-", "Stock Weapons"}, Flag = "additionals", Callback = function(val) local InventoryLoadout, SkinsTable = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"], {} if val == "-" then Client.CurrentInventory = Settings.OldInventory elseif val == "Stock Weapons" then for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then table.insert(SkinsTable, {v.Name.."_Stock"}) end end Client.CurrentInventory = SkinsTable end if InventoryLoadout.Visible == true then InventoryLoadout.Visible = false InventoryLoadout.Visible = true end saveData() end})
 
 ViewmodelsTab:AddToggle({Name = "Toggle Arms", Default = false, Flag = "viewmodels_arms_enable", Callback = function() saveData() end})
 ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_arms_color", Callback = function() saveData() end})
@@ -417,28 +422,10 @@ ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val)
-    saveData()
-    if val == true then
-        spawn(function()
-            while OrionLib.Flags["anti_afk"].Value == true do
-                for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
-                    v:Disable()
-                end
-                wait(1)
-            end
-        end)
-    end
-end})
-SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)
-	if OrionLib.Flags["build"] then
-        dropdownRefresh("build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty"))
-	end
-end})
+SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val) saveData() if val == true then spawn(function() while OrionLib.Flags["anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end) end end})
+SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val) if OrionLib.Flags["build"] then dropdownRefresh("build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty")) end end})
 SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
-SettingsTab:AddButton({Name = "Set", Callback = function()
-	writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
-end})
+SettingsTab:AddButton({Name = "Set", Callback = function() writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value]) end})
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)

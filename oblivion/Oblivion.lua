@@ -35,6 +35,8 @@ end
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local Client = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
 local Mouse = LocalPlayer:GetMouse()
+local FOV = Drawing.new("Circle")
+FOV.Thickness = 2
 Settings.OldInventory = Client.CurrentInventory
 
 local IgnoredFlags = {"branch", "build", "weapon", "weapon_skin"}
@@ -350,12 +352,19 @@ local function getClosestPlayer()
     local closestDistance = math.huge
     local closestPlayer = nil
     for i,v in pairs(game.Players:GetChildren()) do
-        if v ~= LocalPlayer and IsAlive(v) and checkGamemode("ffa") or v ~= LocalPlayer and IsAlive(v) and checkGamemode("team") and GetTeam(LocalPlayer) ~= GetTeam(v) then
-            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
-            if distance < closestDistance then
-                closestDistance = distance
-                closestPlayer = v
-            end
+        if v ~= LocalPlayer and IsAlive(v) and GetTeam(v) ~= "s" and checkGamemode("ffa") or v ~= LocalPlayer and IsAlive(v) and GetTeam(v) ~= "s" and checkGamemode("team") and GetTeam(LocalPlayer) ~= GetTeam(v) then
+			local character, torso = GetCharacter(v)
+			local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(v.Character.HumanoidRootPart.Position)
+			local FOVCheck = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(Vector.X, Vector.Y)).magnitude
+			if OrionLib.Flags["aimbot_fov_only"].Value == true and FOVCheck < OrionLib.Flags["aimbot_fov_radius"].Value or OrionLib.Flags["aimbot_fov_only"].Value == true and OrionLib.Flags["aimbot_fov_radius"].Value == 0 or OrionLib.Flags["aimbot_fov_only"].Value == false then
+				if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then
+					local distance = (LocalPlayer.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+					if distance < closestDistance then
+						closestDistance = distance
+						closestPlayer = v
+					end
+				end
+			end
         end
     end
     return closestPlayer
@@ -387,21 +396,18 @@ AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Call
 			pcall(function()
 				if IsAlive(LocalPlayer) then
 					Settings.aimbot.target = Settings.aimbot.method == "distance" and getClosestPlayer() or nil
-					local character, torso = GetCharacter(Settings.aimbot.target)
 					if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
-						if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then
-							if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
-								if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" then
-									workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
-								elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" then
-									local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
-									local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
-									mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
-								elseif OrionLib.Flags["aimbot_method"].Value == "Silent Aim" then
-									local Ignore = {LocalPlayer.Character, workspace.CurrentCamera, workspace.Map.Clips, workspace.Map.SpawnPoints, workspace.Debris}
-									local Ray = Ray.new(workspace.CurrentCamera, (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).unit * (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).magnitude)
-									local Hit, Pos = workspace:FindPartOnRayWithIgnoreList(Ray, Ignore, false, true)
-								end
+						if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
+							if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" then
+								workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
+							elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" then
+								local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
+								local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
+								mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
+							--[[elseif OrionLib.Flags["aimbot_method"].Value == "Silent Aim" then
+								local Ignore = {LocalPlayer.Character, workspace.CurrentCamera, workspace.Map.Clips, workspace.Map.SpawnPoints, workspace.Debris}
+								local Ray = Ray.new(workspace.CurrentCamera, (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).unit * (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).magnitude)
+								local Hit, Pos = workspace:FindPartOnRayWithIgnoreList(Ray, Ignore, false, true)]]--
 							end
 						end
 					end
@@ -415,7 +421,12 @@ end})
 AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function() saveData() end})
 AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
-AimTab:AddSlider({Name = "Smoothness", Min = 0, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
+AimTab:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
+AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Callback = function(val) saveData() FOV.Visible = val end})
+AimTab:AddSlider({Name = "FOV Thickness", Min = 1, Max = 10, Default = 3, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_fov_thickness", Callback = function(val) saveData() FOV.Thickness = val end})
+AimTab:AddSlider({Name = "FOV Radius", Min = 0, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Callback = function(val) saveData() FOV.Radius = val end})
+AimTab:AddSlider({Name = "FOV Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_fov_transparency", Callback = function(val) saveData() FOV.Transparency = (val / 100) end})
+AimTab:AddColorpicker({Name = "FOV Color", Default = Color3.fromRGB(255, 255, 255), Flag = "aimbot_fov_color", Callback = function(val) saveData() FOV.Color = val end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
@@ -739,6 +750,12 @@ if isfile("oblivion/data.cfg") then
 		OrionLib:MakeNotification({Name = "Oblivion", Content = "Error loading save.", Image = "rbxassetid://4384402990", Time = 10})
 	end
 end
+
+Mouse.Move:Connect(function()
+	if FOV.Visible then
+		FOV.Position = game:GetService("UserInputService"):GetMouseLocation()
+	end
+end)
 
 OblivionRan.Value = true
 OrionLib:Init()

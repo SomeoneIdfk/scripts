@@ -776,3 +776,15 @@ OrionLib:Init()
 espLib.Init()
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Succesfully loaded.", Image = "rbxassetid://4400702457", Time = 5})
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.Name..".", Image = "rbxassetid://4431165334", Time = 10})
+
+--[[
+	List:
+		[High]
+
+		[Mid]
+		-Aimbot Distance/Crosshair prioritization, both if possible working together [Low]
+		-Aimbot Silent Aim [Mid]
+
+		[Low]
+		-Transfer all features from my modified hex to Oblivion. [Mid]
+]]--

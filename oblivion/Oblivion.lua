@@ -740,7 +740,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
 
-		if IsAlive(LocalPlayer) then
+		if OrionLib.Flags["aimbot_enable"].Value == true and IsAlive(LocalPlayer) then
 			Settings.aimbot.target = Settings.aimbot.method == "distance" and getClosestPlayer() or nil
 			if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
 				if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then

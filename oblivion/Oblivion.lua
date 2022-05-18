@@ -103,6 +103,10 @@ local OblivionRan = Instance.new("BoolValue", Oblivion)
 OblivionRan.Name = "OblivionRan"
 OblivionRan.Value = false
 
+local OblivionASD = Instance.new("IntValue", Oblivion)
+OblivionASD.Name = "OblivionAutoShootDelay"
+OblivionASD.Value = 0
+
 -- Functions
 local function SaveTable(queuetable)
 	local tbl = {}
@@ -356,6 +360,18 @@ local function getClosestPlayer()
     return closestPlayer
 end
 
+local function autoShoot()
+    if OblivionASD.Value == 0 then
+        OblivionASD.Value = 50
+        Client.resetaccuracy()
+		Client.RecoilX = 0
+		Client.RecoilY = 0
+        Client.firebullet()
+    elseif OblivionASD.Value ~= 0 then
+        OblivionASD.Value = OblivionASD.Value - 1
+    end
+end
+
 -- GUI
 local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998", PremiumOnly = false})
 local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458", PremiumOnly = false})
@@ -363,9 +379,11 @@ local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762
 local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084", PremiumOnly = false})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185", PremiumOnly = false})
 
-AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function(val) saveData() if val == true then Settings.loops.aimbotloop = game:GetService("RunService").RenderStepped:Connect(function() pcall(function() if IsAlive(LocalPlayer) then local target = Settings.aimbot.method == "distance" and getClosestPlayer() or nil local character, torso = GetCharacter(target) if target and IsAlive(target) then if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Character.Head.Position) end end end end end) end) elseif val == false and Settings.loops.aimbotloop then Settings.loops.aimbotloop:Disconnect() end end})
+AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function(val) saveData() if val == true then Settings.loops.aimbotloop = game:GetService("RunService").RenderStepped:Connect(function() pcall(function() if IsAlive(LocalPlayer) then local target = Settings.aimbot.method == "distance" and getClosestPlayer() or nil local character, torso = GetCharacter(target) if target and IsAlive(target) then if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Character.Head.Position) --[[if OrionLib.Flags["aimbot_autoshoot"].Value == true then wait(OrionLib.Flags["aimbot_delay"]) autoShoot() end]] end end end end end) end) elseif val == false and Settings.loops.aimbotloop then Settings.loops.aimbotloop:Disconnect() end end})
 AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function() saveData() end})
+--[[AimTab:AddToggle({Name = "Auto Shoot", Default = false, Flag = "aimbot_autoshoot", Callback = function() saveData() end})
+AimTab:AddSlider({Name = "Delay", Min = 0, Max = 5, Default = 0, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_delay", Callback = function() saveData() end})]]--
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})

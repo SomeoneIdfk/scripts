@@ -1988,13 +1988,13 @@ function killtarget(target)
                 [1] = target.Character.Head,
                 [2] = target.Character.Head.Position,
                 [3] = LocalPlayer.Character.EquippedTool.Value,
-                [4] = 500,
+                [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = LocalPlayer.Character.Gun,
-                [8] = 100, 
+                [8] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 1 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 100, 
                 [9] = false,
                 [10] = false,
                 [11] = Vector3.new(),
-                [12] = 500,
+                [12] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [13] = Vector3.new()
                 }
             return Arguments
@@ -2018,13 +2018,13 @@ function killtarget(target)
                 [1] = target.Character.Head,
                 [2] = target.Character.Head.CFrame.p,
                 [3] = cbClient.gun.name,
-                [4] = 4096,
+                [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 4096,
                 [5] = LocalPlayer.Character.Gun,
-                [8] = 100,
+                [8] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 1 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 100,
                 [9] = false,
                 [10] = false,
                 [11] = Vector3.new(0,0,0),
-                [12] = 16868,
+                [12] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 16868,
                 [13] = Vector3.new(0, 0, 0)
                 }
             return Arguments
@@ -2033,13 +2033,13 @@ function killtarget(target)
                 [1] = target.Character.Head,
                 [2] = target.Character.Head.CFrame.p,
                 [3] = LocalPlayer.Character.EquippedTool.Value,
-                [4] = 500,
+                [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = LocalPlayer.Character.Gun,
-                [8] = 100, 
+                [8] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 1 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 100, 
                 [9] = false,
                 [10] = false,
                 [11] = Vector3.new(),
-                [12] = 500,
+                [12] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [13] = Vector3.new()
                 }
             return Arguments
@@ -2051,13 +2051,13 @@ function killtarget(target)
                 [1] = target.Character.Head,
                 [2] = target.Character.Head.Position,
                 [3] = rgun,
-                [4] = 500,
+                [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = game.ReplicatedStorage.Weapons[rgun].Model,
-                [8] = 100, 
+                [8] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 1 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500, 
                 [9] = false,
                 [10] = false,
                 [11] = Vector3.new(),
-                [12] = 500,
+                [12] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [13] = Vector3.new()
                 }
             return Arguments
@@ -2081,13 +2081,13 @@ function killtarget(target)
                 [1] = target.Character.Head,
                 [2] = target.Character.Head.CFrame.p,
                 [3] = rgun,
-                [4] = 4096,
+                [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 4096,
                 [5] = game.ReplicatedStorage.Weapons[rgun].Model,
-                [8] = 100,
+                [8] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 1 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 100,
                 [9] = false,
                 [10] = false,
                 [11] = Vector3.new(0,0,0),
-                [12] = 16868,
+                [12] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 16868,
                 [13] = Vector3.new(0, 0, 0)
                 }
             return Arguments
@@ -2096,13 +2096,13 @@ function killtarget(target)
                 [1] = target.Character.Head,
                 [2] = target.Character.Head.CFrame.p,
                 [3] = rgun,
-                [4] = 500,
+                [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = game.ReplicatedStorage.Weapons[rgun].Model,
-                [8] = 100, 
+                [8] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 1 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500, 
                 [9] = false,
                 [10] = false,
                 [11] = Vector3.new(),
-                [12] = 500,
+                [12] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [13] = Vector3.new()
                 }
             return Arguments
@@ -2156,7 +2156,8 @@ ExperimentalTabCategoryOptions:AddSlider("Auto Kill Delay", {0, 10, 0, 1, ""}, "
 ExperimentalTabCategoryOptions:AddToggle("Auto Kill Specific Only", false, "ExperimentalTabCategoryOptionsAKSO")
 ExperimentalTabCategoryOptions:AddDropdown("Auto Kill Specific", {"-"}, "-", "ExperimentalTabCategoryOptionsAKS")
 
-ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "Efficient", "ExperimentalTabCategoryOptionsMethod")
+ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "CFrame", "ExperimentalTabCategoryOptionsMethod")
+ExperimentalTabCategoryOptions:AddToggle("Normal Damage", false, "ExperimentalTabCategoryOptionsND")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
 ExperimentalTabCategoryOptions:AddToggle("After Prep", false, "ExperimentalTabCategoryOptionsAfterPrep")
 ExperimentalTabCategoryOptions:AddDropdown("Random Weapon Type", {"Both", "Gun", "Melee"}, "Both", "ExperimentalTabCategoryOptionsRandomWeaponType")

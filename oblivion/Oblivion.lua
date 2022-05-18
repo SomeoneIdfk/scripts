@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, busy = false}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -378,7 +378,7 @@ local function triggerBot(target)
 		local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(target.Character.Head.Position)
 		local FOVCheck = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(Vector.X, Vector.Y)).magnitude
 		if OrionLib.Flags["aimbot_stand_still"].Value == true and FOVCheck < 20 and Settings.aimbot.standing == true and OblivionASD.Value == 0 or OrionLib.Flags["aimbot_stand_still"].Value == false and FOVCheck < 20 and OblivionASD.Value == 0 then
-			OblivionASD.Value = 25
+			OblivionASD.Value = OrionLib.Flags["aimbot_triggerbot_reset_delay"].Value
 			Client.firebullet()
 		end
 	end
@@ -404,6 +404,7 @@ AimTab:AddColorpicker({Name = "FOV Color", Default = Color3.fromRGB(255, 255, 25
 AimTab:AddToggle({Name = "TriggerBot", Default = false, Flag = "aimbot_triggerbot_enable", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "Stand Still", Default = false, Flag = "aimbot_stand_still", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
+AimTab:AddSlider({Name = "TriggerBot Reset Delay", Min = 20, Max = 300, Default = 50, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_triggerbot_reset_delay", Callback = function() saveData() end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})

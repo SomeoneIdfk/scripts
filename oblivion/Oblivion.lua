@@ -386,7 +386,8 @@ local function getClosestPlayer()
 			end
         end
     end
-    return closestPlayer
+    --Settings.aimbot.target = closestPlayer
+	return closestPlayer
 end
 
 local function triggerBot()
@@ -395,9 +396,11 @@ local function triggerBot()
 		local FOVCheck = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(Vector.X, Vector.Y)).magnitude
 		local distance = Settings.aimbot.distance >= 10 and 70 or Settings.aimbot.distance >= 20 and 50 or Settings.aimbot.distance >= 30 and 40 or Settings.aimbot.distance >= 40 and 30 or 20
 		TriggerbotFOV.Radius = distance
-		if OrionLib.Flags["aimbot_stand_still"].Value == true and FOVCheck < distance and Settings.aimbot.standing == true and OblivionASD.Value == 0 or OrionLib.Flags["aimbot_stand_still"].Value == false and FOVCheck < distance and OblivionASD.Value == 0 then
-			OblivionASD.Value = OrionLib.Flags["aimbot_shooting_delay"].Value == true and getGunName() and Settings.weapon_data[getGunName()].data.triggerbot_delay or OrionLib.Flags["aimbot_shooting_delay"].Value == true and 100 or OrionLib.Flags["aimbot_shooting_delay"].Value == false and 0
-			Client.firebullet()
+		if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and OblivionASD.Value == 0 or OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" and FOVCheck < distance and OblivionASD.Value == 0 then
+			if OrionLib.Flags["aimbot_stand_still"].Value == true and Settings.aimbot.standing == true or OrionLib.Flags["aimbot_stand_still"].Value == false then
+				OblivionASD.Value = OrionLib.Flags["aimbot_shooting_delay"].Value == true and getGunName() and Settings.weapon_data[getGunName()].data.triggerbot_delay or OrionLib.Flags["aimbot_shooting_delay"].Value == true and 100 or OrionLib.Flags["aimbot_shooting_delay"].Value == false and 0
+				Client.firebullet()
+			end
 		end
 	end
 end
@@ -418,7 +421,7 @@ AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind
 	end
 end})
 AimTab:AddDropdown({Name = "Aim Priority", Default = "Distance", Options = {"Distance", "Crosshair"}, Flag = "aimbot_priority", Callback = function() saveData() end})
-AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
+AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim", "Silent Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "Activation Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_activation_delay", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Callback = function(val) saveData() FOV.Visible = val end})
@@ -697,8 +700,8 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				return wait(99e99)
 			end
 		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
-			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" then
-				args[1] = Ray.new(workspace.CurrentCamera.CFrame.Position, (Settings.aimbot.target.Position - workspace.CurrentCamera.CFrame.Position).unit * (Settings.aimbot.target.Position - workspace.CurrentCamera.CFrame.Position).magnitude)
+			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and Settings.aimbot.target ~= nil then
+				args[1] = Ray.new(LocalPlayer.Character.Head.Position, (Settings.aimbot.target.Character.Head.Position - LocalPlayer.Character.Head.Position).unit * (game.ReplicatedStorage.Weapons[LocalPlayer.Character.EquippedTool.Value].Range.Value * 0.1))
 			end
         end
 	end
@@ -766,13 +769,14 @@ end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
 	pcall(function()
+		--print(tostring(Settings.aimbot.target))
 		if OblivionASD.Value ~= 0 then
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
 
 		if OrionLib.Flags["aimbot_enable"].Value == true and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
-			Settings.aimbot.target, Settings.aimbot.part = getClosestPlayer()
-			if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
+			Settings.aimbot.target = getClosestPlayer()
+			if --[[getClosestPlayer() and]] Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
 				if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
 					spawn(function()
 						if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
@@ -784,17 +788,15 @@ game:GetService("RunService").RenderStepped:Connect(function()
 							local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
 							local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
 							mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
-						--[[elseif OrionLib.Flags["aimbot_method"].Value == "Silent Aim" then
-							local Ignore = {LocalPlayer.Character, workspace.CurrentCamera, workspace.Map.Clips, workspace.Map.SpawnPoints, workspace.Debris}
-							local Ray = Ray.new(workspace.CurrentCamera, (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).unit * (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).magnitude)
-							local Hit, Pos = workspace:FindPartOnRayWithIgnoreList(Ray, Ignore, false, true)]]--
 						end
 					end)
 					spawn(function()
-						if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
-							wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
+						if OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" then
+							if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
+								wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
+							end
+							triggerBot()
 						end
-						triggerBot()
 					end)
 				end
 			end

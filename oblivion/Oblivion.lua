@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, busy = false}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -37,17 +37,20 @@ local Client = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
 local Mouse = LocalPlayer:GetMouse()
 local FOV = Drawing.new("Circle")
 FOV.Thickness = 2
+local TriggerbotFOV = Drawing.new("Circle")
+TriggerbotFOV.Thickness = 2
 Settings.OldInventory = Client.CurrentInventory
 
 local IgnoredFlags = {"branch", "build", "weapon", "weapon_skin"}
+local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
 
 local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion"})
 
 -- Esp Setup
-espLib.whitelist = {} -- insert string that is the player's name you want to whitelist (turns esp color to whitelistColor in options)
-espLib.blacklist = {} -- insert string that is the player's name you want to blacklist (removes player from esp)
+espLib.whitelist = {}
+espLib.blacklist = {}
 espLib.options = {enabled = nil, scaleFactorX = 4, scaleFactorY = 5, font = 2, fontSize = 13, limitDistance = false, maxDistance = 1000, visibleOnly = nil, teamCheck = nil, teamColor = nil, fillColor = nil, whitelistColor = Color3.new(1, 0, 0), outOfViewArrows = false, outOfViewArrowsFilled = false, outOfViewArrowsSize = 25, outOfViewArrowsRadius = 100, outOfViewArrowsColor = Color3.new(1, 1, 1), outOfViewArrowsTransparency = 0.5, outOfViewArrowsOutline = false, outOfViewArrowsOutlineFilled = false, outOfViewArrowsOutlineColor = Color3.new(1, 1, 1), outOfViewArrowsOutlineTransparency = 1, names = nil, nameTransparency = nil, nameColor = nil, boxes = true, boxesTransparency = nil, boxesColor = nil, boxFill = false, boxFillTransparency = 0.5, boxFillColor = Color3.new(1, 1, 1), healthBars = true, healthBarsSize = 1, healthBarsTransparency = nil, healthBarsColor = nil, healthText = true, healthTextTransparency = nil, healthTextSuffix = "%", healthTextColor = nil, distance = true, distanceTransparency = nil, distanceSuffix = " Studs", distanceColor = nil, tracers = nil, tracerTransparency = nil, tracerColor = nil, tracerOrigin = nil}
 
 for i,v in ipairs(workspace:GetChildren()) do
@@ -312,10 +315,6 @@ local function GetCharacter(player)
     return character, character and game.FindFirstChild(character, "HumanoidRootPart")
 end
 
-local function IsVisible(pos, ignoreList)
-	return #workspace.CurrentCamera:GetPartsObscuringTarget({LocalPlayer.Character.Head.Position, pos}, ignoreList) == 0 and true or false
-end
-
 local function VisibleCheck(character, position)
     local origin = workspace.CurrentCamera.CFrame.Position
     local part = workspace.FindPartOnRayWithIgnoreList(workspace, Ray.new(origin, position - origin), { GetCharacter(LocalPlayer), workspace.CurrentCamera, character }, false, true)
@@ -358,7 +357,7 @@ local function getGunName()
 end
 
 local function getClosestPlayer()
-    local closestDistance = math.huge
+    Settings.aimbot.distance = math.huge
     local closestPlayer = nil
     for i,v in pairs(game.Players:GetChildren()) do
         if v ~= LocalPlayer and IsAlive(v) and GetTeam(v) ~= "s" and checkGamemode("ffa") or v ~= LocalPlayer and IsAlive(v) and GetTeam(v) ~= "s" and checkGamemode("team") and GetTeam(LocalPlayer) ~= GetTeam(v) then
@@ -369,8 +368,8 @@ local function getClosestPlayer()
 				if OrionLib.Flags["aimbot_fov_only"].Value == true and FOVCheck < OrionLib.Flags["aimbot_fov_radius"].Value or OrionLib.Flags["aimbot_fov_only"].Value == true and OrionLib.Flags["aimbot_fov_radius"].Value == 0 or OrionLib.Flags["aimbot_fov_only"].Value == false then
 					if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then
 						local distance = (LocalPlayer.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
-						if distance < closestDistance then
-							closestDistance = distance
+						if distance < Settings.aimbot.distance then
+							Settings.aimbot.distance = distance
 							closestPlayer = v
 						end
 					end
@@ -378,8 +377,8 @@ local function getClosestPlayer()
 			elseif OrionLib.Flags["aimbot_priority"].Value == "Crosshair" then
 				if OrionLib.Flags["aimbot_fov_only"].Value == true and FOVCheck < OrionLib.Flags["aimbot_fov_radius"].Value or OrionLib.Flags["aimbot_fov_only"].Value == true and OrionLib.Flags["aimbot_fov_radius"].Value == 0 or OrionLib.Flags["aimbot_fov_only"].Value == false then
 					if OrionLib.Flags["aimbot_visible"].Value == false or OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(character, torso.Position) then
-						if FOVCheck < closestDistance then
-							closestDistance = FOVCheck
+						if FOVCheck < Settings.aimbot.distance then
+							Settings.aimbot.distance = FOVCheck
 							closestPlayer = v
 						end
 					end
@@ -390,12 +389,14 @@ local function getClosestPlayer()
     return closestPlayer
 end
 
-local function triggerBot(target)
+local function triggerBot()
 	if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false then
-		local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(target.Character.Head.Position)
+		local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
 		local FOVCheck = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(Vector.X, Vector.Y)).magnitude
-		if OrionLib.Flags["aimbot_stand_still"].Value == true and FOVCheck < 20 and Settings.aimbot.standing == true and OblivionASD.Value == 0 or OrionLib.Flags["aimbot_stand_still"].Value == false and FOVCheck < 20 and OblivionASD.Value == 0 then
-			OblivionASD.Value = getGunName() and Settings.weapon_data[getGunName()].data.triggerbot_delay or 100
+		local distance = Settings.aimbot.distance >= 10 and 70 or Settings.aimbot.distance >= 20 and 50 or Settings.aimbot.distance >= 30 and 40 or Settings.aimbot.distance >= 40 and 30 or 20
+		TriggerbotFOV.Radius = distance
+		if OrionLib.Flags["aimbot_stand_still"].Value == true and FOVCheck < distance and Settings.aimbot.standing == true and OblivionASD.Value == 0 or OrionLib.Flags["aimbot_stand_still"].Value == false and FOVCheck < distance and OblivionASD.Value == 0 then
+			OblivionASD.Value = OrionLib.Flags["aimbot_shooting_delay"].Value == true and getGunName() and Settings.weapon_data[getGunName()].data.triggerbot_delay or OrionLib.Flags["aimbot_shooting_delay"].Value == true and 100 or OrionLib.Flags["aimbot_shooting_delay"].Value == false and 0
 			Client.firebullet()
 		end
 	end
@@ -410,18 +411,25 @@ local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605
 
 AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function() saveData() end})
+AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function(val) saveData()
+	if val == true then
+		local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled"
+		OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3})
+	end
+end})
 AimTab:AddDropdown({Name = "Aim Priority", Default = "Distance", Options = {"Distance", "Crosshair"}, Flag = "aimbot_priority", Callback = function() saveData() end})
 AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "Activation Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_activation_delay", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Callback = function(val) saveData() FOV.Visible = val end})
-AimTab:AddSlider({Name = "FOV Thickness", Min = 1, Max = 10, Default = 3, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_fov_thickness", Callback = function(val) saveData() FOV.Thickness = val end})
+AimTab:AddSlider({Name = "FOV Thickness", Min = 1, Max = 10, Default = 3, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_fov_thickness", Callback = function(val) saveData() FOV.Thickness = val TriggerbotFOV.Thickness = val end})
 AimTab:AddSlider({Name = "FOV Radius", Min = 0, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Callback = function(val) saveData() FOV.Radius = val end})
-AimTab:AddSlider({Name = "FOV Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_fov_transparency", Callback = function(val) saveData() FOV.Transparency = (val / 100) end})
-AimTab:AddColorpicker({Name = "FOV Color", Default = Color3.fromRGB(255, 255, 255), Flag = "aimbot_fov_color", Callback = function(val) saveData() FOV.Color = val end})
+AimTab:AddSlider({Name = "FOV Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_fov_transparency", Callback = function(val) saveData() FOV.Transparency = (val / 100) TriggerbotFOV.Transparency = (val / 100) end})
+AimTab:AddColorpicker({Name = "FOV Color", Default = Color3.fromRGB(255, 255, 255), Flag = "aimbot_fov_color", Callback = function(val) saveData() FOV.Color = val TriggerbotFOV.Color = val end})
 AimTab:AddToggle({Name = "TriggerBot", Default = false, Flag = "aimbot_triggerbot_enable", Callback = function() saveData() end})
+AimTab:AddToggle({Name = "Triggerbot FOV", Default = false, Flag = "aimbot_triggerbot_fov", Callback = function(val) saveData() TriggerbotFOV.Visible = val end})
 AimTab:AddToggle({Name = "Stand Still", Default = false, Flag = "aimbot_stand_still", Callback = function() saveData() end})
+AimTab:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooting_delay", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
 
@@ -751,6 +759,9 @@ Mouse.Move:Connect(function()
 	if FOV.Visible then
 		FOV.Position = game:GetService("UserInputService"):GetMouseLocation()
 	end
+	if TriggerbotFOV.Visible then
+		TriggerbotFOV.Position = game:GetService("UserInputService"):GetMouseLocation()
+	end
 end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
@@ -760,27 +771,31 @@ game:GetService("RunService").RenderStepped:Connect(function()
 		end
 
 		if OrionLib.Flags["aimbot_enable"].Value == true and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
-			Settings.aimbot.target = getClosestPlayer()
+			Settings.aimbot.target, Settings.aimbot.part = getClosestPlayer()
 			if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
 				if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
-					if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
-						wait((OrionLib.Flags["aimbot_activation_delay"].Value / 1000))
-					end
-					if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" then
-						workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
-					elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" then
-						local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
-						local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
-						mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
-					--[[elseif OrionLib.Flags["aimbot_method"].Value == "Silent Aim" then
-						local Ignore = {LocalPlayer.Character, workspace.CurrentCamera, workspace.Map.Clips, workspace.Map.SpawnPoints, workspace.Debris}
-						local Ray = Ray.new(workspace.CurrentCamera, (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).unit * (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).magnitude)
-						local Hit, Pos = workspace:FindPartOnRayWithIgnoreList(Ray, Ignore, false, true)]]--
-					end
-					if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
-						wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
-					end
-					triggerBot(Settings.aimbot.target)
+					spawn(function()
+						if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
+							wait((OrionLib.Flags["aimbot_activation_delay"].Value / 1000))
+						end
+						if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" then
+							workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
+						elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" then
+							local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
+							local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
+							mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
+						--[[elseif OrionLib.Flags["aimbot_method"].Value == "Silent Aim" then
+							local Ignore = {LocalPlayer.Character, workspace.CurrentCamera, workspace.Map.Clips, workspace.Map.SpawnPoints, workspace.Debris}
+							local Ray = Ray.new(workspace.CurrentCamera, (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).unit * (Settings.aimbot.target.Character.Head.Position - workspace.CurrentCamera).magnitude)
+							local Hit, Pos = workspace:FindPartOnRayWithIgnoreList(Ray, Ignore, false, true)]]--
+						end
+					end)
+					spawn(function()
+						if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
+							wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
+						end
+						triggerBot()
+					end)
 				end
 			end
 		end

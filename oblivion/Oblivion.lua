@@ -782,9 +782,9 @@ game:GetService("RunService").RenderStepped:Connect(function()
 						if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
 							wait((OrionLib.Flags["aimbot_activation_delay"].Value / 1000))
 						end
-						if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" then
+						if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" and Settings.aimbot.target ~= nil then
 							workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
-						elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" then
+						elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" and Settings.aimbot.target ~= nil then
 							local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
 							local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
 							mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)

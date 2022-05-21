@@ -767,7 +767,6 @@ end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
 	pcall(function()
-		--print(tostring(Settings.aimbot.target))
 		if OblivionASD.Value ~= 0 then
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
@@ -804,6 +803,10 @@ game:GetService("RunService").RenderStepped:Connect(function()
 			Settings.aimbot.standing = true
 		else
 			Settings.aimbot.standing = false
+		end
+
+		if Settings.aimbot.target == nil then
+			TriggerbotFOV.Radius = 0
 		end
 	end)
 end)

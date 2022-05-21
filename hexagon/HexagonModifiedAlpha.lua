@@ -3,6 +3,9 @@ Made by Pawel12d#0272
 Customized by SomeoneIdfk
 --]]
 
+local Ping
+local LastStep
+
 local Hint = Instance.new("Hint", game.CoreGui)
 Hint.Text = "Hexagon | Waiting for the game to load..."
 
@@ -1982,11 +1985,23 @@ writefile("hexagon/killallguns.cfg", game:HttpGet("https://raw.githubusercontent
 local killallguns = loadstring("return "..readfile("hexagon/killallguns.cfg"))()
 
 function killtarget(target)
+	local position
+	if library.pointers.ExperimentalTabCategoryOptionsVP.value == true then
+		local p = library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" and target.Character.Head.Position or library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" and target.Character.Head.Position or library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" and target.Character.Head.CFrame.p or library.pointers.ExperimentalTabCategoryOptionsMethod.value == "CFrame" and target.Character.Head.CFrame.p
+		local hrp = target.Character.HumanoidRootPart.Position
+		local oldHrp = target.Character.HumanoidRootPart.OldPosition.Value
+		local vel = (Vector3.new(hrp.X, 0, hrp.Z) - Vector3.new(oldHrp.X, 0, oldHrp.Z)) / LastStep    
+		local dir = Vector3.new(vel.X / vel.magnitude, 0, vel.Z / vel.magnitude)			  
+		position = p + dir * (Ping / (math.pow(Ping, 1.5)) * (dir / (dir / 2)))
+	else
+		position = library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" and target.Character.Head.Position or library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" and target.Character.Head.Position or library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" and target.Character.Head.CFrame.p or library.pointers.ExperimentalTabCategoryOptionsMethod.value == "CFrame" and target.Character.Head.CFrame.p
+	end
+
     if library.pointers.ExperimentalTabCategoryOptionsRandomGun.value == false then
         if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.Position,
+                [2] = position,
                 [3] = LocalPlayer.Character.EquippedTool.Value,
                 [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = LocalPlayer.Character.Gun,
@@ -2001,7 +2016,7 @@ function killtarget(target)
         elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.Position,
+                [2] = position,
                 [3] = "Banana",
                 [4] = 100,
                 [5] = LocalPlayer.Character.Gun,
@@ -2016,7 +2031,7 @@ function killtarget(target)
         elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.CFrame.p,
+                [2] = position,
                 [3] = cbClient.gun.name,
                 [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 4096,
                 [5] = LocalPlayer.Character.Gun,
@@ -2031,7 +2046,7 @@ function killtarget(target)
         elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "CFrame" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.CFrame.p,
+                [2] = position,
                 [3] = LocalPlayer.Character.EquippedTool.Value,
                 [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = LocalPlayer.Character.Gun,
@@ -2049,7 +2064,7 @@ function killtarget(target)
         if library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Efficient" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.Position,
+                [2] = position,
                 [3] = rgun,
                 [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = game.ReplicatedStorage.Weapons[rgun].Model,
@@ -2064,7 +2079,7 @@ function killtarget(target)
         elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Hexagon" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.Position,
+                [2] = position,
                 [3] = "Banana",
                 [4] = 100,
                 [5] = LocalPlayer.Character.Gun,
@@ -2079,7 +2094,7 @@ function killtarget(target)
         elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "Stormy" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.CFrame.p,
+                [2] = position,
                 [3] = rgun,
                 [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 4096,
                 [5] = game.ReplicatedStorage.Weapons[rgun].Model,
@@ -2094,7 +2109,7 @@ function killtarget(target)
         elseif library.pointers.ExperimentalTabCategoryOptionsMethod.value == "CFrame" then
             local Arguments = {
                 [1] = target.Character.Head,
-                [2] = target.Character.Head.CFrame.p,
+                [2] = position,
                 [3] = rgun,
                 [4] = library.pointers.ExperimentalTabCategoryOptionsND.value == true and 100 or library.pointers.ExperimentalTabCategoryOptionsND.value == false and 500,
                 [5] = game.ReplicatedStorage.Weapons[rgun].Model,
@@ -2157,6 +2172,7 @@ ExperimentalTabCategoryOptions:AddToggle("Auto Kill Specific Only", false, "Expe
 ExperimentalTabCategoryOptions:AddDropdown("Auto Kill Specific", {"-"}, "-", "ExperimentalTabCategoryOptionsAKS")
 
 ExperimentalTabCategoryOptions:AddDropdown("Kill All Method", {"Efficient", "Hexagon", "Stormy", "CFrame"}, "CFrame", "ExperimentalTabCategoryOptionsMethod")
+ExperimentalTabCategoryOptions:AddToggle("Velocity Prediction", false, "ExperimentalTabCategoryOptionsVP")
 ExperimentalTabCategoryOptions:AddToggle("Normal Damage", false, "ExperimentalTabCategoryOptionsND")
 ExperimentalTabCategoryOptions:AddDropdown("Kill Method", {"Once", "Loop"}, "Once", "ExperimentalTabCategoryOptionsKMethod")
 ExperimentalTabCategoryOptions:AddToggle("After Prep", false, "ExperimentalTabCategoryOptionsAfterPrep")
@@ -4266,6 +4282,85 @@ library.pointers.InfoCatSelection.options = reportListUsernames(CheatingSkids)
 
 reportUpdateLabels("offline")
 
+local Collision = {workspace.CurrentCamera, workspace.Ray_Ignore, workspace.Debris} 
+
+local function CollisionTBL(obj)      
+	if obj:IsA("Accessory") then      
+		table.insert(Collision, obj)      
+	end      
+	if obj:IsA("Part") then      
+		if obj.Name == "HeadHB" or obj.Name == "FakeHead" then      
+			table.insert(Collision, obj)      
+		end      
+	end      
+end      
+
+RunService.RenderStepped:Connect(function(step) 
+	LastStep = step
+	Ping = game.Stats.PerformanceStats.Ping:GetValue()
+
+	for _,Player in pairs(game.Players:GetPlayers()) do      
+		if Player.Character and Player ~= LocalPlayer and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.HumanoidRootPart:FindFirstChild("OldPosition") then      
+			coroutine.wrap(function()
+				local Position = Player.Character.HumanoidRootPart.Position      
+				RunService.RenderStepped:Wait()      
+				if Player.Character and Player ~= LocalPlayer and Player.Character:FindFirstChild("HumanoidRootPart") then      
+					if Player.Character.HumanoidRootPart:FindFirstChild("OldPosition") then      
+						Player.Character.HumanoidRootPart.OldPosition.Value = Position      
+					else      
+						local Value = Instance.new("Vector3Value")      
+						Value.Name = "OldPosition"      
+						Value.Value = Position      
+						Value.Parent = Player.Character.HumanoidRootPart      
+					end      
+				end      
+			end)()      
+		end      
+	end
+end)
+
+game.Players.PlayerAdded:Connect(function(Player) 
+	Player.CharacterAdded:Connect(function(Character)      
+		Character.ChildAdded:Connect(function(obj)      
+			wait(1)      
+			CollisionTBL(obj)      
+		end)  
+		wait(1)      
+		if Character ~= nil then      
+			local Value = Instance.new("Vector3Value")      
+			Value.Name = "OldPosition"      
+			Value.Value = Character.HumanoidRootPart.Position      
+			Value.Parent = Character.HumanoidRootPart  
+		end
+	end)
+end)
+
+for _,Player in pairs(game.Players:GetPlayers()) do  
+	Player.CharacterAdded:Connect(function(Character)      
+		Character.ChildAdded:Connect(function(obj)      
+			wait(1)      
+			CollisionTBL(obj)      
+		end)      
+		wait(1)      
+		if Player.Character ~= nil and Player.Character:FindFirstChild("HumanoidRootPart") then      
+			local Value = Instance.new("Vector3Value")      
+			Value.Value = Player.Character.HumanoidRootPart.Position      
+			Value.Name = "OldPosition"      
+			Value.Parent = Player.Character.HumanoidRootPart    
+		end
+	end)
+
+	if Player.Character ~= nil and Player.Character:FindFirstChild("UpperTorso") then      
+		local Value = Instance.new("Vector3Value")      
+		Value.Name = "OldPosition"      
+		Value.Value = Player.Character.HumanoidRootPart.Position      
+		Value.Parent = Player.Character.HumanoidRootPart 
+		for _,obj in pairs(Player.Character:GetChildren()) do      
+			CollisionTBL(obj)
+		end     
+	end
+end
+
 -- Other
 game.Players.LocalPlayer.Additionals.TotalDamage.Changed:Connect(function(val)
 	if library.pointers.MiscellaneousTabCategoryMainHitSound.value ~= "" and val ~= 0 then
@@ -5061,7 +5156,6 @@ oldIndex = hookfunc(getrawmetatable(game.Players.LocalPlayer.PlayerGui.Client)._
 end))
 
 getsenv(game.Players.LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat).createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
-    print(offset)
 	if LocalPlayer.Name == plr then
 		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 	elseif teamcolor == WarningColor then

@@ -808,7 +808,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 		end
 
 		if Settings.aimbot.target == nil then
-			TriggerbotFOV.Radius = 0
+			TriggerbotFOV.Radius = 1
 		end
 	end)
 end)

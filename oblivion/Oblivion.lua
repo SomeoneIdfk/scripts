@@ -322,7 +322,7 @@ local function VisibleCheck(character, position)
 end
 
 local function GetTeam(plr)
-	if plr:FindFirstChild("Status") and plr.Status:FindFirstChild("Team") then
+	if plr:FindFirstChild("Status") and plr.Status:FindFirstChild("Team") and plr.Status.Team.Value ~= "Spectator" then
 		return plr.Status.Team.Value
 	end
 
@@ -407,6 +407,7 @@ end
 
 -- GUI
 local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998", PremiumOnly = false})
+local RageTab = Window:MakeTab({Name = "Rage", PremiumOnly = true})
 local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458", PremiumOnly = false})
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762", PremiumOnly = false})
 local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084", PremiumOnly = false})
@@ -414,12 +415,7 @@ local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605
 
 AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function(val) saveData()
-	if val == true then
-		local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled"
-		OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3})
-	end
-end})
+AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function(val) saveData() if val == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
 AimTab:AddDropdown({Name = "Aim Priority", Default = "Distance", Options = {"Distance", "Crosshair"}, Flag = "aimbot_priority", Callback = function() saveData() end})
 AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim", "Silent Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "Activation Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_activation_delay", Callback = function() saveData() end})
@@ -435,6 +431,8 @@ AimTab:AddToggle({Name = "Stand Still", Default = false, Flag = "aimbot_stand_st
 AimTab:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooting_delay", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
+
+RageTab:AddToggle({Name = "Anti Aim", Default = false, Flag = "rage_anti_aim", Callback = function() saveData() end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
 EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
@@ -822,7 +820,7 @@ OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.
 
 		[Mid]
 		-Aimbot Distance/Crosshair prioritization, both if possible working together [Low]
-		-Aimbot Silent Aim [Mid]
+		-Aimbot Silent Aim with triggerbot [Unknown]
 
 		[Low]
 		-Transfer all features from my modified hex to Oblivion. [Mid]

@@ -386,7 +386,6 @@ local function getClosestPlayer()
 			end
         end
     end
-    --Settings.aimbot.target = closestPlayer
 	return closestPlayer
 end
 
@@ -407,7 +406,7 @@ end
 
 -- GUI
 local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998", PremiumOnly = false})
-local RageTab = Window:MakeTab({Name = "Rage", PremiumOnly = true})
+--local RageTab = Window:MakeTab({Name = "Rage", PremiumOnly = false})
 local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458", PremiumOnly = false})
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762", PremiumOnly = false})
 local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084", PremiumOnly = false})
@@ -432,7 +431,7 @@ AimTab:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooti
 AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
 
-RageTab:AddToggle({Name = "Anti Aim", Default = false, Flag = "rage_anti_aim", Callback = function() saveData() end})
+--RageTab:AddToggle({Name = "Anti Aim", Default = false, Flag = "rage_anti_aim", Callback = function() saveData() end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
 EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
@@ -771,9 +770,20 @@ game:GetService("RunService").RenderStepped:Connect(function()
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
 
+		if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and Settings.aimbot.target and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
+			spawn(function()
+				if OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" then
+					if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
+						wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
+					end
+					triggerBot()
+				end
+			end)
+		end
+
 		if OrionLib.Flags["aimbot_enable"].Value == true and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
 			Settings.aimbot.target = getClosestPlayer()
-			if --[[getClosestPlayer() and]] Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
+			if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
 				if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
 					spawn(function()
 						if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
@@ -785,14 +795,6 @@ game:GetService("RunService").RenderStepped:Connect(function()
 							local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
 							local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
 							mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
-						end
-					end)
-					spawn(function()
-						if OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" then
-							if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
-								wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
-							end
-							triggerBot()
 						end
 					end)
 				end

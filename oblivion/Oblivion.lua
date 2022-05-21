@@ -824,7 +824,7 @@ OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome "..LocalPlayer.
 		[High]
 
 		[Mid]
-		-Aimbot Distance/Crosshair prioritization, both if possible working together [Low]
+		-Aimbot Distance/Crosshair prioritization, both if possible working together [Low] [Started]
 		-Aimbot Silent Aim with triggerbot [Unknown]
 
 		[Low]

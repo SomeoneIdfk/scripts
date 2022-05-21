@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, squares = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -405,12 +405,12 @@ local function triggerBot()
 end
 
 -- GUI
-local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998", PremiumOnly = false})
---local RageTab = Window:MakeTab({Name = "Rage", PremiumOnly = false})
-local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458", PremiumOnly = false})
-local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762", PremiumOnly = false})
-local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084", PremiumOnly = false})
-local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185", PremiumOnly = false})
+local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998"})
+--local RageTab = Window:MakeTab({Name = "Rage"})
+local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458"})
+local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762"})
+local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084"})
+local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185"})
 
 AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})

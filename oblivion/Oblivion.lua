@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, squares = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, squares = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {aimbotloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -404,6 +404,25 @@ local function triggerBot()
 	end
 end
 
+local function mainPlayerCheck(player)
+	if player ~= LocalPlayer and IsAlive(player) and GetTeam(player) ~= "s" then
+		if checkGamemode("team") and GetTeam(LocalPlayer) ~= GetTeam(player) or checkGamemode("ffa") then
+			local a, b = GetCharacter(player)
+			if OrionLib.Flags["aimbot_visible"].Value == true and VisibleCheck(a, b.Position) or OrionLib.Flags["aimbot_visible"].Value == false then
+				local Vector, onScreen = workspace.CurrentCamera:WorldToScreenPoint(player.Character.Head.Position)
+				local FOVCheck = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(Vector.X, Vector.Y)).magnitude
+				if OrionLib.Flags["aimbot_fov_only"].Value == true and FOVCheck < (FOV.Radius * 2) or OrionLib.Flags["aimbot_fov_only"].Value == true and OrionLib.Flags["aimbot_fov_radius"].Value == 0 or OrionLib.Flags["aimbot_fov_only"].Value == false then
+					return true
+				end
+			end
+		end
+	elseif player == LocalPlayer and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
+		return true
+	end
+
+	return false
+end
+
 -- GUI
 local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998"})
 --local RageTab = Window:MakeTab({Name = "Rage"})
@@ -420,6 +439,7 @@ AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smo
 AimTab:AddSlider({Name = "Activation Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_activation_delay", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
 AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Callback = function(val) saveData() FOV.Visible = val end})
+AimTab:AddSlider({Name = "FOV Reset", Min = 0, Max = 1000, Default = 300, Color3.fromRGB(255, 255, 255), Increment = 50, Flag = "aimbot_fov_reset", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "FOV Thickness", Min = 1, Max = 10, Default = 3, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_fov_thickness", Callback = function(val) saveData() FOV.Thickness = val TriggerbotFOV.Thickness = val end})
 AimTab:AddSlider({Name = "FOV Radius", Min = 0, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Callback = function(val) saveData() FOV.Radius = val end})
 AimTab:AddSlider({Name = "FOV Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_fov_transparency", Callback = function(val) saveData() FOV.Transparency = (val / 100) TriggerbotFOV.Transparency = (val / 100) end})
@@ -487,7 +507,7 @@ ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val) saveData() if val == true then spawn(function() while OrionLib.Flags["anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end) end end})
+SettingsTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "anti_afk", Callback = function(val) saveData() if val == true then coroutine.wrap(function() while OrionLib.Flags["anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end)() end end})
 SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val) if OrionLib.Flags["build"] then dropdownRefresh("build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty")) end end})
 SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
 SettingsTab:AddButton({Name = "Set", Callback = function() writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value]) end})
@@ -533,7 +553,7 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 		end   
 	end
 
-	spawn(function()
+	coroutine.wrap(function()
 		if new.Name == "Arms" and new:IsA("Model") then
 			for i,v in pairs(new:GetChildren()) do
 				if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
@@ -612,7 +632,7 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 				end
 			end
 		end
-	end)
+	end)()
 end)
 
 hookfunc(getrenv().xpcall, function() end)
@@ -634,7 +654,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				return wait(99e99)
             elseif self.Name == "HitPart" then
                 if OrionLib.Flags["viewmodels_bullet_tracer_enable"].Value == true then
-					spawn(function()
+					coroutine.wrap(function()
 						local BulletTracers = Instance.new("Part")
 						BulletTracers.Anchored = true
 						BulletTracers.CanCollide = false
@@ -647,10 +667,10 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						BulletTracers.Parent = workspace.CurrentCamera
 						wait(3)
 						BulletTracers:Destroy()
-					end)
+					end)()
 				end
                 if OrionLib.Flags["viewmodels_bullet_impact_enable"].Value == true then
-					spawn(function()
+					coroutine.wrap(function()
 						local BulletImpacts = Instance.new("Part")
 						BulletImpacts.Anchored = true
 						BulletImpacts.CanCollide = false
@@ -663,7 +683,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						BulletImpacts.Parent = workspace.CurrentCamera
 						wait(3)
 						BulletImpacts:Destroy()
-					end)
+					end)()
 				end
 			elseif self.Name == "ApplyGun" and args[1] == game.ReplicatedStorage.Weapons.Banana or args[1] == game.ReplicatedStorage.Weapons["Flip Knife"] then
 				args[1] = game.ReplicatedStorage.Weapons.Karambit
@@ -770,38 +790,55 @@ game:GetService("RunService").RenderStepped:Connect(function()
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
 
-		if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and Settings.aimbot.target and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
-			spawn(function()
+		coroutine.wrap(function()
+			if OrionLib.Flags["aimbot_enable"].Value == true then
+				local val = getClosestPlayer()
+				if val then
+					Settings.aimbot.targetresettime = OrionLib.Flags["aimbot_fov_reset"].Value
+					Settings.aimbot.target = val
+				elseif Settings.aimbot.target ~= nil then
+					if Settings.aimbot.targetresettime == 0 or not mainPlayerCheck(Settings.aimbot.target) then
+						Settings.aimbot.target = nil
+					elseif Settings.aimbot.targetresettime ~= 0 then
+						Settings.aimbot.targetresettime = Settings.aimbot.targetresettime - 1
+					end
+				end
+			end
+		end)()
+
+		coroutine.wrap(function()
+			if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and Settings.aimbot.target and mainPlayerCheck(LocalPlayer) then
 				if OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" then
 					if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
 						wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
 					end
 					triggerBot()
 				end
-			end)
-		end
+			end
+		end)()
 
-		if OrionLib.Flags["aimbot_enable"].Value == true and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
-			Settings.aimbot.target = getClosestPlayer()
-			if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
-				if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
-					spawn(function()
-						if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
-							wait((OrionLib.Flags["aimbot_activation_delay"].Value / 1000))
-						end
-						if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" and Settings.aimbot.target ~= nil then
-							workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
-						elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" and Settings.aimbot.target ~= nil then
-							local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
-							local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
-							mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
-						end
-					end)
+		coroutine.wrap(function()
+			if OrionLib.Flags["aimbot_enable"].Value == true and mainPlayerCheck(LocalPlayer) then
+				if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
+					if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
+						coroutine.wrap(function()
+							if OrionLib.Flags["aimbot_activation_delay"].Value ~= 0 then
+								wait((OrionLib.Flags["aimbot_activation_delay"].Value / 1000))
+							end
+							if OrionLib.Flags["aimbot_method"].Value == "Lock Aim" and Settings.aimbot.target ~= nil then
+								workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, Settings.aimbot.target.Character.Head.Position)
+							elseif OrionLib.Flags["aimbot_method"].Value == "Smooth Aim" and Settings.aimbot.target ~= nil then
+								local Pos = workspace.CurrentCamera:WorldToScreenPoint(Settings.aimbot.target.Character.Head.Position)
+								local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
+								mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_smoothness"].Value)
+							end
+						end)()
+					end
 				end
 			end
-		end
+		end)()
 
-		if OrionLib.Flags["aimbot_stand_still"].Value == true and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" and LocalPlayer.Character.HumanoidRootPart.Velocity.Magnitude < 3 then
+		if OrionLib.Flags["aimbot_stand_still"].Value == true and mainPlayerCheck(LocalPlayer) and LocalPlayer.Character.HumanoidRootPart.Velocity.Magnitude < 3 then
 			Settings.aimbot.standing = true
 		else
 			Settings.aimbot.standing = false

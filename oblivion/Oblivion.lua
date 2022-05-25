@@ -347,9 +347,32 @@ local function IsAlive(plr)
 	return false
 end
 
+local function knifeOrGun()
+	local success = table.foreach(Settings.weapon_data, function(i, v)
+		if v.name == Client.gun.Name then
+			return "gun"
+		end
+	end)
+
+	if success == "gun" then
+		return "gun"
+	elseif Client.gun:FindFirstChild("Melee") then
+		return "knife"
+	end
+end
+
 local function getGunName()
 	local gun = table.foreach(Settings.weapon_data, function(i,v)
 		if v.name == LocalPlayer.Character.EquippedTool.Value then
+			return i
+		end
+	end)
+	return gun
+end
+
+local function getGunNameFromCheck(gun)
+	local gun = table.foreach(Settings.weapon_data, function(i,v)
+		if v.name == gun then
 			return i
 		end
 	end)
@@ -471,7 +494,7 @@ EspTab:AddColorpicker({Name = "Tracer Color", Default = Color3.fromRGB(255, 255,
 EspTab:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bottom", "Top", "Mouse"}, Flag = "esp_tracerorigin", Callback = function(val) saveData() espLib.options.tracerOrigin = val end})
 
 SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "weapon", Callback = function(val) if val == "-" and OrionLib.Flags["weapon_skin"] then dropdownRefresh("weapon_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["weapon_skin"] then dropdownRefresh("weapon_skin", Settings.CurrentSkins[val], Settings.weapon_data[val].list) end end})
-SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin", Callback = function(val) Settings.CurrentSkins[OrionLib.Flags["weapon"].Value] = val saveData() table.foreach(Settings.CurrentSkins, function(i,v) if i ~= "-" then table.foreach(Settings.weapon_data[i].teams, function(i2,v2) if v2 == "T" then LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i].name].Value = v elseif v2 == "CT" then LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i].name].Value = v end end) end end) end})
+SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "weapon_skin", Callback = function(val) Settings.CurrentSkins[OrionLib.Flags["weapon"].Value] = val saveData() end})
 SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "knife", Callback = function(val) if val == "-" and OrionLib.Flags["knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("knife_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownRefresh("knife_skin", "Stock", skinsList(val, Settings.knife_data)) saveData() end end})
 SkinsTab:AddDropdown({Name = "Knife Skin", Default = "-", Options = {"-"}, Flag = "knife_skin", Callback = function() saveData() end})
 SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "glove", Callback = function(val) if val == "-" and OrionLib.Flags["glove_skin"] then dropdownRefresh("glove_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["glove_skin"] then dropdownRefresh("glove_skin", "Stock", skinsList(val, Settings.glove_data)) saveData() end end})
@@ -522,10 +545,11 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 	end      
 	if Model == nil then return end
 
-	local weaponname = Client.gun ~= "none" and OrionLib.Flags["knife"].Value ~= "-" and Client.gun:FindFirstChild("Melee") and OrionLib.Flags["knife"].Value 
-	if OrionLib.Flags["knife"].Value ~= "-" and weaponname ~= nil and game:GetService("ReplicatedStorage").Skins:FindFirstChild(weaponname) then      
-		if OrionLib.Flags["knife_skin"].Value ~= "Stock" then      
-			MapSkin(weaponname, OrionLib.Flags["knife_skin"].Value)
+	local weaponname = Client.gun ~= "none" and knifeOrGun() == "knife" and OrionLib.Flags["knife"].Value ~= "-" and OrionLib.Flags["knife"].Value or Client.gun ~= "none" and knifeOrGun() == "gun" and Client.gun.Name
+	if weaponname ~= nil and game:GetService("ReplicatedStorage").Skins:FindFirstChild(weaponname) then  
+		local var = knifeOrGun() == "knife" and OrionLib.Flags["knife_skin"].Value ~= "Stock" and OrionLib.Flags["knife_skin"].Value or knifeOrGun() == "gun" and Settings.CurrentSkins[getGunNameFromCheck(weaponname)]
+		if var ~= nil then
+			MapSkin(weaponname, var)
 		end      
 	end
 
@@ -754,17 +778,6 @@ if isfile("oblivion/data.cfg") then
 			end
 		end
 		Settings.CurrentSkins = output.skins
-		table.foreach(Settings.CurrentSkins, function(i,v)
-			if i ~= "-" then
-				table.foreach(Settings.weapon_data[i].teams, function(i2,v2)
-					if v2 == "T" then
-						LocalPlayer.SkinFolder.TFolder[Settings.weapon_data[i].name].Value = v
-					elseif v2 == "CT" then
-						LocalPlayer.SkinFolder.CTFolder[Settings.weapon_data[i].name].Value = v
-					end
-				end)
-			end
-		end)
         if Settings.saveerror == true then
             OrionLib:MakeNotification({Name = "Oblivion", Content = "Some values might be corrupted in the save.", Image = "rbxassetid://4384402990", Time = 5})
         elseif Settings.saveerror == false then

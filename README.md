@@ -8,9 +8,5 @@ Credit farming script:
 Oblivion loader:
 **loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/loader.lua"))();**
 
--- Please refrain from using the Hexagon loader from now on, it will not be supported anymore.
-Hexagon loader:
-**loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/HexagonLoader.lua"))();**
-
 If you want to see something changed or added, create an issue.
 I'll try and look at github every now and then, other then that enjoy!

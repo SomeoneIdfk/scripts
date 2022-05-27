@@ -732,31 +732,9 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				args[1] = game.ReplicatedStorage.Weapons.Karambit
 			elseif self.Name == "test" then
 				return wait(99e99)
-			elseif self.Name == "DataEvent" and args[1][1] == "EquipItem" then
-				local Weapon,Skin = args[1][3], string.split(args[1][4][1], "_")[2]
-				local EquipTeams = (args[1][2] == "Both" and {"T", "CT"}) or {args[1][2]}
-
-				for i,v in pairs(EquipTeams) do
-					LocalPlayer.SkinFolder[v.."Folder"][Weapon]:ClearAllChildren()
-					LocalPlayer.SkinFolder[v.."Folder"][Weapon].Value = Skin
-					
-					if args[1][4][2] == "StatTrak" then
-						local Marker = Instance.new("StringValue")
-						Marker.Name = "StatTrak"
-						Marker.Value = args[1][4][3]
-						Marker.Parent = LocalPlayer.SkinFolder[v.."Folder"][Weapon]
-						
-						local Count = Instance.new("IntValue")
-						Count.Name = "Count"
-						Count.Value = args[1][4][4]
-						Count.Parent = Marker
-					end
-				end
 			end
 		elseif method == "InvokeServer" then
 			if self.Name == "Moolah" then
-				return wait(99e99)
-			elseif self.Name == "Hugh" then
 				return wait(99e99)
 			end
 		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then

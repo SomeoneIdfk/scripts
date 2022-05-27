@@ -25,7 +25,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, squares = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, saveerror = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, squares = {}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, saveerror = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -39,7 +39,6 @@ local FOV = Drawing.new("Circle")
 FOV.Thickness = 2
 local TriggerbotFOV = Drawing.new("Circle")
 TriggerbotFOV.Thickness = 2
-Settings.OldInventory = Client.CurrentInventory
 
 local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin"}
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
@@ -516,7 +515,6 @@ SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "sk
 SkinsTab:AddDropdown({Name = "Knife Skin", Default = "-", Options = {"-"}, Flag = "skins_knife_skin", Callback = function() saveData() end})
 SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "skins_glove", Callback = function(val) if val == "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "Stock", skinsList(val, Settings.glove_data)) saveData() end end})
 SkinsTab:AddDropdown({Name = "Glove Skin", Default = "-", Options = {"-"}, Flag = "skins_glove_skin", Callback = function() saveData() end})
-SkinsTab:AddDropdown({Name = "Inventory Spoof", Default = "-", Options = {"-", "Stock Weapons"}, Flag = "skins_additionals", Callback = function(val) local InventoryLoadout, SkinsTable = LocalPlayer.PlayerGui.GUI["Inventory&Loadout"], {} if val == "-" then Client.CurrentInventory = Settings.OldInventory elseif val == "Stock Weapons" then for i,v in pairs(game.ReplicatedStorage.Skins:GetChildren()) do if v:IsA("Folder") and game.ReplicatedStorage.Weapons:FindFirstChild(v.Name) then table.insert(SkinsTable, {v.Name.."_Stock"}) end end Client.CurrentInventory = SkinsTable end if InventoryLoadout.Visible == true then InventoryLoadout.Visible = false InventoryLoadout.Visible = true end saveData() end})
 
 ViewmodelsTab:AddToggle({Name = "Toggle Arms", Default = false, Flag = "viewmodels_arms_enable", Callback = function() saveData() end})
 ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_arms_color", Callback = function() saveData() end})

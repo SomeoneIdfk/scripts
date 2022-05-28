@@ -35,8 +35,8 @@ local function checkId()
 end
 
 local function checkFile(val)
-    if isfile("oblivion/load_version.txt") then
-        local temp = readfile("oblivion/load_version.txt")
+    if isfile("oblivion/load_version.cfg") then
+        local temp = readfile("oblivion/load_version.cfg")
         local result = table.foreach(versions["data"], function(i, v)
             local result = table.foreach(v["data"], function(i2, v2)
                 if v2 == temp then
@@ -77,7 +77,7 @@ end
 -- GUI
 if checkId() and checkFile() then
     OrionLib:MakeNotification({Name = "Oblivion", Content = "Loading "..checkFile("check")..".", Image = "rbxassetid://4483362458", Time = 5})
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/"..readfile("oblivion/load_version.txt")))();
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/"..readfile("oblivion/load_version.cfg")))();
 elseif checkId() and checkFile() == false then
     OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome to Oblivion - "..game.Players.LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 5})
     local Window = OrionLib:MakeWindow({Name = "Oblivion Loader", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion"})
@@ -91,9 +91,9 @@ elseif checkId() and checkFile() == false then
     end})
     SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "build"})
     SettingsTab:AddButton({Name = "Set", Callback = function()
-        writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
+        writefile("oblivion/load_version.cfg", versions["data"][OrionLib.Flags["branch"].Value]["data"][OrionLib.Flags["build"].Value])
         OrionLib:MakeNotification({Name = "Oblivion", Content = "Loading "..checkFile("check")..".", Image = "rbxassetid://4483362458", Time = 5})
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/"..readfile("oblivion/load_version.txt")))();
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/"..readfile("oblivion/load_version.cfg")))();
         OrionLib:Destroy()
     end})
 

@@ -27,12 +27,14 @@ end
 writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
 
 -- Main
+local workspace = workspace or game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -650,6 +652,85 @@ local function tagsMessageOnlineSkids(method)
 	end
 end
 
+local function removeTextures()
+	local decalsyeeted = false
+	local g = game
+	local w = g.Workspace
+	local l = g.Lighting
+	local t = w.Terrain
+	sethiddenproperty(t,"Decoration",false)
+	t.WaterWaveSize = 0
+	t.WaterWaveSpeed = 0
+	t.WaterReflectance = 0
+	t.WaterTransparency = 0
+	l.GlobalShadows = 0
+	l.FogEnd = 9e9
+	l.Brightness = 0
+	for i, v in pairs(w:GetDescendants()) do
+		if v:IsA("BasePart") and not v:IsA("MeshPart") then
+			v.Material = "Plastic"
+			v.Reflectance = 0
+		elseif (v:IsA("Decal") or v:IsA("Texture")) and decalsyeeted then
+			v.Transparency = 1
+		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+			v.Lifetime = NumberRange.new(0)
+		elseif v:IsA("Explosion") then
+			v.BlastPressure = 1
+			v.BlastRadius = 1
+		elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
+			v.Enabled = false
+		elseif v:IsA("MeshPart") and decalsyeeted then
+			v.Material = "Plastic"
+			v.Reflectance = 0
+			v.TextureID = 10385902758728957
+		elseif v:IsA("SpecialMesh") and decalsyeeted  then
+			v.TextureId=0
+		elseif v:IsA("ShirtGraphic") and decalsyeeted then
+			v.Graphic=0
+		elseif (v:IsA("Shirt") or v:IsA("Pants")) and decalsyeeted then
+			v[v.ClassName.."Template"]=0
+		end
+	end
+	for i = 1,#l:GetChildren() do
+		e=l:GetChildren()[i]
+		if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
+			e.Enabled = false
+		end
+	end
+end
+
+local function godMode()
+	if OblivionRan.Value == true and Settings.godmodeused == false and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" and OrionLib.Flags["rage_god_mode"].Value ~= "-" then
+		Settings.godmodeused = true
+		if OrionLib.Flags["rage_god_mode"].Value == "Hostage" then
+			ReplicatedStorage.Events.ApplyGun:FireServer({
+				Model = ReplicatedStorage.Hostage.Hostage,
+				Name = "USP"
+			}, LocalPlayer);
+		elseif OrionLib.Flags["rage_god_mode"].Value == "Fall Damage" then
+			repeat wait() until workspace.Status.Preparation.Value == false
+			ReplicatedStorage.Events.FallDamage:FireServer(0/0)
+			LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+				LocalPlayer.Character.Humanoid.Health = 100
+			end)
+		elseif OrionLib.Flags["rage_god_mode"].Value == "Humanoid" then
+			LocalPlayer.Character.Humanoid.Parent = nil
+			Instance.new("Humanoid", LocalPlayer.Character)
+		elseif OrionLib.Flags["rage_god_mode"].Value == "Invisibility" then
+			local oldpos = LocalPlayer.Character.HumanoidRootPart.CFrame
+			LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(9999,9999,9999)
+			local NewRoot = LocalPlayer.Character.LowerTorso.Root:Clone()
+			LocalPlayer.Character.LowerTorso.Root:Destroy()
+			NewRoot.Parent = LocalPlayer.Character.LowerTorso
+			wait()
+			LocalPlayer.Character.HumanoidRootPart.CFrame = oldpos
+		end
+		OrionLib:MakeNotification({Name = "Oblivion", Content = "God Mode "..OrionLib.Flags["rage_god_mode"].Value.." activated.", Image = "rbxassetid://3944668821", Time = 3})
+	elseif OblivionRan.Value == true and Settings.godmodeused == true and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" then
+		OrionLib:MakeNotification({Name = "Oblivion", Content = "You can not use multiple god mode's at the same time.", Image = "rbxassetid://3944668821", Time = 3})
+	end
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -662,23 +743,6 @@ for i,v in ipairs(workspace:GetChildren()) do
         end
     end
 end
-workspace.ChildAdded:connect(function(v)
-    local success = pcall(function()
-        for i2,v2 in pairs(game.Players:GetPlayers()) do
-            if v.Name == v2.Name and PlayerCheck(v) then
-                return true
-            end
-        end
-    end)
-    if success then
-        Settings.playerlist[v.Name] = v
-    end
-end)
-workspace.ChildRemoved:connect(function(v)
-    if Settings.playerlist[v.Name] then
-        Settings.playerlist[v.Name] = nil
-    end
-end)
 
 function espLib.GetTeam(player)
     local team, teamColor
@@ -695,6 +759,7 @@ end
 
 -- GUI
 local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998"})
+local RageTab = Window:MakeTab({Name = "Rage", Icon = "rbxassetid://3944668821"})
 local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458"})
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762"})
 local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084"})
@@ -721,6 +786,10 @@ AimTab:AddToggle({Name = "Stand Still", Default = false, Flag = "aimbot_stand_st
 AimTab:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooting_delay", Callback = function() saveData() end})
 AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
+
+RageTab:AddDropdown({Name = "God Mode", Default = "-", Options = {"-", "Hostage", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
+RageTab:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
+RageTab:AddButton({Name = "Set", Callback = function() godMode() end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
 EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
@@ -786,7 +855,7 @@ TagTab:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_ch
 MiscTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", Callback = function(val) saveData() if val == true then coroutine.wrap(function() while OrionLib.Flags["misc_anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end)() end end})
 MiscTab:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = game:GetService("RunService").Heartbeat:Connect(function() pcall(function() getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
 MiscTab:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
-MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then OblivionMapChange.Value = OblivionMapChange.Value + 1 end end})
+MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -1105,50 +1174,7 @@ end)
 OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
 	pcall(function()
 		if OrionLib.Flags["misc_texture_remove"].Value == true then
-			local decalsyeeted = false
-			local g = game
-			local w = g.Workspace
-			local l = g.Lighting
-			local t = w.Terrain
-			sethiddenproperty(t,"Decoration",false)
-			t.WaterWaveSize = 0
-			t.WaterWaveSpeed = 0
-			t.WaterReflectance = 0
-			t.WaterTransparency = 0
-			l.GlobalShadows = 0
-			l.FogEnd = 9e9
-			l.Brightness = 0
-			for i, v in pairs(w:GetDescendants()) do
-				if v:IsA("BasePart") and not v:IsA("MeshPart") then
-					v.Material = "Plastic"
-					v.Reflectance = 0
-				elseif (v:IsA("Decal") or v:IsA("Texture")) and decalsyeeted then
-					v.Transparency = 1
-				elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-					v.Lifetime = NumberRange.new(0)
-				elseif v:IsA("Explosion") then
-					v.BlastPressure = 1
-					v.BlastRadius = 1
-				elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
-					v.Enabled = false
-				elseif v:IsA("MeshPart") and decalsyeeted then
-					v.Material = "Plastic"
-					v.Reflectance = 0
-					v.TextureID = 10385902758728957
-				elseif v:IsA("SpecialMesh") and decalsyeeted  then
-					v.TextureId=0
-				elseif v:IsA("ShirtGraphic") and decalsyeeted then
-					v.Graphic=0
-				elseif (v:IsA("Shirt") or v:IsA("Pants")) and decalsyeeted then
-					v[v.ClassName.."Template"]=0
-				end
-			end
-			for i = 1,#l:GetChildren() do
-				e=l:GetChildren()[i]
-				if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
-					e.Enabled = false
-				end
-			end
+			removeTextures()
 		end
 
         if OrionLib.Flags["tags_online_check"].Value == true then
@@ -1173,6 +1199,37 @@ game.Players.PlayerRemoving:Connect(function(player)
             checkTaggedSkidsInGame()
         end
     end)
+end)
+
+LocalPlayer.CharacterAdded:Connect(function()
+	pcall(function()
+		Settings.godmodeused = false
+		coroutine.wrap(function()
+			if OrionLib.Flags["rage_auto_set"].Value == true and GetTeam(LocalPlayer) ~= "s" then
+				repeat wait() until IsAlive(LocalPlayer)
+				godMode()
+			end
+		end)()
+	end)
+end)
+
+workspace.ChildAdded:connect(function(v)
+    local success = pcall(function()
+        for i2,v2 in pairs(game.Players:GetPlayers()) do
+            if v.Name == v2.Name and PlayerCheck(v) then
+                return true
+            end
+        end
+    end)
+    if success then
+        Settings.playerlist[v.Name] = v
+    end
+end)
+
+workspace.ChildRemoved:connect(function(v)
+    if Settings.playerlist[v.Name] then
+        Settings.playerlist[v.Name] = nil
+    end
 end)
 
 -- Init

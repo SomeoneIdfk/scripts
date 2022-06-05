@@ -10,7 +10,6 @@ repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
 local getrawmetatable = getrawmetatable or false
 local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
-local isfolder = isfolder or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false
 
 -- Config
@@ -34,7 +33,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))().guns, loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -856,6 +855,7 @@ MiscTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", C
 MiscTab:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = game:GetService("RunService").Heartbeat:Connect(function() pcall(function() getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
 MiscTab:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
 MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
+MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -1168,6 +1168,21 @@ game:GetService("RunService").RenderStepped:Connect(function()
                 Settings.lists.refreshplayerlist = false
             end
         end)()
+
+		coroutine.wrap(function()
+			local val = getGunName()
+			if OrionLib.Flags["misc_infinite_ammo"].Value ~= "-" and val then
+				if OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "primary" then
+					Client.ammocount = Settings.weapon_info[val].data.clip
+				elseif OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "secondary" then
+					Client.ammocount2 = Settings.weapon_info[val].data.clip
+				elseif OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info[val].data.type == "primary" then
+					Client.primarystored = Settings.weapon_info[val].data.ammo
+				elseif OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info[val].data.type == "secondary" then
+					Client.secondarystored = Settings.weapon_info[val].data.ammo
+				end
+			end
+		end)()
 	end)
 end)
 

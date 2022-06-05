@@ -11,6 +11,9 @@ local getrawmetatable = getrawmetatable or false
 local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false
+local workspace = workspace or game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 
 -- Config
 if not isfolder("oblivion") then
@@ -26,9 +29,6 @@ end
 writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
 
 -- Main
-local workspace = workspace or game:GetService("Workspace")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local HttpService = game:GetService("HttpService")
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()

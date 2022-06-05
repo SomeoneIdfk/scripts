@@ -1170,15 +1170,15 @@ game:GetService("RunService").RenderStepped:Connect(function()
         end)()
 
 		coroutine.wrap(function()
-			local val = getGunName()
-			if OrionLib.Flags["misc_infinite_ammo"].Value ~= "-" and val then
-				if OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "primary" then
+			if OrionLib.Flags["misc_infinite_ammo"].Value ~= "-" and IsAlive(LocalPlayer) then
+				local val = getGunName()
+				if val and OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "primary" then
 					Client.ammocount = Settings.weapon_info[val].data.clip
-				elseif OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "secondary" then
+				elseif val and OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "secondary" then
 					Client.ammocount2 = Settings.weapon_info[val].data.clip
-				elseif OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info[val].data.type == "primary" then
+				elseif val and OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info[val].data.type == "primary" then
 					Client.primarystored = Settings.weapon_info[val].data.ammo
-				elseif OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info[val].data.type == "secondary" then
+				elseif val and OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info[val].data.type == "secondary" then
 					Client.secondarystored = Settings.weapon_info[val].data.ammo
 				end
 			end

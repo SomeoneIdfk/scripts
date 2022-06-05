@@ -171,19 +171,19 @@ local function getAllNames(datatable, val)
 end
 
 local function modelChange(model, replace)
-	if game:GetService("ReplicatedStorage").Viewmodels:FindFirstChild(model) then
+	if ReplicatedStorage.Viewmodels:FindFirstChild(model) then
 		if Models:FindFirstChild(replace) then
-			game.ReplicatedStorage.Viewmodels[model]:Destroy()
+			ReplicatedStorage.Viewmodels[model]:Destroy()
 			wait()
-			local Model1 = Instance.new("Model", game.ReplicatedStorage.Viewmodels)
+			local Model1 = Instance.new("Model", ReplicatedStorage.Viewmodels)
 			local Clone = Models[replace]:Clone()
 			Clone.Parent = Model1
-			Model = game.ReplicatedStorage.Viewmodels.Model
+			Model = ReplicatedStorage.Viewmodels.Model
 			for _, Child in pairs(Model:GetChildren()) do
 				Child.Parent = Model.Parent
 			end
 			Model:Destroy()
-			game.ReplicatedStorage.Viewmodels[replace].Name = model
+			ReplicatedStorage.Viewmodels[replace].Name = model
 
 			return true
 		else
@@ -194,8 +194,8 @@ local function modelChange(model, replace)
 	end
 end
 
-local function MapSkin(Gun, Skin)
-	local SkinData = game:GetService("ReplicatedStorage").Skins:FindFirstChild(Gun):FindFirstChild(Skin)
+local function MapSkin(weapon, skin)
+	local SkinData = ReplicatedStorage.Skins:FindFirstChild(weapon):FindFirstChild(skin)
 	if not SkinData:FindFirstChild("Animated") then      
 		for _,Data in pairs(SkinData:GetChildren()) do      
 			local Obj = workspace.CurrentCamera.Arms:FindFirstChild(Data.Name)      
@@ -874,7 +874,7 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 	if Model == nil then return end
 
 	local weaponname = Client.gun ~= "none" and knifeOrGun() == "knife" and OrionLib.Flags["skins_knife"].Value ~= "-" and OrionLib.Flags["skins_knife"].Value or Client.gun ~= "none" and knifeOrGun() == "gun" and Client.gun.Name
-	if weaponname ~= nil and game:GetService("ReplicatedStorage").Skins:FindFirstChild(weaponname) then  
+	if weaponname ~= nil and ReplicatedStorage.Skins:FindFirstChild(weaponname) then  
 		local var = knifeOrGun() == "knife" and OrionLib.Flags["skins_knife_skin"].Value ~= "Stock" and OrionLib.Flags["skins_knife_skin"].Value or knifeOrGun() == "gun" and Settings.CurrentSkins[getGunNameFromCheck(weaponname)]
 		if var ~= nil then
 			MapSkin(weaponname, var)
@@ -886,8 +886,8 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 		RGlove = RArm:FindFirstChild("Glove") or RArm:FindFirstChild("RGlove")
 		if OrionLib.Flags["skins_glove"].Value ~= "-" and Client.gun ~= "none" and OrionLib.Flags["skins_glove_skin"].Value ~= "Stock" then
 			if RGlove then RGlove:Destroy() end      
-			RGlove = game:GetService("ReplicatedStorage").Gloves.Models[OrionLib.Flags["skins_glove"].Value].RGlove:Clone()      
-			RGlove.Mesh.TextureId = game:GetService("ReplicatedStorage").Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
+			RGlove = ReplicatedStorage.Gloves.Models[OrionLib.Flags["skins_glove"].Value].RGlove:Clone()      
+			RGlove.Mesh.TextureId = ReplicatedStorage.Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
 			RGlove.Parent = RArm      
 			RGlove.Transparency = 0      
 			RGlove.Welded.Part0 = RArm      
@@ -897,8 +897,8 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 		LGlove = LArm:FindFirstChild("Glove") or LArm:FindFirstChild("LGlove")      
 		if OrionLib.Flags["skins_glove"].Value ~= "-" and Client.gun ~= "none" and OrionLib.Flags["skins_glove_skin"].Value ~= "Stock" then      
 			if LGlove then LGlove:Destroy() end      
-			LGlove = game:GetService("ReplicatedStorage").Gloves.Models[OrionLib.Flags["skins_glove"].Value].LGlove:Clone()       
-			LGlove.Mesh.TextureId = game:GetService("ReplicatedStorage").Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
+			LGlove = ReplicatedStorage.Gloves.Models[OrionLib.Flags["skins_glove"].Value].LGlove:Clone()       
+			LGlove.Mesh.TextureId = ReplicatedStorage.Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
 			LGlove.Transparency = 0      
 			LGlove.Parent = LArm      
 			LGlove.Welded.Part0 = LArm      
@@ -1037,8 +1037,8 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						BulletImpacts:Destroy()
 					end)()
 				end
-			elseif self.Name == "ApplyGun" and args[1] == game.ReplicatedStorage.Weapons.Banana or args[1] == game.ReplicatedStorage.Weapons["Flip Knife"] then
-				args[1] = game.ReplicatedStorage.Weapons.Karambit
+			elseif self.Name == "ApplyGun" and args[1] == ReplicatedStorage.Weapons.Banana or args[1] == ReplicatedStorage.Weapons["Flip Knife"] then
+				args[1] = ReplicatedStorage.Weapons.Karambit
 			elseif self.Name == "test" then
 				return wait(99e99)
 			end
@@ -1048,7 +1048,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 			end
 		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
 			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and Settings.aimbot.target ~= nil then
-				args[1] = Ray.new(LocalPlayer.Character.Head.Position, (Settings.aimbot.target.Character.Head.Position - LocalPlayer.Character.Head.Position).unit * (game.ReplicatedStorage.Weapons[LocalPlayer.Character.EquippedTool.Value].Range.Value * 0.1))
+				args[1] = Ray.new(LocalPlayer.Character.Head.Position, (Settings.aimbot.target.Character.Head.Position - LocalPlayer.Character.Head.Position).unit * (ReplicatedStorage.Weapons[LocalPlayer.Character.EquippedTool.Value].Range.Value * 0.1))
 			end
         end
 	end
@@ -1067,6 +1067,10 @@ end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
 	pcall(function()
+		local isalivelp = IsAlive(LocalPlayer)
+		local teamlp = GetTeam(LocalPlayer)
+		local mainlp = mainPlayerCheck(LocalPlayer)
+
 		if OblivionASD.Value ~= 0 then
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
@@ -1088,7 +1092,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 		end)()
 
 		coroutine.wrap(function()
-			if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and Settings.aimbot.target and mainPlayerCheck(LocalPlayer) then
+			if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and Settings.aimbot.target and mainlp then
 				if OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" then
 					if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
 						wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
@@ -1099,7 +1103,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 		end)()
 
 		coroutine.wrap(function()
-			if OrionLib.Flags["aimbot_enable"].Value == true and mainPlayerCheck(LocalPlayer) then
+			if OrionLib.Flags["aimbot_enable"].Value == true and mainlp then
 				if Settings.aimbot.target and IsAlive(Settings.aimbot.target) then
 					if OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true then
 						coroutine.wrap(function()
@@ -1119,7 +1123,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 			end
 		end)()
 
-		if OrionLib.Flags["aimbot_stand_still"].Value == true and mainPlayerCheck(LocalPlayer) and LocalPlayer.Character.HumanoidRootPart.Velocity.Magnitude < 3 then
+		if OrionLib.Flags["aimbot_stand_still"].Value == true and mainlp and LocalPlayer.Character.HumanoidRootPart.Velocity.Magnitude < 3 then
 			Settings.aimbot.standing = true
 		else
 			Settings.aimbot.standing = false
@@ -1170,7 +1174,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
         end)()
 
 		coroutine.wrap(function()
-			if OrionLib.Flags["misc_infinite_ammo"].Value ~= "-" and IsAlive(LocalPlayer) then
+			if OrionLib.Flags["misc_infinite_ammo"].Value ~= "-" and mainlp then
 				local val = getGunName()
 				if val and OrionLib.Flags["misc_infinite_ammo"].Value == "Mag" and Settings.weapon_info[val].data.type == "primary" then
 					Client.ammocount = Settings.weapon_info[val].data.clip
@@ -1248,7 +1252,7 @@ workspace.ChildRemoved:connect(function(v)
 end)
 
 -- Init
-for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildren()) do
+for _, Model in pairs(ReplicatedStorage.Viewmodels:GetChildren()) do
 	local Clone = Model:Clone()
 	Clone.Parent = Models
 end

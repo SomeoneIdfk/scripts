@@ -33,7 +33,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))().guns, loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))().guns, loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -196,7 +196,7 @@ end
 
 local function MapSkin(weapon, skin)
 	local SkinData = ReplicatedStorage.Skins:FindFirstChild(weapon):FindFirstChild(skin)
-	if not SkinData:FindFirstChild("Animated") then      
+	if SkinData and not SkinData:FindFirstChild("Animated") then
 		for _,Data in pairs(SkinData:GetChildren()) do      
 			local Obj = workspace.CurrentCamera.Arms:FindFirstChild(Data.Name)      
 			if Obj ~= nil and Obj.Transparency ~= 1 then      
@@ -206,14 +206,14 @@ local function MapSkin(weapon, skin)
 					Obj.TextureID = Data.Value      
 				end      
 			end      
-		end   
+		end
 	end      
 end
 
-local function skinsList(knife, list)
+local function skinsList(value, list)
 	local temp = {}
 	table.foreach(list, function(i, v)
-		if i == knife then
+		if i == value then
 			table.foreach(v, function(i2, v2)
 				table.insert(temp, v2)
 			end)
@@ -232,6 +232,15 @@ local function skinsGunList(gun)
             end)
         end
     end)
+    if OrionLib.Flags["skins_custom"].Value == true then
+        table.foreach(Settings.weapon_data, function(i, v)
+            if i == gun and v["custom_list"] then
+                table.foreach(v.custom_list, function(i2, v2)
+                    table.insert(temp, i2)
+                end)
+            end
+        end)
+    end
     return temp
 end
 
@@ -252,7 +261,7 @@ end
 local function saveData()
     if OblivionRan.Value == true then
 		local tempmaster = {skins = {}, data = {}}
-        local temp = {[1] = {["skins_knife"] = {}}, [2] = {["skins_knife_skin"] = {}}, [3] = {["skins_glove"] = {}}, [4] = {["skins_glove_skin"] = {}}}
+        local temp = {[1] = {["skins_custom"] = {}} , [2] = {["skins_knife"] = {}}, [3] = {["skins_knife_skin"] = {}}, [4] = {["skins_glove"] = {}}, [5] = {["skins_glove_skin"] = {}}}
         for i,v in pairs(temp) do
             for i2,v2 in pairs(v) do
                 temp[i] = {[i2] = {["Type"] = OrionLib.Flags[i2].Type, ["Value"] = OrionLib.Flags[i2].Value}}
@@ -730,6 +739,35 @@ local function godMode()
 	end
 end
 
+local function loadCustomSkins()
+    if Settings.CustomSkins == false then
+        Settings.CustomSkins = true
+        OrionLib:MakeNotification({Name = "Oblivion", Content = "Custom Skins is still being worked on, but can already be used.", Image = "rbxassetid://4335483762", Time = 5})
+        for i,v in pairs(Settings.weapon_data) do
+            if ReplicatedStorage.Skins:FindFirstChild(v.name) then
+                if v["custom_list"] then
+                    for i2,v2 in pairs(v.custom_list) do
+                        local var
+                        for i3,v3 in pairs(ReplicatedStorage.Skins[v.name]:GetChildren()) do
+                            if not v3:FindFirstChild("Animated") then
+                                var = v3:Clone()
+                                break
+                            end
+                        end
+                        var.Parent = ReplicatedStorage.Skins[v.name]
+                        var.Name = i2
+                        for i3,v3 in pairs(var:GetChildren()) do
+                            if v3.ClassName == "StringValue" then
+                                v3.Value = v2
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -807,6 +845,7 @@ EspTab:AddSlider({Name = "Tracer Transparency", Min = 0, Max = 100, Default = 10
 EspTab:AddColorpicker({Name = "Tracer Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_tracer_color", Callback = function(val) saveData() espLib.options.tracerColor = val end})
 EspTab:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bottom", "Top", "Mouse"}, Flag = "esp_tracerorigin", Callback = function(val) saveData() espLib.options.tracerOrigin = val end})
 
+SkinsTab:AddToggle({Name = "Custom Skins", Default = false, Flag = "skins_custom", Callback = function(val) saveData() if val == true then loadCustomSkins() end end})
 SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val) if val == "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownRefresh("skins_weapon_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownRefresh("skins_weapon_skin", Settings.CurrentSkins[val], skinsGunList(val)) end end})
 SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val) Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val saveData() end})
 SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "skins_knife", Callback = function(val) if val == "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("skins_knife_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownRefresh("skins_knife_skin", "Stock", skinsList(val, Settings.knife_data)) saveData() end end})
@@ -1271,6 +1310,7 @@ if isfile("oblivion/data.cfg") then
 		output = loadstring("return"..readfile("oblivion/data.cfg"))()
 	end)
 	if a == true then
+		Settings.CurrentSkins = output.skins
 		for i,v in pairs(output.data) do
 			for i2,v2 in pairs(v) do
                 if OrionLib.Flags[i2] then
@@ -1280,7 +1320,6 @@ if isfile("oblivion/data.cfg") then
                 end
 			end
 		end
-		Settings.CurrentSkins = output.skins
         if Settings.saveerror == true then
             OrionLib:MakeNotification({Name = "Oblivion", Content = "Some values might be corrupted in the save.", Image = "rbxassetid://4384402990", Time = 5})
         elseif Settings.saveerror == false then

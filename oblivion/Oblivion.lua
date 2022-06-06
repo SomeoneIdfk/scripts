@@ -288,8 +288,12 @@ local function saveData()
 end
 
 local function dropdownRefresh(flag, value, list)
-    OrionLib.Flags[flag]:Refresh(list, true)
-    OrionLib.Flags[flag]:Set(value)
+	OrionLib.Flags[flag]:Refresh(list, true)
+	if table.find(list, value) then
+		OrionLib.Flags[flag]:Set(value)
+	elseif not table.find(list, value) then
+		OrionLib.Flags[flag]:Set(list[1])
+	end
 end
 
 local function GetCharacter(player)

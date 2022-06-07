@@ -743,7 +743,7 @@ local function godMode()
 	end
 end
 
-local function loadCustomSkins()
+--[[local function loadCustomSkins()
     if Settings.CustomSkins == false then
         Settings.CustomSkins = true
         OrionLib:MakeNotification({Name = "Oblivion", Content = "Custom Skins is still being worked on, but can already be used.", Image = "rbxassetid://4335483762", Time = 5})
@@ -760,11 +760,35 @@ local function loadCustomSkins()
                         end
                         var.Parent = ReplicatedStorage.Skins[v.name]
                         var.Name = i2
-                        for i3,v3 in pairs(var:GetChildren()) do
-                            if v3.ClassName == "StringValue" then
-                                v3.Value = v2
-                            end
-                        end
+						for i3,v3 in pairs(var:GetChildren()) do
+							if v3.ClassName == "StringValue" then
+								v3.Value = v2
+							end
+						end
+                    end
+                end
+            end
+        end
+    end
+end]]--
+
+local function loadCustomSkins()
+    if Settings.CustomSkins == false then
+        Settings.CustomSkins = true
+        OrionLib:MakeNotification({Name = "Oblivion", Content = "Custom Skins is still being worked on, but can already be used.", Image = "rbxassetid://4335483762", Time = 5})
+        for i,v in pairs(Settings.weapon_data) do
+            if ReplicatedStorage.Skins:FindFirstChild(v.name) then
+                if v["custom_list"] then
+                    for i2,v2 in pairs(v.custom_list) do
+                        local var = Instance.new("Folder")
+						var.Name = i2
+						var.Parent = ReplicatedStorage.Skins[v.name]
+						for i3,v3 in pairs(v2) do
+							local var2 = Instance.new("StringValue")
+							var2.Name = v.custom_parts[i3]
+							var2.Parent = var
+							var2.Value = v3
+						end
                     end
                 end
             end

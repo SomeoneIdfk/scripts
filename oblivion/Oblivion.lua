@@ -26,7 +26,7 @@ else
 	TaggedSkids = {}
 end
 
---writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
+writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
 
 -- Main
 repeat wait() until workspace["Map"]

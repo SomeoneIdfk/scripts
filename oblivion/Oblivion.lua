@@ -743,35 +743,6 @@ local function godMode()
 	end
 end
 
---[[local function loadCustomSkins()
-    if Settings.CustomSkins == false then
-        Settings.CustomSkins = true
-        OrionLib:MakeNotification({Name = "Oblivion", Content = "Custom Skins is still being worked on, but can already be used.", Image = "rbxassetid://4335483762", Time = 5})
-        for i,v in pairs(Settings.weapon_data) do
-            if ReplicatedStorage.Skins:FindFirstChild(v.name) then
-                if v["custom_list"] then
-                    for i2,v2 in pairs(v.custom_list) do
-                        local var
-                        for i3,v3 in pairs(ReplicatedStorage.Skins[v.name]:GetChildren()) do
-                            if not v3:FindFirstChild("Animated") then
-                                var = v3:Clone()
-                                break
-                            end
-                        end
-                        var.Parent = ReplicatedStorage.Skins[v.name]
-                        var.Name = i2
-						for i3,v3 in pairs(var:GetChildren()) do
-							if v3.ClassName == "StringValue" then
-								v3.Value = v2
-							end
-						end
-                    end
-                end
-            end
-        end
-    end
-end]]--
-
 local function loadCustomSkins()
     if Settings.CustomSkins == false then
         Settings.CustomSkins = true

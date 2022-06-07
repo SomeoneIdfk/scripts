@@ -783,9 +783,9 @@ end
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
-espLib.options = {enabled = nil, scaleFactorX = 4, scaleFactorY = 5, font = 2, fontSize = 13, limitDistance = false, maxDistance = 1000, visibleOnly = nil, teamCheck = nil, teamColor = nil, fillColor = nil, whitelistColor = Color3.new(1, 0, 0), outOfViewArrows = false, outOfViewArrowsFilled = false, outOfViewArrowsSize = 25, outOfViewArrowsRadius = 100, outOfViewArrowsColor = Color3.new(1, 1, 1), outOfViewArrowsTransparency = 0.5, outOfViewArrowsOutline = false, outOfViewArrowsOutlineFilled = false, outOfViewArrowsOutlineColor = Color3.new(1, 1, 1), outOfViewArrowsOutlineTransparency = 1, names = nil, nameTransparency = nil, nameColor = nil, boxes = true, boxesTransparency = nil, boxesColor = nil, boxFill = false, boxFillTransparency = 0.5, boxFillColor = Color3.new(1, 1, 1), healthBars = true, healthBarsSize = 1, healthBarsTransparency = nil, healthBarsColor = nil, healthText = true, healthTextTransparency = nil, healthTextSuffix = "%", healthTextColor = nil, distance = true, distanceTransparency = nil, distanceSuffix = " Studs", distanceColor = nil, tracers = nil, tracerTransparency = nil, tracerColor = nil, tracerOrigin = nil}
+espLib.options = {enabled = nil, scaleFactorX = 4, scaleFactorY = 5, font = 2, fontSize = 13, limitDistance = false, maxDistance = 1000, visibleOnly = nil, teamCheck = nil, teamColor = nil, fillColor = nil, whitelistColor = Color3.new(1, 0, 0), outOfViewArrows = false, outOfViewArrowsFilled = false, outOfViewArrowsSize = 25, outOfViewArrowsRadius = 100, outOfViewArrowsColor = Color3.new(1, 1, 1), outOfViewArrowsTransparency = 0.5, outOfViewArrowsOutline = false, outOfViewArrowsOutlineFilled = false, outOfViewArrowsOutlineColor = Color3.new(1, 1, 1), outOfViewArrowsOutlineTransparency = 1, names = nil, nameTransparency = nil, nameColor = nil, boxes = true, boxesTransparency = nil, boxesColor = nil, boxFill = false, boxFillTransparency = 0.5, boxFillColor = Color3.new(1, 1, 1), healthBars = true, healthBarsSize = 1, healthBarsTransparency = nil, healthBarsColor = nil, healthText = true, healthTextTransparency = nil, healthTextSuffix = "%", healthTextColor = nil, distance = true, distanceTransparency = nil, distanceSuffix = " Studs", distanceColor = nil, tracers = nil, tracerTransparency = nil, tracerColor = nil, tracerOrigin = nil, chams = nil, chamsColor = nil, chamsTransparency = nil}
 
-for i,v in ipairs(workspace:GetChildren()) do
+--[[for i,v in ipairs(workspace:GetChildren()) do
     for i2,v2 in pairs(game.Players:GetPlayers()) do
         if v2.Name == v.Name then
             Settings.playerlist[v.Name] = v
@@ -793,6 +793,10 @@ for i,v in ipairs(workspace:GetChildren()) do
     end
 end
 
+function espLib.GetCharacter(player)
+    local character = Settings.playerlist[player.Name]
+    return character, character and game.FindFirstChild(character, "HumanoidRootPart")
+end]]--
 function espLib.GetTeam(player)
     local team, teamColor
     if game.Players[player.Name]:FindFirstChild("Status") then
@@ -852,6 +856,9 @@ EspTab:AddColorpicker({Name = "Misc Color", Default = Color3.fromRGB(255, 255, 2
 EspTab:AddSlider({Name = "Misc Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "esp_misc_transparency", Callback = function(val) saveData() espLib.options.nameTransparency = (val / 100) espLib.options.healthTextTransparency = (val / 100) espLib.options.healthBarsTransparency = (val / 100) espLib.options.distanceTransparency = (val / 100) end})
 EspTab:AddSlider({Name = "Box Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_box_transparency", Callback = function(val) saveData() espLib.options.boxesTransparency = (val / 100) end})
 EspTab:AddColorpicker({Name = "Box Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_box_color", Callback = function(val) saveData() espLib.options.boxesColor = val end})
+EspTab:AddToggle({Name = "Chams", Default = false, Flag = "esp_chams", Callback = function(val) saveData() espLib.options.chams = val end})
+EspTab:AddSlider({Name = "Chams Transparency", Min = 0, Max = 100, Default = 0, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_chams_transparency", Callback = function(val) saveData() espLib.options.chamsTransparency = (val / 100) end})
+EspTab:AddColorpicker({Name = "Chams Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_chams_color", Callback = function(val) saveData() espLib.options.chamsColor = val end})
 EspTab:AddToggle({Name = "Tracers", Default = false, Flag = "esp_tracers", Callback = function(val) saveData() espLib.options.tracers = val end})
 EspTab:AddSlider({Name = "Tracer Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_tracer_transparency", Callback = function(val) saveData() espLib.options.tracerTransparency = (val / 100) end})
 EspTab:AddColorpicker({Name = "Tracer Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_tracer_color", Callback = function(val) saveData() espLib.options.tracerColor = val end})
@@ -1318,7 +1325,7 @@ LocalPlayer.CharacterAdded:Connect(function()
 	end)
 end)
 
-workspace.ChildAdded:connect(function(v)
+--[[workspace.ChildAdded:connect(function(v)
     local success = pcall(function()
         for i2,v2 in pairs(game.Players:GetPlayers()) do
             if v.Name == v2.Name and PlayerCheck(v) then
@@ -1335,7 +1342,7 @@ workspace.ChildRemoved:connect(function(v)
     if Settings.playerlist[v.Name] then
         Settings.playerlist[v.Name] = nil
     end
-end)
+end)]]--
 
 -- Init
 for _, Model in pairs(ReplicatedStorage.Viewmodels:GetChildren()) do

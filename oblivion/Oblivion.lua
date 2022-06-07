@@ -33,7 +33,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -303,7 +303,9 @@ local function dropdownCustom(state)
 	if table.find(var, Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value]) then
 		OrionLib.Flags["skins_weapon_skin"]:Set(Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value])
 	elseif not table.find(var, Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value]) then
-		OrionLib.Flags["skins_weapon_skin"]:Set()
+		Settings.dropdownfilter = true
+		OrionLib.Flags["skins_weapon_skin"]:Set(var[1])
+		Settings.dropdownfilter = false
 	end
 end
 
@@ -873,11 +875,11 @@ SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "s
 		dropdownCustom("normal")
 	end end})
 SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val)
-	if val == "Show custom skins" then
+	if Settings.dropdownfilter == false and val == "Show custom skins" then
 		dropdownCustom("custom")
-	elseif val == "Show normal skins" then
+	elseif Settings.dropdownfilter == false and val == "Show normal skins" then
 		dropdownCustom("normal")
-	elseif val ~= nil then
+	elseif Settings.dropdownfilter == false and val ~= nil then
 		Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val
 		saveData()
 	end

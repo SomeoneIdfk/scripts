@@ -34,10 +34,10 @@ writefile("oblivion/weapon_types.cfg", game:HttpGet("https://raw.githubuserconte
 repeat wait() until workspace["Map"] and workspace.Map["Origin"]
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
+local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -123,9 +123,9 @@ local function SaveTable(queuetable)
 	local function TableToString(Table, IgnoredTables, Depth)
 		IgnoredTables = IgnoredTables or {}
 	
-		--if IgnoredTables[Table] then
-			--return IgnoredTables[Table] == Depth - 1 and '[Parent table]' or '[Cyclic Table]'
-		--end
+		--[[if IgnoredTables[Table] then
+			return IgnoredTables[Table] == Depth - 1 and '[Parent table]' or '[Cyclic Table]'
+		end]]--
 	
 		Depth = Depth or 0
 		Depth = Depth + 1
@@ -142,9 +142,9 @@ local function SaveTable(queuetable)
 			if KeyClass == 'string' then
 				Key = Key:gsub('[%c%z]', SpecialCharacters)
 				
-				if Key:match'%s' then
-					--Key = ('["%s"]'):format(Key)
-				end
+				--[[if Key:match'%s' then
+					Key = ('["%s"]'):format(Key)
+				end]]--
 				
 				Key = '["'..Key..'"]'
 			else
@@ -832,6 +832,26 @@ local function killTarget(target)
 	end
 end
 
+local function teleportToPlayer(plr, option)
+	if option == "random_radius" then
+		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 1000) - 500), 0, (math.random(0, 1000) - 500))
+	elseif option == "after_prep" then
+		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, (math.random(0,1000) - 500), (math.random(1000,5000) * 1000))
+	end
+end
+
+local function teleportTospawnpoint()
+	RunService.RenderStepped:Wait()
+	local lastspawnpoint
+	local spawns = GetTeam(LocalPlayer) == "T" and workspace.Map.TSpawns or GetTeam(LocalPlayer) == "CT" and workspace.Map.CTSpawns or nil
+	for i,v in pairs(spawns:GetChildren()) do
+		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 1, 0)
+		lastspawnpoint = v
+		break
+	end
+	LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 1, 0))
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -889,9 +909,11 @@ RageTab:AddDropdown({Name = "Weapon", Default = "Held", Options = {"Held", "Rand
 RageTab:AddToggle({Name = "Insta Kill", Default = false, Flag = "rage_insta_kill", Callback = function() saveData() end})
 RageTab:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_kill_velocity_prediction", Callback = function() saveData() end})
 RageTab:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
-RageTab:AddSlider({Name = "Loop Rate", Min = 1, Max = 50, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
+RageTab:AddSlider({Name = "Loop Rate", Min = 1, Max = 30, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
 RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player"})
 RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable"})
+RageTab:AddLabel("Teleportation")
+RageTab:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
 EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
@@ -1240,6 +1262,8 @@ RunService.RenderStepped:Connect(function(step)
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
 
+		print(teamlp)
+
 		coroutine.wrap(function()
 			for _,Player in pairs(game.Players:GetPlayers()) do
 				if Player.Character and Player ~= LocalPlayer and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.HumanoidRootPart:FindFirstChild("OldPosition") then      
@@ -1378,6 +1402,25 @@ RunService.RenderStepped:Connect(function(step)
 				elseif val and OrionLib.Flags["misc_infinite_ammo"].Value == "Reserve" and Settings.weapon_info.guns[val].data.type == "secondary" then
 					Client.secondarystored = Settings.weapon_info.guns[val].data.ammo
 				end
+			end
+		end)()
+
+		coroutine.wrap(function()
+			for _,Player in pairs(game.Players:GetChildren()) do
+				coroutine.wrap(function()
+					local targetsalive = OrionLib.Flags["rage_kill_player_enable"].Value == true and game.Players:FindFirstChild(OrionLib.Flags["rage_kill_player"].Value) and PlayerCheck(game.Players[OrionLib.Flags["rage_kill_player"].Value]) and true or false
+					local prepcheck = OrionLib.Flags["rage_kill_prep_check"].Value == false and true or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == true and false or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == false and true
+					if mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck and Player ~= LocalPlayer and PlayerCheck(Player) then
+						teleportToPlayer(Player, "random_radius")
+						Settings.teleportreset = false
+					elseif mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck == false then
+						teleportToPlayer(LocalPlayer, "after_prep")
+						Settings.teleportreset = false
+					elseif mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive == false and Settings.teleportreset == false then
+						teleportTospawnpoint()
+						Settings.teleportreset = true
+					end
+				end)()
 			end
 		end)()
 

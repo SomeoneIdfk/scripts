@@ -14,6 +14,7 @@ local hookfunc = hookfunc or hookfunction or replaceclosure or false
 local workspace = workspace or game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 -- Config
 if not isfolder("oblivion") then
@@ -26,16 +27,16 @@ else
 	TaggedSkids = {}
 end
 
-writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
+--writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
 
 -- Main
-repeat wait() print('waiting') until workspace["Map"] and workspace.Map["Origin"]
+repeat wait() until workspace["Map"] and workspace.Map["Origin"]
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -53,7 +54,7 @@ FOV.Thickness = 2
 local TriggerbotFOV = Drawing.new("Circle")
 TriggerbotFOV.Thickness = 2
 
-local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin"}
+local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player", "rage_kill_player_enable"}
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
@@ -355,7 +356,7 @@ end
 
 local function knifeOrGun()
 	local success = table.foreach(Settings.weapon_data, function(i, v)
-		if v.name == Client.gun.Name then
+		if Client.gun ~= "none" and v.name == Client.gun.Name then
 			return "gun"
 		end
 	end)
@@ -792,6 +793,40 @@ local function loadCustomSkins()
     end
 end
 
+local function killTarget(target)
+	local prepcheck = OrionLib.Flags["rage_kill_prep_check"].Value == false and true or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == true and false or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == false and true
+	if PlayerCheck(game.Players[OrionLib.Flags["rage_kill_player"].Value]) and prepcheck then
+		local position
+		if OrionLib.Flags["rage_kill_velocity_prediction"].Value == true then
+			local p = target.Character.Head.CFrame.p
+			local hrp = target.Character.HumanoidRootPart.Position
+			local oldHrp = target.Character.HumanoidRootPart.OldPosition.Value
+			local vel = (Vector3.new(hrp.X, 0, hrp.Z) - Vector3.new(oldHrp.X, 0, oldHrp.Z)) / Settings.LastStep
+			local dir = Vector3.new(vel.X / vel.magnitude, 0, vel.Z / vel.magnitude)			  
+			position = p + dir * (Settings.Ping / (math.pow(Settings.Ping, 1.5)) * (dir / (dir / 2)))
+		else
+			position = target.Character.Head.CFrame.p
+		end
+
+		local Arguments = {
+			[1] = target.Character.Head,
+			[2] = position,
+			[3] = Client.gun.Name,
+			[4] = 500,
+			[5] = LocalPlayer.Character.Gun,
+			[8] = 100,
+			[9] = false,
+			[10] = false,
+			[11] = Vector3.new(),
+			[12] = 500,
+			[13] = Vector3.new()
+			}
+		for i = 1,OrionLib.Flags["rage_kill_loop_rate"].Value,1 do
+			ReplicatedStorage.Events.HitPart:FireServer(unpack(Arguments))
+		end
+	end
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -848,9 +883,16 @@ AimTab:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooti
 AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
 
-RageTab:AddDropdown({Name = "God Mode", Default = "-", Options = {"-", "Hostage", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
+RageTab:AddLabel("God Mode")
+RageTab:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Hostage", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
 RageTab:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
 RageTab:AddButton({Name = "Set", Callback = function() godMode() end})
+RageTab:AddLabel("Kill All")
+RageTab:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_kill_velocity_prediction", Callback = function() saveData() end})
+RageTab:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
+RageTab:AddSlider({Name = "Loop Rate", Min = 1, Max = 50, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
+RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player"})
+RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable"})
 
 EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
 EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
@@ -974,7 +1016,7 @@ Settings.tags.onlinelabel = TagTab:AddLabel("Online:")
 TagTab:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function() saveData() end})
 
 MiscTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", Callback = function(val) saveData() if val == true then coroutine.wrap(function() while OrionLib.Flags["misc_anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end)() end end})
-MiscTab:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = game:GetService("RunService").Heartbeat:Connect(function() pcall(function() getsenv(game.Players.LocalPlayer.PlayerGui.Client).splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
+MiscTab:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = RunService.Heartbeat:Connect(function() pcall(function() Client.splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
 MiscTab:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
 MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
@@ -996,10 +1038,8 @@ workspace.CurrentCamera.ChildAdded:Connect(function(new)
 	if Model == nil then return end
 
 	local weaponname = Client.gun ~= "none" and knifeOrGun() == "knife" and OrionLib.Flags["skins_knife"].Value ~= "-" and OrionLib.Flags["skins_knife"].Value or Client.gun ~= "none" and knifeOrGun() == "gun" and Client.gun.Name
-	print(weaponname)
 	if weaponname ~= nil and ReplicatedStorage.Skins:FindFirstChild(weaponname) then  
 		local var = knifeOrGun() == "knife" and Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] ~= "Stock" and Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] or knifeOrGun() == "gun" and Settings.CurrentSkins[getGunNameFromCheck(weaponname)]
-		print(var)
 		if var ~= nil then
 			MapSkin(weaponname, var)
 		end      
@@ -1189,15 +1229,38 @@ Mouse.Move:Connect(function()
 	end
 end)
 
-game:GetService("RunService").RenderStepped:Connect(function()
-	pcall(function()
+RunService.RenderStepped:Connect(function(step)
+	--pcall(function()
 		local isalivelp = IsAlive(LocalPlayer)
 		local teamlp = GetTeam(LocalPlayer)
 		local mainlp = mainPlayerCheck(LocalPlayer)
+		Settings.LastStep = step
+		Settings.Ping = game.Stats.PerformanceStats.Ping:GetValue()
 
 		if OblivionASD.Value ~= 0 then
 			OblivionASD.Value = OblivionASD.Value - 1
 		end
+
+		coroutine.wrap(function()
+			for _,Player in pairs(game.Players:GetPlayers()) do
+				if Player.Character and Player ~= LocalPlayer and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.HumanoidRootPart:FindFirstChild("OldPosition") then      
+					coroutine.wrap(function()
+						local Position = Player.Character.HumanoidRootPart.Position      
+						RunService.RenderStepped:Wait()      
+						if Player.Character and Player ~= LocalPlayer and Player.Character:FindFirstChild("HumanoidRootPart") then      
+							if Player.Character.HumanoidRootPart:FindFirstChild("OldPosition") then      
+								Player.Character.HumanoidRootPart.OldPosition.Value = Position      
+							else      
+								local Value = Instance.new("Vector3Value")      
+								Value.Name = "OldPosition"      
+								Value.Value = Position      
+								Value.Parent = Player.Character.HumanoidRootPart      
+							end      
+						end      
+					end)()      
+				end
+			end
+		end)()
 
 		coroutine.wrap(function()
 			if OrionLib.Flags["aimbot_enable"].Value == true then
@@ -1257,7 +1320,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 			TriggerbotFOV.Radius = 1
 		end
 
-		if Settings.currentmap ~= workspace.Map.Origin.Value then
+		if workspace:FindFirstChild("Map"):FindFirstChild("Origin") and Settings.currentmap ~= workspace.Map.Origin.Value then
 			Settings.currentmap = workspace.Map.Origin.Value
 			OblivionMapChange.Value = OblivionMapChange.Value + 1
 		end
@@ -1266,25 +1329,32 @@ game:GetService("RunService").RenderStepped:Connect(function()
             if Settings.lists.refreshplayerlist == false then
                 Settings.lists.refreshplayerlist = true
 
-                local temp = {all_players = {"-"}, alive_players = {}, enemy_players = {}, team_players = {}}
+                local temp = {all_players = {"-"}, alive_players = {"-"}, enemy_players = {"-"}, team_players = {"-"}}
                 for i,v in pairs(game.Players:GetChildren()) do
                     if v ~= LocalPlayer then
                         table.insert(temp.all_players, v.Name)
-                    end
     
-                    if checkGamemode("team") and GetTeam(v) ~= GetTeam(LocalPlayer) or checkGamemode("ffa") then
-                        table.insert(temp.enemy_players, v.Name)
-                    end
-    
-                    if checkGamemode("team") and GetTeam(v) == GetTeam(LocalPlayer) then
-                        table.insert(temp.team_players, v.Name)
-                    end
-    
-                    if IsAlive(v) and GetTeam(v) ~= "s" then
-                        table.insert(temp.alive_players, v.Name)
-                    end
+						if checkGamemode("team") and GetTeam(v) ~= GetTeam(LocalPlayer) or checkGamemode("ffa") then
+							table.insert(temp.enemy_players, v.Name)
+						end
+		
+						if checkGamemode("team") and GetTeam(v) == GetTeam(LocalPlayer) then
+							table.insert(temp.team_players, v.Name)
+						end
+		
+						if IsAlive(v) and GetTeam(v) ~= "s" then
+							table.insert(temp.alive_players, v.Name)
+						end
+					end
                 end
     
+				if not compareTables(temp.enemy_players, OrionLib.Flags["rage_kill_player"].Options) then
+					OrionLib.Flags["rage_kill_player"]:Refresh(temp.enemy_players, true)
+					if not table.find(temp.enemy_players, OrionLib.Flags["rage_kill_player"].Value) then
+						OrionLib.Flags["rage_kill_player"]:Set("-")
+					end
+				end
+
                 if not compareTables(temp.all_players, OrionLib.Flags["tags_select_player"].Options) then
                     OrionLib.Flags["tags_select_player"]:Refresh(temp.all_players, true)
                     if not table.find(temp.all_players, OrionLib.Flags["tags_select_player"].Value) then
@@ -1311,7 +1381,13 @@ game:GetService("RunService").RenderStepped:Connect(function()
 				end
 			end
 		end)()
-	end)
+
+		coroutine.wrap(function()
+			if mainlp and OrionLib.Flags["rage_kill_player_enable"].Value == true and OrionLib.Flags["rage_kill_player"].Value ~= "-" and game.Players:FindFirstChild(OrionLib.Flags["rage_kill_player"].Value) then
+				killTarget(game.Players[OrionLib.Flags["rage_kill_player"].Value])
+			end
+		end)()
+	--end)
 end)
 
 OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
@@ -1332,6 +1408,16 @@ game.Players.PlayerAdded:Connect(function(player)
             OrionLib:MakeNotification({Name = "Oblivion", Content = "Tagged player joined the game: "..player.Name, Image = "rbxassetid://4384401919", Time = 5})
             checkTaggedSkidsInGame()
         end
+
+		player.CharacterAdded:Connect(function(Character)
+			wait(1)
+			if Character ~= nil then
+				local Value = Instance.new("Vector3Value")      
+				Value.Name = "OldPosition"      
+				Value.Value = Character.HumanoidRootPart.Position      
+				Value.Parent = Character.HumanoidRootPart  
+			end
+		end)
     end)
 end)
 
@@ -1355,6 +1441,25 @@ LocalPlayer.CharacterAdded:Connect(function()
 		end)()
 	end)
 end)
+
+for _,Player in pairs(game.Players:GetPlayers()) do
+	Player.CharacterAdded:Connect(function()
+		wait(1)
+		if Player.Character ~= nil and Player.Character:FindFirstChild("HumanoidRootPart") then      
+			local Value = Instance.new("Vector3Value")      
+			Value.Value = Player.Character.HumanoidRootPart.Position      
+			Value.Name = "OldPosition"      
+			Value.Parent = Player.Character.HumanoidRootPart    
+		end
+	end)
+
+	if Player.Character ~= nil and Player.Character:FindFirstChild("UpperTorso") then      
+		local Value = Instance.new("Vector3Value")      
+		Value.Name = "OldPosition"      
+		Value.Value = Player.Character.HumanoidRootPart.Position
+		Value.Parent = Player.Character.HumanoidRootPart
+	end
+end
 
 --[[workspace.ChildAdded:connect(function(v)
     local success = pcall(function()

@@ -55,7 +55,7 @@ FOV.Thickness = 2
 local TriggerbotFOV = Drawing.new("Circle")
 TriggerbotFOV.Thickness = 2
 
-local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player_1", "rage_kill_player_enable_1", "rage_kill_player_2", "rage_kill_player_enable_2"}
+local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player_1", "rage_kill_player_enable_1", "rage_kill_player_2", "rage_kill_player_enable_2", "rage_kill_player_3", "rage_kill_player_enable_3"}
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
@@ -932,6 +932,8 @@ RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "ra
 RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_1"})
 RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_2"})
 RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_2"})
+RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_3"})
+RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_3"})
 RageTab:AddLabel("Teleportation")
 RageTab:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
 
@@ -1411,6 +1413,13 @@ RunService.RenderStepped:Connect(function(step)
 					end
 				end
 
+				if not compareTables(temp.enemy_players, OrionLib.Flags["rage_kill_player_3"].Options) then
+					OrionLib.Flags["rage_kill_player_3"]:Refresh(temp.enemy_players, true)
+					if not table.find(temp.enemy_players, OrionLib.Flags["rage_kill_player_3"].Value) then
+						OrionLib.Flags["rage_kill_player_3"]:Set("-")
+					end
+				end
+
                 if not compareTables(temp.all_players, OrionLib.Flags["tags_select_player"].Options) then
                     OrionLib.Flags["tags_select_player"]:Refresh(temp.all_players, true)
                     if not table.find(temp.all_players, OrionLib.Flags["tags_select_player"].Value) then
@@ -1443,7 +1452,7 @@ RunService.RenderStepped:Connect(function(step)
 		coroutine.wrap(function()
 			for _,Player in pairs(game.Players:GetChildren()) do
 				coroutine.wrap(function()
-					local targetsalive = OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") and true or OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") and true or OrionLib.Flags["rage_kill_all"].Value == true and #Settings.lists.alive_enemies ~= 1 or false
+					local targetsalive = OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") and true or OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") and true or OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") and true or OrionLib.Flags["rage_kill_all"].Value == true and #Settings.lists.alive_enemies ~= 1 or false
 					if mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck and Player ~= LocalPlayer and PlayerCheck(Player) then
 						teleportToPlayer(Player, "random_radius")
 						Settings.teleportreset = false
@@ -1471,7 +1480,7 @@ RunService.RenderStepped:Connect(function(step)
 				for i = 1,10,1 do
 					if i == 10 and Settings.calcstep == step then
 						local targets = 0
-						for i = 1,2,1 do
+						for i = 1,3,1 do
 							if OrionLib.Flags["rage_kill_player_enable_"..i].Value == true and targetAlive("rage_kill_player_"..i) then
 								targets = targets + 1
 							end
@@ -1490,6 +1499,8 @@ RunService.RenderStepped:Connect(function(step)
 				killTarget(game.Players[OrionLib.Flags["rage_kill_player_1"].Value], "kill_specific")
 			elseif mainlp and OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") then
 				killTarget(game.Players[OrionLib.Flags["rage_kill_player_2"].Value], "kill_specific")
+			elseif mainlp and OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") then
+				killTarget(game.Players[OrionLib.Flags["rage_kill_player_3"].Value], "kill_specific")
 			end
 		end)()
 	end)

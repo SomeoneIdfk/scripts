@@ -837,14 +837,6 @@ espLib.whitelist = {}
 espLib.blacklist = {}
 espLib.options = {enabled = nil, scaleFactorX = 4, scaleFactorY = 5, font = 2, fontSize = 13, limitDistance = false, maxDistance = 1000, visibleOnly = nil, teamCheck = nil, teamColor = nil, fillColor = nil, whitelistColor = Color3.new(1, 0, 0), outOfViewArrows = false, outOfViewArrowsFilled = false, outOfViewArrowsSize = 25, outOfViewArrowsRadius = 100, outOfViewArrowsColor = Color3.new(1, 1, 1), outOfViewArrowsTransparency = 0.5, outOfViewArrowsOutline = false, outOfViewArrowsOutlineFilled = false, outOfViewArrowsOutlineColor = Color3.new(1, 1, 1), outOfViewArrowsOutlineTransparency = 1, names = nil, nameTransparency = nil, nameColor = nil, boxes = true, boxesTransparency = nil, boxesColor = nil, boxFill = false, boxFillTransparency = 0.5, boxFillColor = Color3.new(1, 1, 1), healthBars = true, healthBarsSize = 1, healthBarsTransparency = nil, healthBarsColor = nil, healthText = true, healthTextTransparency = nil, healthTextSuffix = "%", healthTextColor = nil, distance = true, distanceTransparency = nil, distanceSuffix = " Studs", distanceColor = nil, tracers = nil, tracerTransparency = nil, tracerColor = nil, tracerOrigin = nil, chams = nil, chamsColor = nil, chamsTransparency = nil}
 
---[[for i,v in ipairs(workspace:GetChildren()) do
-    for i2,v2 in pairs(game.Players:GetPlayers()) do
-        if v2.Name == v.Name then
-            Settings.playerlist[v.Name] = v
-        end
-    end
-end]]--
-
 function espLib.GetTeam(player)
     local team, teamColor
     if game.Players[player.Name]:FindFirstChild("Status") then
@@ -1467,25 +1459,6 @@ for _,Player in pairs(game.Players:GetPlayers()) do
 		Value.Parent = Player.Character.HumanoidRootPart
 	end
 end
-
---[[workspace.ChildAdded:connect(function(v)
-    local success = pcall(function()
-        for i2,v2 in pairs(game.Players:GetPlayers()) do
-            if v.Name == v2.Name and PlayerCheck(v) then
-                return true
-            end
-        end
-    end)
-    if success then
-        Settings.playerlist[v.Name] = v
-    end
-end)
-
-workspace.ChildRemoved:connect(function(v)
-    if Settings.playerlist[v.Name] then
-        Settings.playerlist[v.Name] = nil
-    end
-end)]]--
 
 -- Init
 for _, Model in pairs(ReplicatedStorage.Viewmodels:GetChildren()) do

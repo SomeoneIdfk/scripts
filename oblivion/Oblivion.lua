@@ -27,7 +27,8 @@ else
 	TaggedSkids = {}
 end
 
---writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
+writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
+writefile("oblivion/weapon_types.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapons.cfg"))
 
 -- Main
 repeat wait() until workspace["Map"] and workspace.Map["Origin"]
@@ -36,7 +37,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua'),true))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -796,6 +797,10 @@ end
 local function killTarget(target)
 	local prepcheck = OrionLib.Flags["rage_kill_prep_check"].Value == false and true or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == true and false or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == false and true
 	if PlayerCheck(game.Players[OrionLib.Flags["rage_kill_player"].Value]) and prepcheck then
+		local type = OrionLib.Flags["rage_kill_weapon"].Value == "Held" and "current" or OrionLib.Flags["rage_kill_weapon"].Value == "Random Gun" and "Gun" or OrionLib.Flags["rage_kill_weapon"].Value == "Random Knife" and "Melee" or OrionLib.Flags["rage_kill_weapon"].Value == "Both" and "Both"
+		local gunname = type == "current" and Client.gun.Name or Settings.weapon_types[type][math.random(1,#Settings.weapon_types[type])]
+		local gunmodel = ReplicatedStorage.Weapons[gunname].Model
+
 		local position
 		if OrionLib.Flags["rage_kill_velocity_prediction"].Value == true then
 			local p = target.Character.Head.CFrame.p
@@ -811,14 +816,14 @@ local function killTarget(target)
 		local Arguments = {
 			[1] = target.Character.Head,
 			[2] = position,
-			[3] = Client.gun.Name,
-			[4] = 500,
-			[5] = LocalPlayer.Character.Gun,
-			[8] = 100,
+			[3] = gunname,
+			[4] = OrionLib.Flags["rage_insta_kill"].Value == false and 100 or OrionLib.Flags["rage_insta_kill"].Value == true and 500,
+			[5] = gunmodel,
+			[8] = OrionLib.Flags["rage_insta_kill"].Value == false and 1 or OrionLib.Flags["rage_insta_kill"].Value == true and 100,
 			[9] = false,
 			[10] = false,
 			[11] = Vector3.new(),
-			[12] = 500,
+			[12] = OrionLib.Flags["rage_insta_kill"].Value == false and 100 or OrionLib.Flags["rage_insta_kill"].Value == true and 500,
 			[13] = Vector3.new()
 			}
 		for i = 1,OrionLib.Flags["rage_kill_loop_rate"].Value,1 do
@@ -888,6 +893,8 @@ RageTab:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Hostage", "F
 RageTab:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
 RageTab:AddButton({Name = "Set", Callback = function() godMode() end})
 RageTab:AddLabel("Kill All")
+RageTab:AddDropdown({Name = "Weapon", Default = "Held", Options = {"Held", "Random Gun", "Random Knife", "Both"}, Flag = "rage_kill_weapon", Callback = function() saveData() end})
+RageTab:AddToggle({Name = "Insta Kill", Default = false, Flag = "rage_insta_kill", Callback = function() saveData() end})
 RageTab:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_kill_velocity_prediction", Callback = function() saveData() end})
 RageTab:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
 RageTab:AddSlider({Name = "Loop Rate", Min = 1, Max = 50, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
@@ -1230,7 +1237,7 @@ Mouse.Move:Connect(function()
 end)
 
 RunService.RenderStepped:Connect(function(step)
-	--pcall(function()
+	pcall(function()
 		local isalivelp = IsAlive(LocalPlayer)
 		local teamlp = GetTeam(LocalPlayer)
 		local mainlp = mainPlayerCheck(LocalPlayer)
@@ -1387,7 +1394,7 @@ RunService.RenderStepped:Connect(function(step)
 				killTarget(game.Players[OrionLib.Flags["rage_kill_player"].Value])
 			end
 		end)()
-	--end)
+	end)
 end)
 
 OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()

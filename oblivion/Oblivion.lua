@@ -37,7 +37,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, falldamagefilter = false}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -55,7 +55,7 @@ FOV.Thickness = 2
 local TriggerbotFOV = Drawing.new("Circle")
 TriggerbotFOV.Thickness = 2
 
-local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player", "rage_kill_player_enable"}
+local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player_1", "rage_kill_player_enable_1", "rage_kill_player_2", "rage_kill_player_enable_2"}
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
@@ -794,8 +794,16 @@ local function loadCustomSkins()
     end
 end
 
+local function targetAlive(flag)
+	if game.Players:FindFirstChild(OrionLib.Flags[flag].Value) and PlayerCheck(game.Players[OrionLib.Flags[flag].Value]) then
+		return true
+	end
+
+	return false
+end
+
 local function killTarget(target, loop)
-	local looped = loop == "kill_specific" and OrionLib.Flags["rage_kill_loop_rate"].Value or loop == "kill_all" and 5 or 1
+	local looped = loop == "kill_specific" and Settings.resultloop or loop == "kill_all" and 5 or 1
 	local prepcheck = OrionLib.Flags["rage_kill_prep_check"].Value == false and true or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == true and false or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == false and true
 	if PlayerCheck(target) and prepcheck then
 		local type = OrionLib.Flags["rage_kill_weapon"].Value == "Held" and "current" or OrionLib.Flags["rage_kill_weapon"].Value == "Random Gun" and "Gun" or OrionLib.Flags["rage_kill_weapon"].Value == "Random Knife" and "Melee" or OrionLib.Flags["rage_kill_weapon"].Value == "Both" and "Both"
@@ -837,7 +845,7 @@ local function teleportToPlayer(plr, option)
 	if option == "random_radius" then
 		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0, 1000) - 500), 0, (math.random(0, 1000) - 500))
 	elseif option == "after_prep" then
-		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new(0, (math.random(0,1000) - 500), (math.random(1000,5000) * 1000))
+		LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame * CFrame.new((math.random(0,1000) - 500), 0, (math.random(1000,5000) * 1000))
 	end
 end
 
@@ -920,8 +928,10 @@ RageTab:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_k
 RageTab:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
 RageTab:AddSlider({Name = "Loop Rate", Min = 1, Max = 30, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
 RageTab:AddToggle({Name = "Kill All", Default = false, Flag = "rage_kill_all", Callback = function() saveData() end})
-RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player"})
-RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable"})
+RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_1"})
+RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_1"})
+RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_2"})
+RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_2"})
 RageTab:AddLabel("Teleportation")
 RageTab:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
 
@@ -1387,10 +1397,17 @@ RunService.RenderStepped:Connect(function(step)
 					end
                 end
     
-				if not compareTables(temp.enemy_players, OrionLib.Flags["rage_kill_player"].Options) then
-					OrionLib.Flags["rage_kill_player"]:Refresh(temp.enemy_players, true)
-					if not table.find(temp.enemy_players, OrionLib.Flags["rage_kill_player"].Value) then
-						OrionLib.Flags["rage_kill_player"]:Set("-")
+				if not compareTables(temp.enemy_players, OrionLib.Flags["rage_kill_player_1"].Options) then
+					OrionLib.Flags["rage_kill_player_1"]:Refresh(temp.enemy_players, true)
+					if not table.find(temp.enemy_players, OrionLib.Flags["rage_kill_player_1"].Value) then
+						OrionLib.Flags["rage_kill_player_1"]:Set("-")
+					end
+				end
+
+				if not compareTables(temp.enemy_players, OrionLib.Flags["rage_kill_player_2"].Options) then
+					OrionLib.Flags["rage_kill_player_2"]:Refresh(temp.enemy_players, true)
+					if not table.find(temp.enemy_players, OrionLib.Flags["rage_kill_player_2"].Value) then
+						OrionLib.Flags["rage_kill_player_2"]:Set("-")
 					end
 				end
 
@@ -1426,7 +1443,7 @@ RunService.RenderStepped:Connect(function(step)
 		coroutine.wrap(function()
 			for _,Player in pairs(game.Players:GetChildren()) do
 				coroutine.wrap(function()
-					local targetsalive = OrionLib.Flags["rage_kill_player_enable"].Value == true and game.Players:FindFirstChild(OrionLib.Flags["rage_kill_player"].Value) and PlayerCheck(game.Players[OrionLib.Flags["rage_kill_player"].Value]) and true or OrionLib.Flags["rage_kill_all"].Value == true and #Settings.lists.alive_enemies ~= 1 or false
+					local targetsalive = OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") and true or OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") and true or OrionLib.Flags["rage_kill_all"].Value == true and #Settings.lists.alive_enemies ~= 1 or false
 					if mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck and Player ~= LocalPlayer and PlayerCheck(Player) then
 						teleportToPlayer(Player, "random_radius")
 						Settings.teleportreset = false
@@ -1448,8 +1465,31 @@ RunService.RenderStepped:Connect(function(step)
 		end)()
 
 		coroutine.wrap(function()
-			if mainlp and OrionLib.Flags["rage_kill_player_enable"].Value == true and OrionLib.Flags["rage_kill_player"].Value ~= "-" and game.Players:FindFirstChild(OrionLib.Flags["rage_kill_player"].Value) then
-				killTarget(game.Players[OrionLib.Flags["rage_kill_player"].Value], "kill_specific")
+			if Settings.calctargets == false then
+				Settings.calctargets = true
+				Settings.calcstep = step
+				for i = 1,10,1 do
+					if i == 10 and Settings.calcstep == step then
+						local targets = 0
+						for i = 1,2,1 do
+							if OrionLib.Flags["rage_kill_player_enable_"..i].Value == true and targetAlive("rage_kill_player_"..i) then
+								targets = targets + 1
+							end
+						end
+						local var = targets == 0 and 1 or math.floor(OrionLib.Flags["rage_kill_loop_rate"].Value / targets)
+						Settings.resultloop = targets == 0 and 1 or var < 1 and 1 or var
+						wait(1)
+						Settings.calctargets = false
+					end
+				end
+			end
+		end)()
+
+		coroutine.wrap(function()
+			if mainlp and OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") then
+				killTarget(game.Players[OrionLib.Flags["rage_kill_player_1"].Value], "kill_specific")
+			elseif mainlp and OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") then
+				killTarget(game.Players[OrionLib.Flags["rage_kill_player_2"].Value], "kill_specific")
 			end
 		end)()
 	end)

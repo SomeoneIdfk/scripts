@@ -37,7 +37,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, FallDamageFilter = false}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, falldamagefilter = false}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -842,18 +842,23 @@ local function teleportToPlayer(plr, option)
 end
 
 local function teleportTospawnpoint()
-	Settings.FallDamageFilter = true
+	Settings.falldamagefilter = true
 	RunService.RenderStepped:Wait()
 	local lastspawnpoint
 	local spawns = GetTeam(LocalPlayer) == "T" and workspace.Map.TSpawns or GetTeam(LocalPlayer) == "CT" and workspace.Map.CTSpawns or nil
 	for i,v in pairs(spawns:GetChildren()) do
-		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 1, 0)
 		lastspawnpoint = v
 		break
 	end
 	LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 1, 0))
-	RunService.RenderStepped:Wait()
-	Settings.FallDamageFilter = false
+	LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 1, 0)
+	for i = 1,50,1 do
+		if Settings.falldamagefilter == false then
+			Settings.falldamagefilter = true
+		end
+		wait(0.1)
+	end
+	Settings.falldamagefilter = false
 end
 
 -- Esp Setup
@@ -1046,6 +1051,7 @@ MiscTab:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_r
 MiscTab:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
 MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
+MiscTab:AddToggle({Name = "No Fall Damage", Default = false, Flag = "misc_no_fall_damage", Callback = function() saveData() end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -1231,7 +1237,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				args[1] = ReplicatedStorage.Weapons.Karambit
 			elseif self.Name == "test" then
 				return wait(99e99)
-			elseif self.Name == "FallDamage" and Settings.FallDamageFilter == true then
+			elseif self.Name == "FallDamage" and OrionLib.Flags["misc_no_fall_damage"].Value == true or self.Name == "FallDamage" and Settings.falldamagefilter == true then
 				return
 			end
 		elseif method == "InvokeServer" then

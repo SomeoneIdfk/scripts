@@ -1559,7 +1559,8 @@ OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function(val)
 
 		if OrionLib.Flags["misc_auto_join"].Value ~= "None" then
 			local var = OrionLib.Flags["misc_auto_join"].Value == "Terrorists" and "T" or OrionLib.Flags["misc_auto_join"].Value == "Counter-Terrorists" and "CT"
-			repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var and OblivionMapChange.Value == val
+			local rounds = workspace.Status.Rounds.Value
+			repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var and OblivionMapChange.Value == val and rounds == workspace.Status.Rounds.Value
 		end
 	end)
 end)

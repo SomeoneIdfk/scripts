@@ -1288,20 +1288,20 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 						return args[1]
 					end
 				elseif args[2] ~= LocalPlayer then
-					print('1')
+					--print('1')
 					if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" and IsAlive(args[2]) == false and GetTeam(args[2]) ~= "s" then
-						print('2')
+						--print('2')
 						coroutine.wrap(function()
 							if tagsTableFind(args[2].UserId, "id") then
-								print('3')
+								--print('3')
 								DisplayChat.moveOldMessages()
 								DisplayChat.createNewMessage("<Dead Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
-								print('4')
+								--print('4')
 							else
-								print('3')
+								--print('3')
 								DisplayChat.moveOldMessages()
 								DisplayChat.createNewMessage("<Dead Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
-								print('4')
+								--print('4')
 							end
 						end)()
 					end

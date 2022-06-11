@@ -31,13 +31,13 @@ writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubuserconten
 writefile("oblivion/weapon_types.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapons.cfg"))
 
 -- Main
-repeat wait() until workspace["Map"] and workspace.Map["Origin"]
+repeat wait() until workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Origin")
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50)}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -49,6 +49,7 @@ end
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local Client = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
+local DisplayChat = getsenv(LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
 local Mouse = LocalPlayer:GetMouse()
 local FOV = Drawing.new("Circle")
 FOV.Thickness = 2
@@ -345,6 +346,16 @@ local function checkGamemode(mode)
 	end
 
 	return false
+end
+
+local function checkGame()
+	if game.PlaceId == 301549746 then
+		return "casual"
+	elseif game.PlaceId == 1480424328 then
+		return "unranked"
+	elseif game.PlaceId == 1869597719 then
+		return "deathmatch"
+	end
 end
 
 local function IsAlive(plr)
@@ -869,6 +880,18 @@ local function teleportTospawnpoint()
 	Settings.falldamagefilter = false
 end
 
+local function warmupCheck()
+	if game.PlaceId == 301549746 or game.PlaceId == 1480424328 then
+		if workspace.Status.TWins.Value == 0 and workspace.Status.CTWins.Value == 0 and workspace.Status.Rounds.Value ~= 1 then
+			return true
+		end
+	elseif game.PlaceId == 1869597719 then
+		return true
+	end
+
+	return false
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -1064,6 +1087,8 @@ MiscTab:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_remov
 MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "No Fall Damage", Default = false, Flag = "misc_no_fall_damage", Callback = function() saveData() end})
+MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function() saveData() end})
+MiscTab:AddDropdown({Name = "Auto Join", Default = "None", Options = {"None", "Terrorists", "Counter-Terrorists"}, Flag = "misc_auto_join", Callback = function() saveData() end})
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
@@ -1255,6 +1280,22 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 		elseif method == "InvokeServer" then
 			if self.Name == "Moolah" then
 				return wait(99e99)
+			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
+				if args[2] == LocalPlayer then
+					
+				elseif not args[2] == LocalPlayer then
+					if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" then
+						coroutine.wrap(function()
+							if tagsTableFind(args[2].UserId, "id") then
+								DisplayChat.moveOldMessages()
+								DisplayChat.createNewMessage("<Alive Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
+							else
+								DisplayChat.moveOldMessages()
+								DisplayChat.createNewMessage("<Alive Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
+							end
+						end)()
+					end
+				end
 			end
 		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
 			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and Settings.aimbot.target ~= nil then
@@ -1515,6 +1556,11 @@ OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
         if OrionLib.Flags["tags_online_check"].Value == true then
             tagsMessageOnlineSkids("forced")
         end
+
+		if OrionLib.Flags["misc_auto_join"].Value ~= "None" then
+			local var = OrionLib.Flags["misc_auto_join"].Value == "Terrorists" and "T" or OrionLib.Flags["misc_auto_join"].Value == "Counter-Terrorists" and "CT"
+			ReplicatedStorage.Events.JoinTeam:FireServer(var)
+		end
 	end)
 end)
 
@@ -1601,6 +1647,7 @@ if isfile("oblivion/data.cfg") then
 		for i,v in pairs(output.data) do
 			for i2,v2 in pairs(v) do
                 if OrionLib.Flags[i2] then
+					print(i2, v2.Value)
 				    OrionLib.Flags[i2]:Set(v2.Value)
                 else
                     Settings.saveerror = true

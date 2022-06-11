@@ -1547,7 +1547,7 @@ RunService.RenderStepped:Connect(function(step)
 	end)
 end)
 
-OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
+OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function(val)
 	pcall(function()
 		if OrionLib.Flags["misc_texture_remove"].Value == true then
 			removeTextures()
@@ -1559,7 +1559,7 @@ OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
 
 		if OrionLib.Flags["misc_auto_join"].Value ~= "None" then
 			local var = OrionLib.Flags["misc_auto_join"].Value == "Terrorists" and "T" or OrionLib.Flags["misc_auto_join"].Value == "Counter-Terrorists" and "CT"
-			repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var
+			repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var and OblivionMapChange.Value == val
 		end
 	end)
 end)
@@ -1647,7 +1647,6 @@ if isfile("oblivion/data.cfg") then
 		for i,v in pairs(output.data) do
 			for i2,v2 in pairs(v) do
                 if OrionLib.Flags[i2] then
-					print(i2, v2.Value)
 				    OrionLib.Flags[i2]:Set(v2.Value)
                 else
                     Settings.saveerror = true

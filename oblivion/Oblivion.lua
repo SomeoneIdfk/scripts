@@ -37,7 +37,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = false, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50)}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50)}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -50,6 +50,7 @@ end
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local Client = getsenv(LocalPlayer.PlayerGui:WaitForChild("Client"))
 local DisplayChat = getsenv(LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat)
+local createNewMessage = DisplayChat.createNewMessage
 local Mouse = LocalPlayer:GetMouse()
 local FOV = Drawing.new("Circle")
 FOV.Thickness = 2
@@ -1281,17 +1282,26 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 			if self.Name == "Moolah" then
 				return wait(99e99)
 			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
+				print(args[2].Name .. ": " .. args[1])
 				if args[2] == LocalPlayer then
-					
-				elseif not args[2] == LocalPlayer then
-					if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" then
+					if true == false then
+						return args[1]
+					end
+				elseif args[2] ~= LocalPlayer then
+					print('1')
+					if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" and IsAlive(args[2]) == false and GetTeam(args[2]) ~= "s" then
+						print('2')
 						coroutine.wrap(function()
 							if tagsTableFind(args[2].UserId, "id") then
+								print('3')
 								DisplayChat.moveOldMessages()
-								DisplayChat.createNewMessage("<Alive Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
+								DisplayChat.createNewMessage("<Dead Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
+								print('4')
 							else
+								print('3')
 								DisplayChat.moveOldMessages()
-								DisplayChat.createNewMessage("<Alive Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
+								DisplayChat.createNewMessage("<Dead Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
+								print('4')
 							end
 						end)()
 					end
@@ -1306,6 +1316,18 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 	
 	return oldNamecall(self, unpack(args))
 end))
+
+DisplayChat.createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
+	if plr == LocalPlayer.Name then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	elseif teamcolor == Settings.DeadColor then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	elseif teamcolor == Settings.TaggedColor then
+		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	end
+	
+	return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+end
 
 Mouse.Move:Connect(function()
 	if FOV.Visible then

@@ -1071,9 +1071,10 @@ MT_QOLSec:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_rem
 MT_QOLSec:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "No Fall Damage", Default = false, Flag = "misc_no_fall_damage", Callback = function() saveData() end})
+MiscTab:AddToggle({Name = "Filter Chat", Default = false, Flag = "misc_filter_chat", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function(val) saveData() if val == true then OrionLib:MakeNotification({Name = "Oblivion", Content = "Dead Chat is still in it's early state.", Image = "rbxassetid://4384401360", Time = 10}) end end})
 MiscTab:AddDropdown({Name = "Auto Join", Default = "None", Options = {"None", "Terrorists", "Counter-Terrorists"}, Flag = "misc_auto_join", Callback = function() saveData() end})
-MiscTab:AddButton({Name = "Kill Server", Callback = function() if mainPlayerCheck(LocalPlayer) then if knifeOrGun() ~= "gun" then OrionLib:MakeNotification({Name = "Oblivion", Content = "Pull out your gun.", Image = "rbxassetid://4384401360", Time = 5}) repeat wait(0.5) until knifeOrGun() == "gun" or mainPlayerCheck(LocalPlayer) == false end if knifeOrGun() == "gun" and mainPlayerCheck(LocalPlayer) then for i = 1,50,1 do repeat wait() until LocalPlayer.Character:FindFirstChild("Gun") and LocalPlayer.Character.Gun:FindFirstChild("Mag") coroutine.wrap(function() for i2 = 1,50,1 do local mag = LocalPlayer.Character.Gun.Mag game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag) if i == 50 and i2 == 50 then OrionLib:MakeNotification({Name = "Oblivion", Content = "Server killed.", Image = "rbxassetid://4384401360", Time = 5}) end end end)() for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do if v.Name == "MagDrop" then v:Destroy() end end end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "Cancelled.", Image = "rbxassetid://4384401360", Time = 5}) end elseif not mainPlayerCheck(LocalPlayer) then OrionLib:MakeNotification({Name = "Oblivion", Content = "You need to be alive for this action.", Image = "rbxassetid://4384401360", Time = 5}) end end})
+MiscTab:AddButton({Name = "Kill Server", Callback = function() if mainPlayerCheck(LocalPlayer) then if knifeOrGun() ~= "gun" then OrionLib:MakeNotification({Name = "Oblivion", Content = "Pull out your gun.", Image = "rbxassetid://4384401360", Time = 5}) repeat wait(0.5) until knifeOrGun() == "gun" or mainPlayerCheck(LocalPlayer) == false end if knifeOrGun() == "gun" and mainPlayerCheck(LocalPlayer) then for i = 1,50,1 do repeat wait() until LocalPlayer.Character:FindFirstChild("Gun") and LocalPlayer.Character.Gun:FindFirstChild("Mag") coroutine.wrap(function() for i2 = 1,50,1 do local mag = LocalPlayer.Character.Gun.Mag game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag) if i == 50 and i2 == 50 then OrionLib:MakeNotification({Name = "Oblivion", Content = "Server killed.", Image = "rbxassetid://4384401360", Time = 5}) end end end)() for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do if v.Name == "MagDrop" then v:Destroy() end end end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "Cancelled.", Image = "rbxassetid://4384401360", Time = 5}) end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "You need to be alive for this action.", Image = "rbxassetid://4384401360", Time = 5}) end end})
 
 local ST_MiscSec = SettingsTab:AddSection({Name = "Misc"})
 local ST_VersionSec = SettingsTab:AddSection({Name = "Version"})
@@ -1298,14 +1299,27 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 end))
 
 DisplayChat.createNewMessage = function(plr, msg, teamcolor, msgcolor, offset, line)
-	if plr == LocalPlayer.Name then
-		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	elseif teamcolor == Settings.DeadColor then
-		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
-	elseif teamcolor == Settings.TaggedColor then
-		return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+	if OrionLib.Flags["misc_filter_chat"].Value == true then
+		if plr == LocalPlayer.Name then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif teamcolor == Settings.DeadColor then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif teamcolor == Settings.TaggedColor then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		elseif game.Players:FindFirstChild(plr) and checkGame() == "casual" then
+			local player = game.Players[plr]
+			if PlayerCheck(player) then
+				return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+			elseif warmupCheck() or workspace.Status.RoundOver.Value == true or workspace.Status.Preparation.Value == true then
+				return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+			elseif IsAlive(player) == false and GetTeam(player) ~= "s" and warmupCheck() == false and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false and offset == 0.01 then
+				return createNewMessage("<Warning> "..plr, msg, Settings.DeadColor, msgcolor, offset, line)
+			end
+		elseif game.Players:FindFirstChild(plr) and checkGame() ~= "casual" then
+			return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
+		end
 	end
-	
+
 	return createNewMessage(plr, msg, teamcolor, msgcolor, offset, line)
 end
 

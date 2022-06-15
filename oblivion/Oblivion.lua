@@ -62,7 +62,7 @@ local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperAr
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
 
-local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion"})
+local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion", IntroEnabled = false, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846", Icon = "rbxassetid://1521636846"})
 
 -- Workspace
 local Oblivion = Instance.new("Folder", workspace)
@@ -368,16 +368,28 @@ local function IsAlive(plr)
 end
 
 local function knifeOrGun()
-	local success = table.foreach(Settings.weapon_data, function(i, v)
-		if Client.gun ~= "none" and v.name == Client.gun.Name then
+	local a,b = pcall(function()
+		local val = table.foreach(Settings.weapon_data, function(i, v)
+			if Client.gun and Client.gun ~= "none" and v.name == Client.gun.Name then
+				return "gun"
+			end
+		end)
+
+		if val then
 			return "gun"
 		end
 	end)
 
-	if success == "gun" then
+	local c,d = pcall(function()
+		return Client.gun:FindFirstChild("Melee")
+	end)
+
+	if a and b == "gun" then
 		return "gun"
-	elseif Client.gun:FindFirstChild("Melee") then
+	elseif c and d then
 		return "knife"
+	elseif not a or not c then
+		return "unknown"
 	end
 end
 
@@ -921,181 +933,186 @@ local TagTab = Window:MakeTab({Name = "Tags", Icon = "rbxassetid://4384401919"})
 local MiscTab = Window:MakeTab({Name = "Misc", Icon = "rbxassetid://4384401360"})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185"})
 
-AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function(val) saveData() if val == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
-AimTab:AddDropdown({Name = "Aim Priority", Default = "Distance", Options = {"Distance", "Crosshair"}, Flag = "aimbot_priority", Callback = function() saveData() end})
-AimTab:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim", "Silent Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
-AimTab:AddSlider({Name = "Activation Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_activation_delay", Callback = function() saveData() end})
-AimTab:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Callback = function(val) saveData() FOV.Visible = val end})
-AimTab:AddSlider({Name = "FOV Reset", Min = 0, Max = 1000, Default = 300, Color3.fromRGB(255, 255, 255), Increment = 50, Flag = "aimbot_fov_reset", Callback = function() saveData() end})
-AimTab:AddSlider({Name = "FOV Thickness", Min = 1, Max = 10, Default = 3, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_fov_thickness", Callback = function(val) saveData() FOV.Thickness = val TriggerbotFOV.Thickness = val end})
-AimTab:AddSlider({Name = "FOV Radius", Min = 0, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Callback = function(val) saveData() FOV.Radius = val end})
-AimTab:AddSlider({Name = "FOV Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_fov_transparency", Callback = function(val) saveData() FOV.Transparency = (val / 100) TriggerbotFOV.Transparency = (val / 100) end})
-AimTab:AddColorpicker({Name = "FOV Color", Default = Color3.fromRGB(255, 255, 255), Flag = "aimbot_fov_color", Callback = function(val) saveData() FOV.Color = val TriggerbotFOV.Color = val end})
-AimTab:AddToggle({Name = "TriggerBot", Default = false, Flag = "aimbot_triggerbot_enable", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "Triggerbot FOV", Default = false, Flag = "aimbot_triggerbot_fov", Callback = function(val) saveData() TriggerbotFOV.Visible = val end})
-AimTab:AddToggle({Name = "Stand Still", Default = false, Flag = "aimbot_stand_still", Callback = function() saveData() end})
-AimTab:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooting_delay", Callback = function() saveData() end})
-AimTab:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
-AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
+local AT_MainSec = AimTab:AddSection({Name = "Main"})
+local AT_AimSec = AimTab:AddSection({Name = "Aim"})
+local AT_FOVSec = AimTab:AddSection({Name = "FOV"})
+local AT_TriggerBotSec = AimTab:AddSection({Name = "TriggerBot"})
+AT_MainSec:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Callback = function() saveData() end})
+AT_MainSec:AddToggle({Name = "Visible Only", Default = false, Flag = "aimbot_visible", Callback = function() saveData() end})
+AT_MainSec:AddToggle({Name = "Keybind Only", Default = false, Flag = "aimbot_keybind_only", Callback = function(val) saveData() if val == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
+AT_MainSec:AddBind({Name = "Bind", Default = Enum.KeyCode.E, Hold = false, Flag = "aimbot_keybind", Callback = function() saveData() Settings.aimbot.aim = Settings.aimbot.aim == true and false or Settings.aimbot.aim == false and true if OrionLib.Flags["aimbot_keybind_only"].Value == true then local setting = Settings.aimbot.aim == true and "enabled" or Settings.aimbot.aim == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..setting, Image = "rbxassetid://4483345998", Time = 3}) end end})
+AT_AimSec:AddDropdown({Name = "Aim Priority", Default = "Distance", Options = {"Distance", "Crosshair"}, Flag = "aimbot_priority", Callback = function() saveData() end})
+AT_AimSec:AddDropdown({Name = "Aim Method", Default = "Smooth Aim", Options = {"Smooth Aim", "Lock Aim", "Silent Aim"}, Flag = "aimbot_method", Callback = function() saveData() end})
+AT_AimSec:AddSlider({Name = "Activation Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_activation_delay", Callback = function() saveData() end})
+AT_AimSec:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_smoothness", Callback = function() saveData() end})
+AT_FOVSec:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Callback = function(val) saveData() FOV.Visible = val end})
+AT_FOVSec:AddSlider({Name = "FOV Reset", Min = 0, Max = 1000, Default = 300, Color3.fromRGB(255, 255, 255), Increment = 50, Flag = "aimbot_fov_reset", Callback = function() saveData() end})
+AT_FOVSec:AddSlider({Name = "FOV Thickness", Min = 1, Max = 10, Default = 3, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_fov_thickness", Callback = function(val) saveData() FOV.Thickness = val TriggerbotFOV.Thickness = val end})
+AT_FOVSec:AddSlider({Name = "FOV Radius", Min = 0, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Callback = function(val) saveData() FOV.Radius = val end})
+AT_FOVSec:AddSlider({Name = "FOV Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "aimbot_fov_transparency", Callback = function(val) saveData() FOV.Transparency = (val / 100) TriggerbotFOV.Transparency = (val / 100) end})
+AT_FOVSec:AddColorpicker({Name = "FOV Color", Default = Color3.fromRGB(255, 255, 255), Flag = "aimbot_fov_color", Callback = function(val) saveData() FOV.Color = val TriggerbotFOV.Color = val end})
+AT_TriggerBotSec:AddToggle({Name = "TriggerBot", Default = false, Flag = "aimbot_triggerbot_enable", Callback = function() saveData() end})
+AT_TriggerBotSec:AddToggle({Name = "Triggerbot FOV", Default = false, Flag = "aimbot_triggerbot_fov", Callback = function(val) saveData() TriggerbotFOV.Visible = val end})
+AT_TriggerBotSec:AddToggle({Name = "Stand Still", Default = false, Flag = "aimbot_stand_still", Callback = function() saveData() end})
+AT_TriggerBotSec:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aimbot_shooting_delay", Callback = function() saveData() end})
+AT_TriggerBotSec:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 
-RageTab:AddLabel("God Mode")
-RageTab:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Hostage", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
-RageTab:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
-RageTab:AddButton({Name = "Set", Callback = function() godMode() end})
-RageTab:AddLabel("Kill All")
-RageTab:AddDropdown({Name = "Weapon", Default = "Held", Options = {"Held", "Random Gun", "Random Knife", "Both"}, Flag = "rage_kill_weapon", Callback = function() saveData() end})
-RageTab:AddToggle({Name = "Insta Kill", Default = false, Flag = "rage_insta_kill", Callback = function() saveData() end})
-RageTab:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_kill_velocity_prediction", Callback = function() saveData() end})
-RageTab:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
-RageTab:AddSlider({Name = "Loop Rate", Min = 1, Max = 30, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
-RageTab:AddToggle({Name = "Kill All", Default = false, Flag = "rage_kill_all", Callback = function() saveData() end})
-RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_1"})
-RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_1"})
-RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_2"})
-RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_2"})
-RageTab:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_3"})
-RageTab:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_3"})
-RageTab:AddLabel("Teleportation")
-RageTab:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
+local RT_GodModeSec = RageTab:AddSection({Name = "God Mode"})
+local RT_KillAllSec = RageTab:AddSection({Name = "Kill All"})
+local RT_Kill1Sec = RageTab:AddSection({Name = "Kill Player"})
+local RT_Kill2Sec = RageTab:AddSection({Name = "Kill Player"})
+local RT_Kill3Sec = RageTab:AddSection({Name = "Kill Player"})
+local RT_TeleportSec = RageTab:AddSection({Name = "Teleportation"})
+local RT_AntiAntiAimSec = RageTab:AddSection({Name = "Anti Anti-Aim"})
+RT_GodModeSec:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Hostage", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
+RT_GodModeSec:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
+RT_GodModeSec:AddButton({Name = "Set", Callback = function() godMode() end})
+RT_KillAllSec:AddDropdown({Name = "Weapon", Default = "Held", Options = {"Held", "Random Gun", "Random Knife", "Both"}, Flag = "rage_kill_weapon", Callback = function() saveData() end})
+RT_KillAllSec:AddToggle({Name = "Insta Kill", Default = false, Flag = "rage_insta_kill", Callback = function() saveData() end})
+RT_KillAllSec:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_kill_velocity_prediction", Callback = function() saveData() end})
+RT_KillAllSec:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
+RT_KillAllSec:AddSlider({Name = "Loop Rate", Min = 1, Max = 30, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
+RT_KillAllSec:AddToggle({Name = "Kill All", Default = false, Flag = "rage_kill_all", Callback = function() saveData() end})
+RT_Kill1Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_1"})
+RT_Kill1Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_1"})
+RT_Kill2Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_2"})
+RT_Kill2Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_2"})
+RT_Kill3Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_3"})
+RT_Kill3Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_3"})
+RT_TeleportSec:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
+RT_AntiAntiAimSec:AddToggle({Name = "Pitch Manipulation", Default = false, Flag = "rage_anti_anti_aim_pitch", Callback = function() saveData() end})
+RT_AntiAntiAimSec:AddToggle({Name = "Roll Manipulation", Default = false, Flag = "rage_anti_anti_aim_roll", Callback = function() saveData() end})
+RT_AntiAntiAimSec:AddToggle({Name = "Animation Manipulation", Default = false, Flag = "rage_anti_anti_aim_animation", Callback = function() saveData() end})
 
-EspTab:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
-EspTab:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
-EspTab:AddToggle({Name = "Team Check", Default = false, Flag = "esp_team_check", Callback = function(val) saveData() espLib.options.teamCheck = val end})
-EspTab:AddToggle({Name = "Team Color", Default = false, Flag = "esp_team_color", Callback = function(val) saveData() espLib.options.teamColor = val end})
-EspTab:AddToggle({Name = "Name", Default = false, Flag = "esp_name", Callback = function(val) saveData() espLib.options.names = val end})
-EspTab:AddToggle({Name = "Health", Default = false, Flag = "esp_health", Callback = function(val) saveData() espLib.options.healthText = val end})
-EspTab:AddToggle({Name = "Health Bar", Default = false, Flag = "esp_health_bar", Callback = function(val) saveData() espLib.options.healthBars = val end})
-EspTab:AddToggle({Name = "Distance", Default = false, Flag = "esp_distance", Callback = function(val) saveData() espLib.options.distance = val end})
-EspTab:AddColorpicker({Name = "Misc Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_misc_color", Callback = function(val) saveData() espLib.options.nameColor = val espLib.options.healthTextColor = val espLib.options.healthBarsColor = val espLib.options.distanceColor = val end})
-EspTab:AddSlider({Name = "Misc Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "esp_misc_transparency", Callback = function(val) saveData() espLib.options.nameTransparency = (val / 100) espLib.options.healthTextTransparency = (val / 100) espLib.options.healthBarsTransparency = (val / 100) espLib.options.distanceTransparency = (val / 100) end})
-EspTab:AddSlider({Name = "Box Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_box_transparency", Callback = function(val) saveData() espLib.options.boxesTransparency = (val / 100) end})
-EspTab:AddColorpicker({Name = "Box Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_box_color", Callback = function(val) saveData() espLib.options.boxesColor = val end})
+local ET_MainSec = EspTab:AddSection({Name = "Main"})
+local ET_AddSec = EspTab:AddSection({Name = "Additional"})
+local ET_TracerSec = EspTab:AddSection({Name = "Tracers"})
+ET_MainSec:AddToggle({Name = "Enable", Default = false, Flag = "esp_enable", Callback = function(val) saveData() espLib.options.enabled = val end})
+ET_MainSec:AddToggle({Name = "Visible Only", Default = false, Flag = "esp_visible", Callback = function(val) saveData() espLib.options.visibleOnly = val end})
+ET_MainSec:AddToggle({Name = "Team Check", Default = false, Flag = "esp_team_check", Callback = function(val) saveData() espLib.options.teamCheck = val end})
+ET_MainSec:AddToggle({Name = "Team Color", Default = false, Flag = "esp_team_color", Callback = function(val) saveData() espLib.options.teamColor = val end})
+ET_AddSec:AddToggle({Name = "Name", Default = false, Flag = "esp_name", Callback = function(val) saveData() espLib.options.names = val end})
+ET_AddSec:AddToggle({Name = "Health", Default = false, Flag = "esp_health", Callback = function(val) saveData() espLib.options.healthText = val end})
+ET_AddSec:AddToggle({Name = "Health Bar", Default = false, Flag = "esp_health_bar", Callback = function(val) saveData() espLib.options.healthBars = val end})
+ET_AddSec:AddToggle({Name = "Distance", Default = false, Flag = "esp_distance", Callback = function(val) saveData() espLib.options.distance = val end})
+ET_AddSec:AddColorpicker({Name = "Misc Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_misc_color", Callback = function(val) saveData() espLib.options.nameColor = val espLib.options.healthTextColor = val espLib.options.healthBarsColor = val espLib.options.distanceColor = val end})
+ET_AddSec:AddSlider({Name = "Misc Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 10, Flag = "esp_misc_transparency", Callback = function(val) saveData() espLib.options.nameTransparency = (val / 100) espLib.options.healthTextTransparency = (val / 100) espLib.options.healthBarsTransparency = (val / 100) espLib.options.distanceTransparency = (val / 100) end})
+ET_AddSec:AddSlider({Name = "Box Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_box_transparency", Callback = function(val) saveData() espLib.options.boxesTransparency = (val / 100) end})
+ET_AddSec:AddColorpicker({Name = "Box Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_box_color", Callback = function(val) saveData() espLib.options.boxesColor = val end})
 --[[EspTab:AddToggle({Name = "Chams", Default = false, Flag = "esp_chams", Callback = function(val) saveData() espLib.options.chams = val end})
 EspTab:AddSlider({Name = "Chams Transparency", Min = 0, Max = 100, Default = 0, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_chams_transparency", Callback = function(val) saveData() espLib.options.chamsTransparency = (val / 100) end})
 EspTab:AddColorpicker({Name = "Chams Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_chams_color", Callback = function(val) saveData() espLib.options.chamsColor = val end})]]--
-EspTab:AddToggle({Name = "Tracers", Default = false, Flag = "esp_tracers", Callback = function(val) saveData() espLib.options.tracers = val end})
-EspTab:AddSlider({Name = "Tracer Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_tracer_transparency", Callback = function(val) saveData() espLib.options.tracerTransparency = (val / 100) end})
-EspTab:AddColorpicker({Name = "Tracer Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_tracer_color", Callback = function(val) saveData() espLib.options.tracerColor = val end})
-EspTab:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bottom", "Top", "Mouse"}, Flag = "esp_tracerorigin", Callback = function(val) saveData() espLib.options.tracerOrigin = val end})
+ET_TracerSec:AddToggle({Name = "Tracers", Default = false, Flag = "esp_tracers", Callback = function(val) saveData() espLib.options.tracers = val end})
+ET_TracerSec:AddSlider({Name = "Tracer Transparency", Min = 0, Max = 100, Default = 100, Color3.fromRGB(0, 0, 0), Increment = 10, Flag = "esp_tracer_transparency", Callback = function(val) saveData() espLib.options.tracerTransparency = (val / 100) end})
+ET_TracerSec:AddColorpicker({Name = "Tracer Color", Default = Color3.fromRGB(255, 255, 255), Flag = "esp_tracer_color", Callback = function(val) saveData() espLib.options.tracerColor = val end})
+ET_TracerSec:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bottom", "Top", "Mouse"}, Flag = "esp_tracerorigin", Callback = function(val) saveData() espLib.options.tracerOrigin = val end})
 
-SkinsTab:AddToggle({Name = "Custom Skins", Default = false, Flag = "skins_custom", Callback = function(val) saveData()
-	if val == true then
-		loadCustomSkins()
-		if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then
-			dropdownCustom("normal", "guns")
-		end
-		if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then
-			dropdownCustom("normal", "knives")
-		end
-	elseif val == false then
-		if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then
-			dropdownCustom("normal", "guns")
-		end
-		if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then
-			dropdownCustom("normal", "knives")
-		end
-	end end})
-SkinsTab:AddDropdown({Name = "Weapon", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val)
-	if val == "-" and OrionLib.Flags["skins_weapon_skin"] then
-		dropdownRefresh("skins_weapon_skin", "-", {"-"})
-	elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then
-		dropdownCustom("normal", "guns")
-	end end})
-SkinsTab:AddDropdown({Name = "Weapon Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val)
-	if Settings.dropdownfilter == false and val == "Show custom skins" then
-		dropdownCustom("custom", "guns")
-	elseif Settings.dropdownfilter == false and val == "Show normal skins" then
-		dropdownCustom("normal", "guns")
-	elseif Settings.dropdownfilter == false and val ~= nil then
-		Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val
-		saveData()
-	end
-end})
-SkinsTab:AddDropdown({Name = "Knife", Default = "-", Options = {"-"}, Flag = "skins_knife", Callback = function(val)
-	if val == "-" and OrionLib.Flags["skins_knife_skin"] then
-		modelChange("v_T Knife", "v_T Knife")
-		modelChange("v_CT Knife", "v_CT Knife")
-		dropdownRefresh("skins_knife_skin", "-", {"-"})
-		saveData()
-	elseif val ~= "-" and OrionLib.Flags["skins_knife_skin"] then
-		modelChange("v_T Knife", "v_"..val)
-		modelChange("v_CT Knife", "v_"..val)
-		dropdownCustom("normal", "knives")
-		saveData()
-	end end})
-SkinsTab:AddDropdown({Name = "Knife Skin", Default = "-", Options = {"-"}, Flag = "skins_knife_skin", Callback = function(val)
-	if Settings.dropdownfilter == false and val == "Show custom skins" then
-		dropdownCustom("custom", "knives")
-	elseif Settings.dropdownfilter == false and val == "Show normal skins" then
-		dropdownCustom("normal", "knives")
-	elseif Settings.dropdownfilter == false and val ~= nil then
-		Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] = val
-		saveData()
-	end end})
-SkinsTab:AddDropdown({Name = "Glove", Default = "-", Options = {"-"}, Flag = "skins_glove", Callback = function(val)
-	if val == "-" and OrionLib.Flags["skins_glove_skin"] then
-		dropdownRefresh("skins_glove_skin", "-", {"-"})
-		saveData()
-	elseif val ~= "-" and OrionLib.Flags["skins_glove_skin"] then
-		dropdownRefresh("skins_glove_skin", "Stock", skinsList(val, Settings.glove_data))
-		saveData()
-	end end})
-SkinsTab:AddDropdown({Name = "Glove Skin", Default = "-", Options = {"-"}, Flag = "skins_glove_skin", Callback = function() saveData() end})
+local ST_AddSec = SkinsTab:AddSection({Name = "Additional"})
+local ST_WeaponSec = SkinsTab:AddSection({Name = "Weapons"})
+local ST_KnifeSec = SkinsTab:AddSection({Name = "Knives"})
+local ST_GloveSec = SkinsTab:AddSection({Name = "Gloves"})
+ST_AddSec:AddToggle({Name = "Custom Skins", Default = false, Flag = "skins_custom", Callback = function(val) saveData() if val == true then loadCustomSkins() if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then dropdownCustom("normal", "guns") end if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then dropdownCustom("normal", "knives") end elseif val == false then if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then dropdownCustom("normal", "guns") end if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then dropdownCustom("normal", "knives") end end end})
+ST_WeaponSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val) if val == "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownRefresh("skins_weapon_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownCustom("normal", "guns") end end})
+ST_WeaponSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val) if Settings.dropdownfilter == false and val == "Show custom skins" then dropdownCustom("custom", "guns") elseif Settings.dropdownfilter == false and val == "Show normal skins" then dropdownCustom("normal", "guns") elseif Settings.dropdownfilter == false and val ~= nil then Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val saveData() end end})
+ST_KnifeSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_knife", Callback = function(val) if val == "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("skins_knife_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownCustom("normal", "knives") saveData() end end})
+ST_KnifeSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_knife_skin", Callback = function(val) if Settings.dropdownfilter == false and val == "Show custom skins" then dropdownCustom("custom", "knives") elseif Settings.dropdownfilter == false and val == "Show normal skins" then dropdownCustom("normal", "knives") elseif Settings.dropdownfilter == false and val ~= nil then Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] = val saveData() end end})
+ST_GloveSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_glove", Callback = function(val) if val == "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "Stock", skinsList(val, Settings.glove_data)) saveData() end end})
+ST_GloveSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_glove_skin", Callback = function() saveData() end})
 
-ViewmodelsTab:AddToggle({Name = "Toggle Arms", Default = false, Flag = "viewmodels_arms_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_arms_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_arms_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_arms_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Gloves", Default = false, Flag = "viewmodels_gloves_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "viewmodels_gloves_show", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_gloves_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_gloves_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_gloves_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Sleeves", Default = false, Flag = "viewmodels_sleeves_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_sleeves_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_sleeves_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_sleeves_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Toggle Weapon", Default = false, Flag = "viewmodels_weapon_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "viewmodels_weapon_show", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_weapon_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_weapon_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_weapon_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Buller Tracers", Default = false, Flag = "viewmodels_bullet_tracer_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_bullet_tracer_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_tracer_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_tracer_transparency", Callback = function() saveData() end})
-ViewmodelsTab:AddToggle({Name = "Bullet Impacts", Default = false, Flag = "viewmodels_bullet_impact_enable", Callback = function() saveData() end})
-ViewmodelsTab:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_bullet_impact_color", Callback = function() saveData() end})
-ViewmodelsTab:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_impact_material", Callback = function() saveData() end})
-ViewmodelsTab:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_impact_transparency", Callback = function() saveData() end})
+local VT_ArmsSec = ViewmodelsTab:AddSection({Name = "Arms"})
+local VT_GlovesSec = ViewmodelsTab:AddSection({Name = "Gloves"})
+local VT_SleevesSec = ViewmodelsTab:AddSection({Name = "Sleeves"})
+local VT_WeaponSec = ViewmodelsTab:AddSection({Name = "Weapon"})
+local VT_BulletSec = ViewmodelsTab:AddSection({Name = "Bullet"})
+VT_ArmsSec:AddToggle({Name = "Toggle", Default = false, Flag = "viewmodels_arms_enable", Callback = function() saveData() end})
+VT_ArmsSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_arms_color", Callback = function() saveData() end})
+VT_ArmsSec:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_arms_material", Callback = function() saveData() end})
+VT_ArmsSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_arms_transparency", Callback = function() saveData() end})
+VT_GlovesSec:AddToggle({Name = "Toggle", Default = false, Flag = "viewmodels_gloves_enable", Callback = function() saveData() end})
+VT_GlovesSec:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "viewmodels_gloves_show", Callback = function() saveData() end})
+VT_GlovesSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_gloves_color", Callback = function() saveData() end})
+VT_GlovesSec:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_gloves_material", Callback = function() saveData() end})
+VT_GlovesSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_gloves_transparency", Callback = function() saveData() end})
+VT_SleevesSec:AddToggle({Name = "Toggle", Default = false, Flag = "viewmodels_sleeves_enable", Callback = function() saveData() end})
+VT_SleevesSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_sleeves_color", Callback = function() saveData() end})
+VT_SleevesSec:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_sleeves_material", Callback = function() saveData() end})
+VT_SleevesSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_sleeves_transparency", Callback = function() saveData() end})
+VT_WeaponSec:AddToggle({Name = "Toggle", Default = false, Flag = "viewmodels_weapon_enable", Callback = function() saveData() end})
+VT_WeaponSec:AddDropdown({Name = "Show", Default = "Skin", Options = {"Skin", "Color"}, Flag = "viewmodels_weapon_show", Callback = function() saveData() end})
+VT_WeaponSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_weapon_color", Callback = function() saveData() end})
+VT_WeaponSec:AddDropdown({Name = "Material", Default = "SmoothPlastic", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_weapon_material", Callback = function() saveData() end})
+VT_WeaponSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_weapon_transparency", Callback = function() saveData() end})
+VT_BulletSec:AddToggle({Name = "Tracers", Default = false, Flag = "viewmodels_bullet_tracer_enable", Callback = function() saveData() end})
+VT_BulletSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_bullet_tracer_color", Callback = function() saveData() end})
+VT_BulletSec:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_tracer_material", Callback = function() saveData() end})
+VT_BulletSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_tracer_transparency", Callback = function() saveData() end})
+VT_BulletSec:AddToggle({Name = "Impacts", Default = false, Flag = "viewmodels_bullet_impact_enable", Callback = function() saveData() end})
+VT_BulletSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), Flag = "viewmodels_bullet_impact_color", Callback = function() saveData() end})
+VT_BulletSec:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_impact_material", Callback = function() saveData() end})
+VT_BulletSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_impact_transparency", Callback = function() saveData() end})
 
-TagTab:AddDropdown({Name = "Select Player", Default = "-", Options = {"-"}, Flag = "tags_select_player"})
-TagTab:AddButton({Name = "Add Tag", Callback = function() if OrionLib.Flags["tags_select_player"].Value ~= "-" then if not tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then table.insert(TaggedSkids, {[game.Players[OrionLib.Flags["tags_select_player"].Value].UserId] = OrionLib.Flags["tags_select_player"].Value}) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Tagged player: "..OrionLib.Flags["tags_select_player"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) OrionLib.Flags["tags_select_player"]:Set("-") dropdownRefresh("tags_select_tag", "-", tagsListUsernames()) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() elseif tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then OrionLib:MakeNotification({Name = "Oblivion", Content = OrionLib.Flags["tags_select_player"].Value.." is already tagged.", Image = "rbxassetid://4384401919", Time = 5}) end end end})
-TagTab:AddDropdown({Name = "Select Tag", Default = "-", Options = {"-"}, Flag = "tags_select_tag", Callback = function(val) if val ~= "-" and tagsTableFind(val, "name") then tagsUpdateLabels("live_reset") tagsUpdateLabels("live", tagsListOnlineSkids(val)) else tagsUpdateLabels("live_reset") end end})
-TagTab:AddButton({Name = "Remove Tag", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then if tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name") then table.remove(TaggedSkids, tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name")) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Removed tag on: "..OrionLib.Flags["tags_select_tag"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames()) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() end end end})
-TagTab:AddButton({Name = "Copy Username", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then setclipboard(OrionLib.Flags["tags_select_tag"].Value) end end})
-TagTab:AddButton({Name = "Refresh List", Callback = function() TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() tagsUpdateLabels("offline") dropdownRefresh("tags_select_tag", "-", tagsListUsernames()) checkTaggedSkidsInGame() end})
-Settings.tags.countlabel = TagTab:AddLabel("")
-Settings.tags.onlinelabel = TagTab:AddLabel("Online:")
-TagTab:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function() saveData() end})
+local TT_InSessionSec = TagTab:AddSection({Name = "In-Session"})
+local TT_TaggedSec = TagTab:AddSection({Name = "Tagged"})
+local TT_AddSec = TagTab:AddSection({Name = "Additional"})
+TT_InSessionSec:AddDropdown({Name = "Select Player", Default = "-", Options = {"-"}, Flag = "tags_select_player"})
+TT_InSessionSec:AddButton({Name = "Add Tag", Callback = function() if OrionLib.Flags["tags_select_player"].Value ~= "-" then if not tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then table.insert(TaggedSkids, {[game.Players[OrionLib.Flags["tags_select_player"].Value].UserId] = OrionLib.Flags["tags_select_player"].Value}) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Tagged player: "..OrionLib.Flags["tags_select_player"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) OrionLib.Flags["tags_select_player"]:Set("-") dropdownRefresh("tags_select_tag", "-", tagsListUsernames()) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() elseif tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then OrionLib:MakeNotification({Name = "Oblivion", Content = OrionLib.Flags["tags_select_player"].Value.." is already tagged.", Image = "rbxassetid://4384401919", Time = 5}) end end end})
+TT_TaggedSec:AddDropdown({Name = "Select Tag", Default = "-", Options = {"-"}, Flag = "tags_select_tag", Callback = function(val) if val ~= "-" and tagsTableFind(val, "name") then tagsUpdateLabels("live_reset") tagsUpdateLabels("live", tagsListOnlineSkids(val)) else tagsUpdateLabels("live_reset") end end})
+TT_TaggedSec:AddButton({Name = "Remove Tag", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then if tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name") then table.remove(TaggedSkids, tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name")) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Removed tag on: "..OrionLib.Flags["tags_select_tag"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames()) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() end end end})
+TT_AddSec:AddButton({Name = "Copy Username", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then setclipboard(OrionLib.Flags["tags_select_tag"].Value) end end})
+TT_AddSec:AddButton({Name = "Refresh List", Callback = function() TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() tagsUpdateLabels("offline") dropdownRefresh("tags_select_tag", "-", tagsListUsernames()) checkTaggedSkidsInGame() end})
+Settings.tags.countlabel = TT_AddSec:AddLabel("")
+Settings.tags.onlinelabel = TT_AddSec:AddLabel("Online:")
+TT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function() saveData() end})
 
-MiscTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", Callback = function(val) saveData() if val == true then coroutine.wrap(function() while OrionLib.Flags["misc_anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end)() end end})
-MiscTab:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = RunService.Heartbeat:Connect(function() pcall(function() Client.splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
-MiscTab:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
-MiscTab:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
+local MT_QOLSec = MiscTab:AddSection({Name = "QOL"})
+MT_QOLSec:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", Callback = function(val) saveData() if val == true then coroutine.wrap(function() while OrionLib.Flags["misc_anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end)() end end})
+MT_QOLSec:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = RunService.Heartbeat:Connect(function() pcall(function() Client.splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
+MT_QOLSec:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
+MT_QOLSec:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "No Fall Damage", Default = false, Flag = "misc_no_fall_damage", Callback = function() saveData() end})
-MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function() saveData() end})
+MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function(val) saveData() if val == true then OrionLib:MakeNotification({Name = "Oblivion", Content = "Dead Chat is still in it's early state.", Image = "rbxassetid://4384401360", Time = 10}) end end})
 MiscTab:AddDropdown({Name = "Auto Join", Default = "None", Options = {"None", "Terrorists", "Counter-Terrorists"}, Flag = "misc_auto_join", Callback = function() saveData() end})
+MiscTab:AddButton({Name = "Kill Server", Callback = function()
+	if mainPlayerCheck(LocalPlayer) then
+		if knifeOrGun() ~= "gun" then
+			OrionLib:MakeNotification({Name = "Oblivion", Content = "Please pull out your gun.", Image = "rbxassetid://4384401360", Time = 5})
+			repeat wait(0.5) until knifeOrGun() == "gun" or mainPlayerCheck(LocalPlayer) == false
+		end
+		if knifeOrGun() == "gun" and mainPlayerCheck(LocalPlayer) then
+			for i = 1,50,1 do
+				repeat wait() until LocalPlayer.Character:FindFirstChild("Gun") and LocalPlayer.Character.Gun:FindFirstChild("Mag")
+				coroutine.wrap(function()
+					for i2 = 1,50,1 do
+						local mag = LocalPlayer.Character.Gun.Mag
+						game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag)
+						if i == 50 and i2 == 50 then
+							OrionLib:MakeNotification({Name = "Oblivion", Content = "Server killed.", Image = "rbxassetid://4384401360", Time = 5})
+						end
+					end
+				end)()
 
-SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
-SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val) if OrionLib.Flags["settings_build"] then dropdownRefresh("settings_build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty")) end end})
-SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "settings_build"})
-SettingsTab:AddButton({Name = "Set", Callback = function() writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["settings_branch"].Value]["data"][OrionLib.Flags["settings_build"].Value]) end})
+				for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do
+					if v.Name == "MagDrop" then
+						v:Destroy()
+					end
+				end
+			end
+		elseif mainPlayerCheck(LocalPlayer) == false then
+			OrionLib:MakeNotification({Name = "Oblivion", Content = "Cancelled.", Image = "rbxassetid://4384401360", Time = 5})
+		end
+	elseif not mainPlayerCheck(LocalPlayer) then
+		OrionLib:MakeNotification({Name = "Oblivion", Content = "You need to be alive for this action.", Image = "rbxassetid://4384401360", Time = 5})
+	end
+end})
+
+local ST_MiscSec = SettingsTab:AddSection({Name = "Misc"})
+local ST_VersionSec = SettingsTab:AddSection({Name = "Version"})
+ST_MiscSec:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
+ST_MiscSec:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
+ST_VersionSec:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val) if OrionLib.Flags["settings_build"] then dropdownRefresh("settings_build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty")) end end})
+ST_VersionSec:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "settings_build"})
+ST_VersionSec:AddButton({Name = "Set", Callback = function() writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["settings_branch"].Value]["data"][OrionLib.Flags["settings_build"].Value]) end})
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)
@@ -1282,26 +1299,20 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 			if self.Name == "Moolah" then
 				return wait(99e99)
 			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
-				print(args[2].Name .. ": " .. args[1])
+				--print(args[2].Name .. ": " .. args[1])
 				if args[2] == LocalPlayer then
 					if true == false then
 						return args[1]
 					end
 				elseif args[2] ~= LocalPlayer then
-					--print('1')
 					if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" and IsAlive(args[2]) == false and GetTeam(args[2]) ~= "s" then
-						--print('2')
 						coroutine.wrap(function()
 							if tagsTableFind(args[2].UserId, "id") then
-								--print('3')
 								DisplayChat.moveOldMessages()
 								DisplayChat.createNewMessage("<Dead Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
-								--print('4')
 							else
-								--print('3')
 								DisplayChat.moveOldMessages()
 								DisplayChat.createNewMessage("<Dead Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
-								--print('4')
 							end
 						end)()
 					end
@@ -1514,6 +1525,26 @@ RunService.RenderStepped:Connect(function(step)
 
 		coroutine.wrap(function()
 			for _,Player in pairs(game.Players:GetChildren()) do
+				coroutine.wrap(function()
+					if IsAlive(Player) and GetTeam(Player) ~= "s" and Player ~= LocalPlayer then
+						if OrionLib.Flags["rage_anti_anti_aim_pitch"].Value == true then
+							Player.Character.UpperTorso.Waist.C0 = CFrame.Angles(0, 0, 0)      
+							Player.Character.LowerTorso.Root.C0 = CFrame.Angles(0,0,0)
+							Player.Character.Head.Neck.C0 = CFrame.new(0,1,0) * CFrame.Angles(0, 0, 0)
+						end
+
+						if OrionLib.Flags["rage_anti_anti_aim_roll"].Value == true then
+							Player.Character.Humanoid.MaxSlopeAngle = 0
+						end
+
+						if OrionLib.Flags["rage_anti_anti_aim_animation"].Value == true then
+							for i2,Animation in pairs(Player.Character.Humanoid:GetPlayingAnimationTracks()) do
+								Animation:Stop()
+							end
+						end
+					end
+				end)()
+
 				coroutine.wrap(function()
 					local targetsalive = OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") and true or OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") and true or OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") and true or OrionLib.Flags["rage_kill_all"].Value == true and #Settings.lists.alive_enemies ~= 1 or false
 					if mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck and Player ~= LocalPlayer and PlayerCheck(Player) then

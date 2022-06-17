@@ -27,20 +27,27 @@ else
 	TaggedSkids = {}
 end
 
-local file_versions = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/file_versions.cfg"))()
+local file_versions, file_updated = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/file_versions.cfg"))(), false
 
 for i,v in pairs(file_versions) do
+	print("[Oblivion] Checking: "..i)
+	print("[Oblivion] Current version: "..v)
 	if not isfile("oblivion/"..i) then
 		print("[Oblivion] Creating file: "..i)
 		writefile("oblivion/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+		file_updated = true
 	else
 		local var = loadstring("return "..readfile("oblivion/"..i))()
 		if not var["data"] or not var.data["version"] then
 			print("[Oblivion] Updating file: "..i)
+			print("[Oblivion] Downloaded version: nil")
 			writefile("oblivion/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+			file_updated = true
 		elseif var.data.version ~= v then
 			print("[Oblivion] Updating file: "..i)
+			print("[Oblivion] Downloaded version: "..var.data.version)
 			writefile("oblivion/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+			file_updated = true
 		end
 	end
 end
@@ -76,6 +83,8 @@ local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skin
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
+
+if file_updated == true then OrionLib:MakeNotification({Name = "Oblivion", Content = "Updated/Created necessary files.", Image = "rbxassetid://4400702947", Time = 5}) end
 
 local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion", IntroEnabled = false, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846", Icon = "rbxassetid://1521636846"})
 

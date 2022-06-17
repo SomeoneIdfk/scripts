@@ -1572,13 +1572,23 @@ RunService.RenderStepped:Connect(function(step)
 		end)()
 
 		coroutine.wrap(function()
-			if mainlp and OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") then
-				killTarget(game.Players[OrionLib.Flags["rage_kill_player_1"].Value], "kill_specific")
-			elseif mainlp and OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") then
-				killTarget(game.Players[OrionLib.Flags["rage_kill_player_2"].Value], "kill_specific")
-			elseif mainlp and OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") then
-				killTarget(game.Players[OrionLib.Flags["rage_kill_player_3"].Value], "kill_specific")
-			end
+			coroutine.wrap(function()
+				if mainlp and OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") then
+					killTarget(game.Players[OrionLib.Flags["rage_kill_player_1"].Value], "kill_specific")
+				end
+			end)()
+
+			coroutine.wrap(function()
+				if mainlp and OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") then
+					killTarget(game.Players[OrionLib.Flags["rage_kill_player_2"].Value], "kill_specific")
+				end
+			end)()
+
+			coroutine.wrap(function()
+				if mainlp and OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") then
+					killTarget(game.Players[OrionLib.Flags["rage_kill_player_3"].Value], "kill_specific")
+				end
+			end)()
 		end)()
 	end)
 end)

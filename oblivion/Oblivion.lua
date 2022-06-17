@@ -27,8 +27,23 @@ else
 	TaggedSkids = {}
 end
 
-writefile("oblivion/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
-writefile("oblivion/weapon_types.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapons.cfg"))
+local file_versions = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/file_versions.cfg"))()
+
+for i,v in pairs(file_versions) do
+	if not isfile("oblivion/"..i) then
+		print("[Oblivion] Creating file: "..i)
+		writefile("oblivion/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+	else
+		local var = loadstring("return "..readfile("oblivion/"..i))()
+		if not var["data"] or not var.data["version"] then
+			print("[Oblivion] Updating file: "..i)
+			writefile("oblivion/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+		elseif var.data.version ~= v then
+			print("[Oblivion] Updating file: "..i)
+			writefile("oblivion/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+		end
+	end
+end
 
 -- Main
 repeat wait() until workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Origin")

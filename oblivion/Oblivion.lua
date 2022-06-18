@@ -687,6 +687,7 @@ local function tagsListOnlineSkids(player)
 				till.current = till.current + 1
 			end)()
 			RunService.RenderStepped:Wait()
+			RunService.RenderStepped:Wait()
 		end
 
 		repeat wait(1) until till.target == till.current

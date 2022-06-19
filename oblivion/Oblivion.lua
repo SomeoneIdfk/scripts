@@ -1708,7 +1708,6 @@ OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
 
 		coroutine.wrap(function()
 			if OrionLib.Flags["misc_dead_zones"].Value == true or OrionLib.Flags["misc_walk_on_water"].Value == true then
-				repeat wait(1) until OblivionRan.Value == true
 				removeDeadZones()
 			end
 		end)()
@@ -1717,7 +1716,7 @@ OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
 			if OrionLib.Flags["misc_auto_join"].Value ~= "None" then
 				local var = OrionLib.Flags["misc_auto_join"].Value == "Terrorists" and "T" or OrionLib.Flags["misc_auto_join"].Value == "Counter-Terrorists" and "CT"
 				local rounds = workspace.Status.Rounds.Value
-				repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var and rounds == workspace.Status.Rounds.Value or rounds ~= workspace.Status.Rounds.Value
+				repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(1) until GetTeam(LocalPlayer) == var and rounds == workspace.Status.Rounds.Value or rounds ~= workspace.Status.Rounds.Value
 			end
 		end)()
 	end)

@@ -59,7 +59,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = workspace.Map.Origin.Value, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0)}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0), deadzones = false}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -663,8 +663,8 @@ local function tagsHttpGet(id)
 		success, response = pcall(function()
 			return HttpService:JSONDecode(game:HttpGetAsync("https://api.roblox.com/users/"..id.."/onlinestatus/"))
 		end)
-		
-		wait()
+
+		wait(1)
 	end
 
 	return response
@@ -677,8 +677,9 @@ local function tagsListOnlineSkids(player)
 		end
 	else
 		local temp = {"-"}
-		local till = {target = #tagsListUserIds(), current = 0}
-		for i,v in pairs(tagsListUserIds()) do
+		local tags =  tagsListUserIds()
+		local till = {target = #tags, current = 0, queue = 100}
+		for i,v in pairs(tags) do
 			coroutine.wrap(function()
 				local response = tagsHttpGet(v)
 				if response["IsOnline"] and response.IsOnline == true then
@@ -686,7 +687,17 @@ local function tagsListOnlineSkids(player)
 				end
 				till.current = till.current + 1
 			end)()
-			RunService.RenderStepped:Wait()
+			if i == till.queue then
+				repeat
+					for i2 = 1,5,1 do
+						if till.current == till.queue then
+							break
+						end
+						wait(0.1)
+					end
+				until till.current == till.queue
+				till.queue = till.queue + 100
+			end
 			RunService.RenderStepped:Wait()
 		end
 
@@ -737,8 +748,6 @@ local function tagsMessageOnlineSkids(method)
 		local temp = tagsListOnlineSkids()
 		table.remove(temp, 1)
 		local string = ""
-
-        writefile("oblivion/temp.cfg", SaveTable(temp))
 
 		if #temp == 0 then
             OrionLib:MakeNotification({Name = "Oblivion", Content = "No tagged players online.", Image = "rbxassetid://4384401919", Time = 10})
@@ -957,6 +966,36 @@ local function warmupCheck()
 	return false
 end
 
+local function removeDeadZones()
+	if Settings.deadzones == false then
+		Settings.deadzones = true
+		local Clips = workspace.Map.Clips; Clips.Name = "FAT"; Clips.Parent = nil
+		local Killers = workspace.Map.Killers; Killers.Name = "FAT"; Killers.Parent = nil
+
+		for i,v in pairs(Clips:GetChildren()) do
+			if OrionLib.Flags["misc_dead_zones"].Value == true and v:IsA("BasePart") then
+				v:Destroy()
+			end
+		end
+		for i,v in pairs(Killers:GetChildren()) do
+			if OrionLib.Flags["misc_dead_zones"].Value == true and OrionLib.Flags["misc_walk_on_water"].Value == true and v.Name ~= "WaterKiller" or OrionLib.Flags["misc_dead_zones"].Value == true and OrionLib.Flags["misc_walk_on_water"].Value == false then
+				v:Destroy()
+			elseif OrionLib.Flags["misc_walk_on_water"].Value == true and v.Name == "WaterKiller" then
+				local ClonedWater = v:Clone()
+				ClonedWater.Parent = Killers
+				ClonedWater.Transparency = 1
+				ClonedWater.CanCollide = true
+				ClonedWater.Name = "WaterBox"
+				v:Destroy()
+			end
+		end
+
+		Killers.Name = "Killers"; Killers.Parent = workspace.Map
+		Clips.Name = "Clips"; Clips.Parent = workspace.Map
+		Settings.deadzones = false
+	end
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -1115,16 +1154,19 @@ TT_AddSec:AddButton({Name = "Copy Username", Callback = function() if OrionLib.F
 TT_AddSec:AddButton({Name = "Refresh List", Callback = function() TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() tagsUpdateLabels("offline") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) checkTaggedSkidsInGame() end})
 Settings.tags.countlabel = TT_AddSec:AddLabel("")
 Settings.tags.onlinelabel = TT_AddSec:AddLabel("Online:")
-TT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function(val) saveData() if val == true then coroutine.wrap(function() tagsMessageOnlineSkids() end)() end end})
+TT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function(val) saveData() if val == true and OblivionRan.Value == true then tagsMessageOnlineSkids() end end})
 TT_MergeSec:AddDropdown({Name = "File", Default = "-", Options = {"-"}, Flag = "tags_merge_file"})
 TT_MergeSec:AddButton({Name = "Refresh", Callback = function() local temp = {"-"} for i,v in pairs(listfiles("oblivion")) do table.insert(temp, v) end dropdownRefresh("tags_merge_file", "-", temp) end})
 TT_MergeSec:AddButton({Name = "Merge", Callback = function() if OrionLib.Flags["tags_merge_file"].Value ~= "-" and isfile(OrionLib.Flags["tags_merge_file"].Value) then local temp = TaggedSkids pcall(function() for i,v in pairs(loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) do pcall(function() print(i..'/'..#loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) for i2,v2 in pairs(v) do if not tagsTableFind(i2, "id") then table.insert(temp, {[i2] = v2}) end end end) end end) writefile("oblivion/tagged.cfg", SaveTable(temp)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") OrionLib:MakeNotification({Name = "Oblivion", Content = "Merged tags from: "..OrionLib.Flags["tags_merge_file"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) end end})
 
 local MT_QOLSec = MiscTab:AddSection({Name = "QOL"})
+local MT_MiscSec = MiscTab:AddSection({Name = "Misc"})
 MT_QOLSec:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", Callback = function(val) saveData() if val == true then coroutine.wrap(function() while OrionLib.Flags["misc_anti_afk"].Value == true do for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end wait(1) end end)() end end})
 MT_QOLSec:AddToggle({Name = "Blood Removal", Default = false, Flag = "misc_blood_removal", Callback = function(val) saveData() if val == true then Settings.loops.bloodremovalloop = RunService.Heartbeat:Connect(function() pcall(function() Client.splatterBlood = function() end wait(1) end) end) elseif val == false and Settings.loops.bloodremovalloop then Settings.loops.bloodremovalloop:Disconnect() end end})
 MT_QOLSec:AddToggle({Name = "Mag Removal", Default = false, Flag = "misc_mag_removal", Callback = function(val) saveData() if val == true then Settings.loops.magremovalloop = workspace.Ray_Ignore.ChildAdded:Connect(function(child) pcall(function() child:WaitForChild("Mesh") if child.Name == "MagDrop" then child:Destroy() end end) end) elseif val == false and Settings.loops.magremovalloop then Settings.loops.magremovalloop:Disconnect() end end})
 MT_QOLSec:AddToggle({Name = "Remove Textures", Default = false, Flag = "misc_texture_remove", Callback = function(val) saveData() if val == true then removeTextures() end end})
+MT_MiscSec:AddToggle({Name = "Remove Dead Zones", Default = false, Flag = "misc_dead_zones", Callback = function(val) saveData() if val == true and OblivionRan.Value == true then removeDeadZones() end end})
+MT_MiscSec:AddToggle({Name = "Walk On Water", Default = false, Flag = "misc_walk_on_water", Callback = function(val) saveData() if val == true and OblivionRan.Value == true then removeDeadZones() end end})
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "No Fall Damage", Default = false, Flag = "misc_no_fall_damage", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "Filter Chat", Default = false, Flag = "misc_filter_chat", Callback = function() saveData() end})
@@ -1482,6 +1524,7 @@ RunService.RenderStepped:Connect(function(step)
 
 		if workspace:FindFirstChild("Map"):FindFirstChild("Origin") and Settings.currentmap ~= workspace.Map.Origin.Value then
 			Settings.currentmap = workspace.Map.Origin.Value
+			repeat wait(1) until OblivionRan.Value == true
 			OblivionMapChange.Value = OblivionMapChange.Value + 1
 		end
 
@@ -1651,19 +1694,32 @@ end)
 
 OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
 	pcall(function()
-		if OrionLib.Flags["misc_texture_remove"].Value == true then
-			removeTextures()
-		end
+		coroutine.wrap(function()
+			if OrionLib.Flags["misc_texture_remove"].Value == true then
+				removeTextures()
+			end
+		end)()
 
-        if OrionLib.Flags["tags_online_check"].Value == true then
-            tagsMessageOnlineSkids("forced")
-        end
+		coroutine.wrap(function()
+			if OrionLib.Flags["tags_online_check"].Value == true then
+				tagsMessageOnlineSkids("forced")
+			end
+		end)()
 
-		if OrionLib.Flags["misc_auto_join"].Value ~= "None" then
-			local var = OrionLib.Flags["misc_auto_join"].Value == "Terrorists" and "T" or OrionLib.Flags["misc_auto_join"].Value == "Counter-Terrorists" and "CT"
-			local rounds = workspace.Status.Rounds.Value
-			repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var and rounds == workspace.Status.Rounds.Value or rounds ~= workspace.Status.Rounds.Value
-		end
+		coroutine.wrap(function()
+			if OrionLib.Flags["misc_dead_zones"].Value == true or OrionLib.Flags["misc_walk_on_water"].Value == true then
+				repeat wait(1) until OblivionRan.Value == true
+				removeDeadZones()
+			end
+		end)()
+
+		coroutine.wrap(function()
+			if OrionLib.Flags["misc_auto_join"].Value ~= "None" then
+				local var = OrionLib.Flags["misc_auto_join"].Value == "Terrorists" and "T" or OrionLib.Flags["misc_auto_join"].Value == "Counter-Terrorists" and "CT"
+				local rounds = workspace.Status.Rounds.Value
+				repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(0.1) until GetTeam(LocalPlayer) == var and rounds == workspace.Status.Rounds.Value or rounds ~= workspace.Status.Rounds.Value
+			end
+		end)()
 	end)
 end)
 

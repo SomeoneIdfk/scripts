@@ -810,12 +810,12 @@ end
 local function godMode()
 	if OblivionRan.Value == true and Settings.godmodeused == false and IsAlive(LocalPlayer) and GetTeam(LocalPlayer) ~= "s" and OrionLib.Flags["rage_god_mode"].Value ~= "-" then
 		Settings.godmodeused = true
-		if OrionLib.Flags["rage_god_mode"].Value == "Hostage" then
+		--[[if OrionLib.Flags["rage_god_mode"].Value == "Hostage" then
 			ReplicatedStorage.Events.ApplyGun:FireServer({
 				Model = ReplicatedStorage.Hostage.Hostage,
 				Name = "USP"
 			}, LocalPlayer);
-		elseif OrionLib.Flags["rage_god_mode"].Value == "Fall Damage" then
+		else]]if OrionLib.Flags["rage_god_mode"].Value == "Fall Damage" then
 			repeat wait() until workspace.Status.Preparation.Value == false
 			ReplicatedStorage.Events.FallDamage:FireServer(0/0)
 			LocalPlayer.Character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
@@ -1016,7 +1016,7 @@ local RT_Kill2Sec = RageTab:AddSection({Name = "Kill Player"})
 local RT_Kill3Sec = RageTab:AddSection({Name = "Kill Player"})
 local RT_TeleportSec = RageTab:AddSection({Name = "Teleportation"})
 local RT_AntiAntiAimSec = RageTab:AddSection({Name = "Anti Anti-Aim"})
-RT_GodModeSec:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Hostage", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
+RT_GodModeSec:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
 RT_GodModeSec:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
 RT_GodModeSec:AddButton({Name = "Set", Callback = function() godMode() end})
 RT_KillAllSec:AddDropdown({Name = "Weapon", Default = "Held", Options = {"Held", "Random Gun", "Random Knife", "Both"}, Flag = "rage_kill_weapon", Callback = function() saveData() end})

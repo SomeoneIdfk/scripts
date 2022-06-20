@@ -59,7 +59,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0), deadzones = false}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0), deadzones = false, troll = {sound = {running = false, sounds = {["TTT a"] = workspace.RoundEnd, ["TTT b"] = workspace.RoundStart, ["T Win"] = workspace.Sounds.T, ["CT Win"] = workspace.Sounds.CT, ["Planted"] = workspace.Sounds.Arm, ["Defused"] = workspace.Sounds.Defuse, ["Rescued"] = workspace.Sounds.Rescue, ["Explosion"] = workspace.Sounds.Explosion, ["Becky"] = workspace.Sounds.Becky, ["Beep"] = workspace.Sounds.Beep}}}}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -79,7 +79,7 @@ FOV.Thickness = 2
 local TriggerbotFOV = Drawing.new("Circle")
 TriggerbotFOV.Thickness = 2
 
-local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player_1", "rage_kill_player_enable_1", "rage_kill_player_2", "rage_kill_player_enable_2", "rage_kill_player_3", "rage_kill_player_enable_3", "tags_merge_file"}
+local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player_1", "rage_kill_player_enable_1", "rage_kill_player_2", "rage_kill_player_enable_2", "rage_kill_player_3", "rage_kill_player_enable_3", "tags_merge_file", "troll_sound_spam"}
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
 
 OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
@@ -1021,6 +1021,7 @@ local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458"})
 local SkinsTab = Window:MakeTab({Name = "Skins", Icon = "rbxassetid://4335483762"})
 local ViewmodelsTab = Window:MakeTab({Name = "Viewmodels", Icon = "rbxassetid://4483363084"})
 local TagTab = Window:MakeTab({Name = "Tags", Icon = "rbxassetid://4384401919"})
+local TrollTab = Window:MakeTab({Name = "Troll", Icon = "rbxassetid://6960991786"})
 local MiscTab = Window:MakeTab({Name = "Misc", Icon = "rbxassetid://4384401360"})
 local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185"})
 
@@ -1142,22 +1143,26 @@ VT_BulletSec:AddColorpicker({Name = "Color", Default = Color3.fromRGB(0, 0, 0), 
 VT_BulletSec:AddDropdown({Name = "Material", Default = "ForceField", Options = {"SmoothPlastic", "Neon", "ForceField", "Wood", "Glass"}, Flag = "viewmodels_bullet_impact_material", Callback = function() saveData() end})
 VT_BulletSec:AddSlider({Name = "Transparency", Min = 0, Max = 100, Default = 50, Color3.fromRGB(0, 0, 0), Increment = 10, ValueName = "%", Flag = "viewmodels_bullet_impact_transparency", Callback = function() saveData() end})
 
-local TT_InSessionSec = TagTab:AddSection({Name = "In-Session"})
-local TT_TaggedSec = TagTab:AddSection({Name = "Tagged"})
-local TT_AddSec = TagTab:AddSection({Name = "Additional"})
-local TT_MergeSec = TagTab:AddSection({Name = "Merge"})
-TT_InSessionSec:AddDropdown({Name = "Select Player", Default = "-", Options = {"-"}, Flag = "tags_select_player"})
-TT_InSessionSec:AddButton({Name = "Add Tag", Callback = function() if OrionLib.Flags["tags_select_player"].Value ~= "-" then if not tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then table.insert(TaggedSkids, {[game.Players[OrionLib.Flags["tags_select_player"].Value].UserId] = OrionLib.Flags["tags_select_player"].Value}) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Tagged player: "..OrionLib.Flags["tags_select_player"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) OrionLib.Flags["tags_select_player"]:Set("-") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() elseif tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then OrionLib:MakeNotification({Name = "Oblivion", Content = OrionLib.Flags["tags_select_player"].Value.." is already tagged.", Image = "rbxassetid://4384401919", Time = 5}) end end end})
-TT_TaggedSec:AddDropdown({Name = "Select Tag", Default = "-", Options = {"-"}, Flag = "tags_select_tag", Callback = function(val) tagsUpdateLabels("live_reset") if val ~= "-" then if val == "Next Page" then Settings.tags.page = Settings.tags.page + 1 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif val == "Previous Page" and Settings.tags.page ~= 0 then Settings.tags.page = Settings.tags.page - 1 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif tagsTableFind(val, "name") then tagsUpdateLabels("live", tagsListOnlineSkids(val)) end end end})
-TT_TaggedSec:AddButton({Name = "Remove Tag", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then if tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name") then table.remove(TaggedSkids, tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name")) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Removed tag on: "..OrionLib.Flags["tags_select_tag"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() end end end})
-TT_AddSec:AddButton({Name = "Copy Username", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then setclipboard(OrionLib.Flags["tags_select_tag"].Value) end end})
-TT_AddSec:AddButton({Name = "Refresh List", Callback = function() TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() tagsUpdateLabels("offline") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) checkTaggedSkidsInGame() end})
-Settings.tags.countlabel = TT_AddSec:AddLabel("")
-Settings.tags.onlinelabel = TT_AddSec:AddLabel("Online:")
-TT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function(val) saveData() if val == true and OblivionRan.Value == true then tagsMessageOnlineSkids() end end})
-TT_MergeSec:AddDropdown({Name = "File", Default = "-", Options = {"-"}, Flag = "tags_merge_file"})
-TT_MergeSec:AddButton({Name = "Refresh", Callback = function() local temp = {"-"} for i,v in pairs(listfiles("oblivion")) do table.insert(temp, v) end dropdownRefresh("tags_merge_file", "-", temp) end})
-TT_MergeSec:AddButton({Name = "Merge", Callback = function() if OrionLib.Flags["tags_merge_file"].Value ~= "-" and isfile(OrionLib.Flags["tags_merge_file"].Value) then local temp = TaggedSkids pcall(function() for i,v in pairs(loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) do pcall(function() print(i..'/'..#loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) for i2,v2 in pairs(v) do if not tagsTableFind(i2, "id") then table.insert(temp, {[i2] = v2}) end end end) end end) writefile("oblivion/tagged.cfg", SaveTable(temp)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") OrionLib:MakeNotification({Name = "Oblivion", Content = "Merged tags from: "..OrionLib.Flags["tags_merge_file"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) end end})
+local TaT_InSessionSec = TagTab:AddSection({Name = "In-Session"})
+local TaT_TaggedSec = TagTab:AddSection({Name = "Tagged"})
+local TaT_AddSec = TagTab:AddSection({Name = "Additional"})
+local TaT_MergeSec = TagTab:AddSection({Name = "Merge"})
+TaT_InSessionSec:AddDropdown({Name = "Select Player", Default = "-", Options = {"-"}, Flag = "tags_select_player"})
+TaT_InSessionSec:AddButton({Name = "Add Tag", Callback = function() if OrionLib.Flags["tags_select_player"].Value ~= "-" then if not tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then table.insert(TaggedSkids, {[game.Players[OrionLib.Flags["tags_select_player"].Value].UserId] = OrionLib.Flags["tags_select_player"].Value}) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Tagged player: "..OrionLib.Flags["tags_select_player"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) OrionLib.Flags["tags_select_player"]:Set("-") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() elseif tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then OrionLib:MakeNotification({Name = "Oblivion", Content = OrionLib.Flags["tags_select_player"].Value.." is already tagged.", Image = "rbxassetid://4384401919", Time = 5}) end end end})
+TaT_TaggedSec:AddDropdown({Name = "Select Tag", Default = "-", Options = {"-"}, Flag = "tags_select_tag", Callback = function(val) tagsUpdateLabels("live_reset") if val ~= "-" then if val == "Next Page" then Settings.tags.page = Settings.tags.page + 1 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif val == "Previous Page" and Settings.tags.page ~= 0 then Settings.tags.page = Settings.tags.page - 1 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif tagsTableFind(val, "name") then tagsUpdateLabels("live", tagsListOnlineSkids(val)) end end end})
+TaT_TaggedSec:AddButton({Name = "Remove Tag", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then if tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name") then table.remove(TaggedSkids, tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name")) writefile("oblivion/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Removed tag on: "..OrionLib.Flags["tags_select_tag"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() end end end})
+TaT_AddSec:AddButton({Name = "Copy Username", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then setclipboard(OrionLib.Flags["tags_select_tag"].Value) end end})
+TaT_AddSec:AddButton({Name = "Refresh List", Callback = function() TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() tagsUpdateLabels("offline") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) checkTaggedSkidsInGame() end})
+Settings.tags.countlabel = TaT_AddSec:AddLabel("")
+Settings.tags.onlinelabel = TaT_AddSec:AddLabel("Online:")
+TaT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function(val) saveData() if val == true and OblivionRan.Value == true then tagsMessageOnlineSkids() end end})
+TaT_MergeSec:AddDropdown({Name = "File", Default = "-", Options = {"-"}, Flag = "tags_merge_file"})
+TaT_MergeSec:AddButton({Name = "Refresh", Callback = function() local temp = {"-"} for i,v in pairs(listfiles("oblivion")) do table.insert(temp, v) end dropdownRefresh("tags_merge_file", "-", temp) end})
+TaT_MergeSec:AddButton({Name = "Merge", Callback = function() if OrionLib.Flags["tags_merge_file"].Value ~= "-" and isfile(OrionLib.Flags["tags_merge_file"].Value) then local temp = TaggedSkids pcall(function() for i,v in pairs(loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) do pcall(function() print(i..'/'..#loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) for i2,v2 in pairs(v) do if not tagsTableFind(i2, "id") then table.insert(temp, {[i2] = v2}) end end end) end end) writefile("oblivion/tagged.cfg", SaveTable(temp)) TaggedSkids = loadstring("return "..readfile("oblivion/tagged.cfg"))() dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") OrionLib:MakeNotification({Name = "Oblivion", Content = "Merged tags from: "..OrionLib.Flags["tags_merge_file"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) end end})
+
+local TrT_SoundSec = TrollTab:AddSection({Name = "Sound"})
+TrT_SoundSec:AddDropdown({Name = "Sound Speed", Default = "Spam", Options = {"Full speed", "Spammy", "Spam", "Slow", "Confusion"}, Flag = "troll_sound_speed", Callback = function() saveData() end})
+TrT_SoundSec:AddToggle({Name = "Sound Spam", Default = false, Flag = "troll_sound_spam", Callback = function() saveData() end})
 
 local MT_QOLSec = MiscTab:AddSection({Name = "QOL"})
 local MT_MiscSec = MiscTab:AddSection({Name = "Misc"})
@@ -1173,6 +1178,7 @@ MiscTab:AddToggle({Name = "Filter Chat", Default = false, Flag = "misc_filter_ch
 MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function(val) saveData() if val == true then OrionLib:MakeNotification({Name = "Oblivion", Content = "Dead Chat is still in it's early state.", Image = "rbxassetid://4384401360", Time = 10}) end end})
 MiscTab:AddDropdown({Name = "Auto Join", Default = "None", Options = {"None", "Terrorists", "Counter-Terrorists"}, Flag = "misc_auto_join", Callback = function() saveData() end})
 MiscTab:AddButton({Name = "Kill Server", Callback = function() if mainPlayerCheck(LocalPlayer) then if knifeOrGun() ~= "gun" then OrionLib:MakeNotification({Name = "Oblivion", Content = "Pull out your gun.", Image = "rbxassetid://4384401360", Time = 5}) repeat wait(0.5) until knifeOrGun() == "gun" or mainPlayerCheck(LocalPlayer) == false end if knifeOrGun() == "gun" and mainPlayerCheck(LocalPlayer) then for i = 1,50,1 do repeat wait() until LocalPlayer.Character:FindFirstChild("Gun") and LocalPlayer.Character.Gun:FindFirstChild("Mag") coroutine.wrap(function() for i2 = 1,50,1 do local mag = LocalPlayer.Character.Gun.Mag game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag) if i == 50 and i2 == 50 then OrionLib:MakeNotification({Name = "Oblivion", Content = "Server killed.", Image = "rbxassetid://4384401360", Time = 5}) end end end)() for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do if v.Name == "MagDrop" then v:Destroy() end end end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "Cancelled.", Image = "rbxassetid://4384401360", Time = 5}) end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "You need to be alive for this action.", Image = "rbxassetid://4384401360", Time = 5}) end end})
+MiscTab:AddToggle({Name = "No Preparation", Default = false, Flag = "misc_no_preparation", Callback = function() saveData() end})
 
 local ST_MiscSec = SettingsTab:AddSection({Name = "Misc"})
 local ST_VersionSec = SettingsTab:AddSection({Name = "Version"})
@@ -1452,14 +1458,14 @@ RunService.RenderStepped:Connect(function(step)
 						if Player.Character and Player ~= LocalPlayer and Player.Character:FindFirstChild("HumanoidRootPart") then      
 							if Player.Character.HumanoidRootPart:FindFirstChild("OldPosition") then      
 								Player.Character.HumanoidRootPart.OldPosition.Value = Position      
-							else      
+							else
 								local Value = Instance.new("Vector3Value")      
 								Value.Name = "OldPosition"      
 								Value.Value = Position      
 								Value.Parent = Player.Character.HumanoidRootPart      
-							end      
-						end      
-					end)()      
+							end
+						end
+					end)()
 				end
 			end
 		end)()
@@ -1688,6 +1694,29 @@ RunService.RenderStepped:Connect(function(step)
 					killTarget(game.Players[OrionLib.Flags["rage_kill_player_3"].Value], "kill_specific")
 				end
 			end)()
+		end)()
+
+		coroutine.wrap(function()
+			if OrionLib.Flags["misc_no_preparation"].Value == true and workspace["Status"] and workspace.Status["Preparation"] then
+				workspace.Status.Preparation.Value = false
+			end
+		end)()
+
+		coroutine.wrap(function()
+			if OrionLib.Flags["troll_sound_spam"].Value == true and Settings.troll.sound.running == false then
+				Settings.troll.sound.running = true
+				for i,v in pairs(Settings.troll.sound.sounds) do
+					if v:IsA("Sound") and OrionLib.Flags["troll_sound_spam"].Value == true then
+						v:Play()
+						if OrionLib.Flags["troll_sound_speed"].Value ~= "Full speed" then
+							wait(OrionLib.Flags["troll_sound_speed"].Value == "Spammy" and 0.2 or OrionLib.Flags["troll_sound_speed"].Value == "Spam" and 1 or OrionLib.Flags["troll_sound_speed"].Value == "Slow" and 5 or OrionLib.Flags["troll_sound_speed"].Value == "Confusion" and 60)
+						elseif OrionLib.Flags["troll_sound_speed"].Value == "Full speed" then
+							RunService.RenderStepped:Wait()
+						end
+					end
+				end
+				Settings.troll.sound.running = false
+			end
 		end)()
 	end)
 end)

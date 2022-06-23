@@ -10,23 +10,32 @@ repeat wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("GUI")
 local getrawmetatable = getrawmetatable or false
 local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
-local isfolder = isfolder or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false
+local workspace = workspace or game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 -- Config
 if not isfolder("oblivion") then
     makefolder("oblivion")
 end
 
-if not isfolder("oblivion/skin_changer") then
-    makefolder("oblivion/skin_changer")
+if not isfolder("oblivion/CB") then
+    makefolder("oblivion/CB")
 end
 
-writefile("oblivion/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
+if not isfolder("oblivion/CB/skin_changer") then
+    makefolder("oblivion/CB/skin_changer")
+end
+
+writefile("oblivion/CB/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_info.cfg"))
 
 -- Main
+repeat wait() until workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Origin")
+
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
+local versions, versiontable = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/universal_versions.cfg"))(), {}
 
 local Settings = {CurrentSkins = {}, data = {}, saveerror = false, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/skin_changer/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), OldInventory = {}, loops = {antiafkloop = nil}}
 Settings.CurrentSkins["-"] = "-"
@@ -43,7 +52,7 @@ local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skin
 
 OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
 
-local Window = OrionLib:MakeWindow({Name = "Oblivion Skin Changer", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion/skin_changer"})
+local Window = OrionLib:MakeWindow({Name = "Oblivion Skin Changer", HidePremium = true})
 
 -- Workspace
 local Oblivion = Instance.new("Folder", workspace)
@@ -138,6 +147,25 @@ local function SaveTable(queuetable)
 	end
 	
     return TableToString(tbl):sub(0, -2)
+end
+
+local function checkId()
+	for i,v in pairs(versions) do
+        if type(v.gameid) == "table" and table.find(v.gameid, game.PlaceId) or type(v.gameid) == "number" and v.gameid == game.PlaceId then
+            return v
+        end
+    end
+
+	return false
+end
+
+local function checkFile()
+    if isfile("oblivion/settings.cfg") then
+        local var = loadstring("return "..readfile("oblivion/settings.cfg"))()
+		return var
+    end
+
+    return false
 end
 
 local function getAllNames(datatable, val)
@@ -256,7 +284,7 @@ local function saveData()
 		end
         tempmaster.data = temp
 		tempmaster.skins = Settings.CurrentSkins
-        writefile("oblivion/skin_changer/data.cfg", SaveTable(tempmaster))
+        writefile("oblivion/CB/skin_changer/data.cfg", SaveTable(tempmaster))
     end
 end
 
@@ -333,9 +361,26 @@ MiscTab:AddToggle({Name = "Anti-AFK", Default = false, Flag = "misc_anti_afk", C
 
 SettingsTab:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 SettingsTab:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val) if OrionLib.Flags["settings_build"] then dropdownRefresh("settings_build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty")) end end})
+SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val)
+	if OrionLib.Flags["settings_build"] then
+		dropdownRefresh("settings_build", versiontable["data"][val]["tables"][1], getAllNames(versiontable["data"][val]["tables"], "empty"))
+	end end})
 SettingsTab:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "settings_build"})
-SettingsTab:AddButton({Name = "Set", Callback = function() writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["settings_branch"].Value]["data"][OrionLib.Flags["settings_build"].Value]) end})
+SettingsTab:AddButton({Name = "Set", Callback = function()
+	local prefilecheckdata = checkFile()
+	local temp = {}
+	if prefilecheckdata then
+		for i,v in pairs(prefilecheckdata) do
+            if table.find(versiontable.tables, v.branch) and table.find(versiontable.data[v.branch].tables, v.build) and versiontable.data[v.branch].data[v.build] ~= v.url then
+                table.insert(temp, v)
+            elseif table.find(versiontable.tables, v.branch) == false then
+                table.insert(temp, v)
+            end
+		end
+	end
+	table.insert(temp, {url = versiontable.data[OrionLib.Flags["settings_branch"].Value].data[OrionLib.Flags["settings_build"].Value], branch = OrionLib.Flags["settings_branch"].Value, build = OrionLib.Flags["settings_build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})
+    writefile("oblivion/settings.cfg", SaveTable(temp))
+end})
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)
@@ -554,16 +599,18 @@ for _, Model in pairs(game:GetService("ReplicatedStorage").Viewmodels:GetChildre
 	Clone.Parent = Models
 end
 
+versiontable = checkId()
+
 dropdownRefresh("skins_weapon", "-", getAllNames(Settings.weapon_data))
 dropdownRefresh("skins_knife", "-", getAllNames(Settings.knife_data))
 dropdownRefresh("skins_glove", "-", getAllNames(Settings.glove_data))
-dropdownRefresh("settings_branch", versions["tables"][1], versions["tables"])
+dropdownRefresh("settings_branch", versiontable["tables"][1], versiontable["tables"])
 
-if isfile("oblivion/skin_changer/data.cfg") then
+if isfile("oblivion/CB/skin_changer/data.cfg") then
 	OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Trying to load save.", Image = "rbxassetid://4384402413", Time = 5})
 	local output
 	local a,b = pcall(function()
-		output = loadstring("return"..readfile("oblivion/skin_changer/data.cfg"))()
+		output = loadstring("return"..readfile("oblivion/CB/skin_changer/data.cfg"))()
 	end)
 	if a == true then
 		for i,v in pairs(output.data) do

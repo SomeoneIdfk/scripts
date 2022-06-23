@@ -162,7 +162,11 @@ elseif preidcheck and prefilecheck == false then
 		local temp = {}
 		if prefilecheckdata then
 			for i,v in pairs(prefilecheckdata) do
-				table.insert(temp, v)
+                if table.find(preidcheck.tables, v.branch) and table.find(preidcheck.data[v.branch].tables, v.build) and preidcheck.data[v.branch].data[v.build] ~= v.url then
+                    table.insert(temp, v)
+                elseif table.find(preidcheck.tables, v.branch) == false then
+                    table.insert(temp, v)
+                end
 			end
 		end
 		table.insert(temp, {url = preidcheck.data[OrionLib.Flags["branch"].Value].data[OrionLib.Flags["build"].Value], branch = OrionLib.Flags["branch"].Value, build = OrionLib.Flags["build"].Value, folder = preidcheck.folder, gameid = preidcheck.gameid})

@@ -194,7 +194,7 @@ local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458"})
 AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Save = true})
 AimTab:AddToggle({Name = "Visible", Default = false, Flag = "aimbot_visible", Save = true})
 AimTab:AddToggle({Name = "Drones", Default = false, Flag = "aimbot_drones", Save = true})
-AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.LeftAlt, Hold = false, Flag = "aimbot_keybind", Save = true, Callback = function() values.keybind_toggled = values.keybind_toggled == false and true or values.keybind_toggled == true and false if OrionLib.Flags["aimbot_enable"].Value == true then local var = values.keybind_toggled == true and "enabled" or values.keybind_toggled == false and "disabled" OrionLib:MakeNotification({Name = "", Content = "Aimbot is now "..var, Image = "", Time = 3}) end end})
+AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.LeftAlt, Hold = false, Flag = "aimbot_keybind", Save = true, Callback = function() values.keybind_toggled = values.keybind_toggled == false and true or values.keybind_toggled == true and false if OrionLib.Flags["aimbot_enable"].Value == true then local var = values.keybind_toggled == true and "enabled" or values.keybind_toggled == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..var..".", Image = "rbxassetid://4483345998", Time = 3}) end end})
 AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Save = true})
 AimTab:AddSlider({Name = "FOV Radius", Min = 5, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Save = true, Callback = function(val) values.fov.Radius = val end})
 

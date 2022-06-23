@@ -1212,7 +1212,7 @@ ST_VersionSec:AddButton({Name = "Set", Callback = function()
 			end
 		end
 	end
-	table.insert(temp, {url = versiontable.data[OrionLib.Flags["branch"].Value].data[OrionLib.Flags["build"].Value], branch = OrionLib.Flags["branch"].Value, build = OrionLib.Flags["build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})
+	table.insert(temp, {url = versiontable.data[OrionLib.Flags["settings_branch"].Value].data[OrionLib.Flags["settings_build"].Value], branch = OrionLib.Flags["settings_branch"].Value, build = OrionLib.Flags["settings_build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})
     writefile("oblivion/settings.cfg", SaveTable(temp))
 end})
 

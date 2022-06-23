@@ -1207,7 +1207,7 @@ ST_VersionSec:AddButton({Name = "Set", Callback = function()
 	local temp = {}
 	if prefilecheckdata then
 		for i,v in pairs(prefilecheckdata) do
-			if not versiontable.gameid == v.gameid then
+			if versiontable.gameid ~= v.gameid then
 				table.insert(temp, v)
 			end
 		end

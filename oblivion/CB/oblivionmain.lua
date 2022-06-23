@@ -1207,7 +1207,9 @@ ST_VersionSec:AddButton({Name = "Set", Callback = function()
 	local temp = {}
 	if prefilecheckdata then
 		for i,v in pairs(prefilecheckdata) do
-			table.insert(temp, v)
+			if not versiontable.gameid == v.gameid then
+				table.insert(temp, v)
+			end
 		end
 	end
 	table.insert(temp, {url = versiontable.data[OrionLib.Flags["branch"].Value].data[OrionLib.Flags["build"].Value], branch = OrionLib.Flags["branch"].Value, build = OrionLib.Flags["build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})

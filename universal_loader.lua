@@ -15,54 +15,25 @@ if not isfolder("oblivion") then
     makefolder("oblivion")
 end
 
-writefile("oblivion/versions.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/versions.cfg"))
-
 -- Main
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
+local versions = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/universal_versions.cfg"))()
 
 -- Functions
 local function checkId()
-	if game.PlaceId == 301549746 then
-		return true
-	elseif game.PlaceId == 1480424328 then
-		return true
-	elseif game.PlaceId == 1869597719 then
-		return true
-	end
+	for i,v in pairs(versions) do
+        print(type(v.gameid))
+        if type(v.gameid) == "table" and table.find(v.gameid, game.PlaceId) then
+            return v
+        end
+    end
 
 	return false
 end
 
 local function checkFile(val)
     if isfile("oblivion/load_version.cfg") then
-        local temp = readfile("oblivion/load_version.cfg")
-        local result = table.foreach(versions["data"], function(i, v)
-            local result = table.foreach(v["data"], function(i2, v2)
-                if v2 == temp then
-                    if val then
-                        return i
-                    else
-                        return true
-                    end
-                end
-            end)
-            if result then
-                if val then
-                    return result
-                else
-                    return true
-                end
-            end
-        end)
-    
-        if result then
-            if val then
-                return result
-            else
-                return true
-            end
-        end
+        
     end
 
     return false

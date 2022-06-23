@@ -11,14 +11,18 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 -- Main
-if not isfolder("Orion") then
-    makefolder("Orion")
+if not isfolder("oblivion") then
+    makefolder("oblivion")
+end
+
+if not isfolder("oblivion/RO_Siege") then
+    makefolder("oblivion/RO_Siege")
 end
 
 local values = {keybind_toggled = false, fov = Drawing.new("Circle")}
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local espLib = loadstring(readfile("Orion/esp.lua"))()
+local espLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/oblivion/RO_Siege/esp.lua"))()
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
@@ -27,7 +31,7 @@ local Success, MapInfo = pcall(function() return workspace.SE_Workspace end)
 values.fov.Thickness = 2
 values.fov.Visible = false
 
-local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, IntroEnabled = false, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846", Icon = "rbxassetid://1521636846", SaveConfig = true, ConfigFolder = "Orion"})
+local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, IntroEnabled = false, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846", Icon = "rbxassetid://1521636846", SaveConfig = true, ConfigFolder = "oblivion/RO_Siege"})
 
 -- Functions
 local function GetTeam(plr)
@@ -190,7 +194,7 @@ local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458"})
 AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Save = true})
 AimTab:AddToggle({Name = "Visible", Default = false, Flag = "aimbot_visible", Save = true})
 AimTab:AddToggle({Name = "Drones", Default = false, Flag = "aimbot_drones", Save = true})
-AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.LeftAlt, Hold = false, Flag = "aimbot_keybind", Save = true, Callback = function() values.keybind_toggled = values.keybind_toggled == false and true or values.keybind_toggled == true and false local var = values.keybind_toggled == true and "enabled" or values.keybind_toggled == false and "disabled" OrionLib:MakeNotification({Name = "", Content = "Aimbot is now "..var, Image = "", Time = 3}) end})
+AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.LeftAlt, Hold = false, Flag = "aimbot_keybind", Save = true, Callback = function() values.keybind_toggled = values.keybind_toggled == false and true or values.keybind_toggled == true and false if OrionLib.Flags["aimbot_enable"].Value == true then local var = values.keybind_toggled == true and "enabled" or values.keybind_toggled == false and "disabled" OrionLib:MakeNotification({Name = "", Content = "Aimbot is now "..var, Image = "", Time = 3}) end end})
 AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Save = true})
 AimTab:AddSlider({Name = "FOV Radius", Min = 5, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Save = true, Callback = function(val) values.fov.Radius = val end})
 

@@ -57,7 +57,7 @@ repeat wait() until workspace:FindFirstChild("Map") and workspace.Map:FindFirstC
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
-local versions = loadstring("return "..readfile("oblivion/versions.cfg"))()
+local versions, versiontable = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/universal_versions.cfg"))(), {}
 
 local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0), deadzones = false, troll = {sound = {running = false, sounds = {["TTT a"] = workspace.RoundEnd, ["TTT b"] = workspace.RoundStart, ["T Win"] = workspace.Sounds.T, ["CT Win"] = workspace.Sounds.CT, ["Planted"] = workspace.Sounds.Arm, ["Defused"] = workspace.Sounds.Defuse, ["Rescued"] = workspace.Sounds.Rescue, ["Explosion"] = workspace.Sounds.Explosion, ["Becky"] = workspace.Sounds.Becky, ["Beep"] = workspace.Sounds.Beep}}}}
 Settings.CurrentSkins["-"] = "-"
@@ -189,6 +189,25 @@ local function SaveTable(queuetable)
 	end
 	
     return TableToString(tbl):sub(0, -2)
+end
+
+local function checkId()
+	for i,v in pairs(versions) do
+        if type(v.gameid) == "table" and table.find(v.gameid, game.PlaceId) or type(v.gameid) == "number" and v.gameid == game.PlaceId then
+            return v
+        end
+    end
+
+	return false
+end
+
+local function checkFile(func)
+    if isfile("oblivion/settings.cfg") then
+        local var = loadstring("return "..readfile("oblivion/settings.cfg"))()
+		return var
+    end
+
+    return false
 end
 
 local function getAllNames(datatable, val)
@@ -1184,9 +1203,22 @@ local ST_MiscSec = SettingsTab:AddSection({Name = "Misc"})
 local ST_VersionSec = SettingsTab:AddSection({Name = "Version"})
 ST_MiscSec:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 ST_MiscSec:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-ST_VersionSec:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val) if OrionLib.Flags["settings_build"] then dropdownRefresh("settings_build", versions["data"][val]["tables"][1], getAllNames(versions["data"][val]["tables"], "empty")) end end})
+ST_VersionSec:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val)
+	if OrionLib.Flags["settings_build"] then
+		dropdownRefresh("settings_build", versiontable["data"][val]["tables"][1], getAllNames(versiontable["data"][val]["tables"], "empty"))
+	end end})
 ST_VersionSec:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "settings_build"})
-ST_VersionSec:AddButton({Name = "Set", Callback = function() writefile("oblivion/load_version.txt", versions["data"][OrionLib.Flags["settings_branch"].Value]["data"][OrionLib.Flags["settings_build"].Value]) end})
+ST_VersionSec:AddButton({Name = "Set", Callback = function()
+	local prefilecheckdata = checkFile("file")
+	local temp = {}
+	if prefilecheckdata then
+		for i,v in pairs(prefilecheckdata) do
+			table.insert(temp, v)
+		end
+	end
+	table.insert(temp, {url = versiontable.data[OrionLib.Flags["branch"].Value].data[OrionLib.Flags["build"].Value], branch = OrionLib.Flags["branch"].Value, build = OrionLib.Flags["build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})
+    writefile("oblivion/settings.cfg", SaveTable(temp))
+end})
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)
@@ -1816,10 +1848,12 @@ for _, Model in pairs(ReplicatedStorage.Viewmodels:GetChildren()) do
 	Clone.Parent = Models
 end
 
+versiontable = checkId()
+
 dropdownRefresh("skins_weapon", "-", getAllNames(Settings.weapon_data))
 dropdownRefresh("skins_knife", "-", getAllNames(Settings.knife_data))
 dropdownRefresh("skins_glove", "-", getAllNames(Settings.glove_data))
-dropdownRefresh("settings_branch", versions["tables"][1], versions["tables"])
+dropdownRefresh("settings_branch", versiontable["tables"][1], versiontable["tables"])
 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page"))
 tagsUpdateLabels("offline")
 

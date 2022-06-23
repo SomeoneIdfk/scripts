@@ -695,32 +695,26 @@ local function tagsListOnlineSkids(player)
 			return tagsHttpGet(tagsListIdFromUsername(player))
 		end
 	else
-		local temp = {"-"}
-		local tags =  tagsListUserIds()
-		local till = {target = #tags, current = 0, queue = 100}
-		for i,v in pairs(tags) do
-			coroutine.wrap(function()
-				local response = tagsHttpGet(v)
-				if response["IsOnline"] and response.IsOnline == true then
-					table.insert(temp, tagsListUsernameFromId(v))
-				end
-				till.current = till.current + 1
-			end)()
-			if i == till.queue then
-				repeat
-					for i2 = 1,5,1 do
-						if till.current == till.queue then
-							break
-						end
-						wait(0.1)
+		local pages = math.ceil(#TaggedSkids / 100)
+		local temp = {}
+		for i = 1,pages,1 do
+			local tags = tagsListUserIds(i - 1)
+			local till = {current = 0, queue = #tags < 100 and #tags or 100}
+			for i2,v2 in pairs(tags) do
+				coroutine.wrap(function()
+					local response = tagsHttpGet(v2)
+					if response["IsOnline"] and response.IsOnline == true then
+						table.insert(temp, tagsListUsernameFromId(v2))
 					end
-				until till.current == till.queue
-				till.queue = till.queue + 100
+					till.current = till.current + 1
+				end)()
+				for i3 = 1,3,1 do
+					RunService.RenderStepped:Wait()
+				end
 			end
-			RunService.RenderStepped:Wait()
+			repeat wait(0.1) until till.current == till.queue
+			wait(i == pages and 0.01 or 1)
 		end
-
-		repeat wait(1) until till.target == till.current
 
 		return temp
 	end

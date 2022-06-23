@@ -201,7 +201,7 @@ local function checkId()
 	return false
 end
 
-local function checkFile(func)
+local function checkFile()
     if isfile("oblivion/settings.cfg") then
         local var = loadstring("return "..readfile("oblivion/settings.cfg"))()
 		return var
@@ -1209,7 +1209,7 @@ ST_VersionSec:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag
 	end end})
 ST_VersionSec:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "settings_build"})
 ST_VersionSec:AddButton({Name = "Set", Callback = function()
-	local prefilecheckdata = checkFile("file")
+	local prefilecheckdata = checkFile()
 	local temp = {}
 	if prefilecheckdata then
 		for i,v in pairs(prefilecheckdata) do

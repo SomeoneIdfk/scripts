@@ -956,14 +956,14 @@ local function teleportTospawnpoint()
 	Settings.falldamagefilter = true
 	RunService.RenderStepped:Wait()
 	local lastspawnpoint
-	local spawns = GetTeam(LocalPlayer) == "T" and workspace.Map.TSpawns or GetTeam(LocalPlayer) == "CT" and workspace.Map.CTSpawns or nil
+	local spawns = GetTeam(LocalPlayer) == "T" and workspace.Map.TSpawns or GetTeam(LocalPlayer) == "CT" and workspace.Map.CTSpawns or workspace.Map.AllSpawns
 	for i,v in pairs(spawns:GetChildren()) do
 		lastspawnpoint = v
 		break
 	end
 	for i = 1,5,1 do
-		LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 1, 0))
-		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 1, 0)
+		LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 10, 0))
+		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
 	end
 	for i = 1,50,1 do
 		if Settings.falldamagefilter == false then
@@ -1679,8 +1679,8 @@ RunService.RenderStepped:Connect(function(step)
 						teleportToPlayer(LocalPlayer, "after_prep")
 						Settings.teleportreset = false
 					elseif mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive == false and Settings.teleportreset == false then
-						teleportTospawnpoint()
 						Settings.teleportreset = true
+						teleportTospawnpoint()
 					end
 				end)()
 

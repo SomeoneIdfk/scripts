@@ -41,7 +41,7 @@ for i,v in pairs(file_versions) do
 		writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
 		file_updated = true
 	elseif isfile("oblivion/CB/"..i) then
-		local var = loadstring("return "..readfile("oblivion/"..i))()
+		local var = loadstring("return "..readfile("oblivion/CB/"..i))()
 		if not var["data"] or not var.data["version"] then
 			print("[Oblivion] Updating file: "..i)
 			print("[Oblivion] Downloaded version: nil")
@@ -206,8 +206,8 @@ local function checkId()
 end
 
 local function checkFile()
-    if isfile("oblivion/settings.cfg") then
-        local var = loadstring("return "..readfile("oblivion/settings.cfg"))()
+    if isfile("oblivion/CB/settings.cfg") then
+        local var = loadstring("return "..readfile("oblivion/CB/settings.cfg"))()
 		return var
     end
 
@@ -359,8 +359,10 @@ local function dropdownCustom(state, type)
 	local var = skinsGunList(OrionLib.Flags[main].Value, state, type)
 	OrionLib.Flags[sub]:Refresh(var, true)
 	if table.find(var, Settings.CurrentSkins[OrionLib.Flags[main].Value]) then
+        Settings.dropdownfilter = true
 		OrionLib.Flags[sub]:Set(Settings.CurrentSkins[OrionLib.Flags[main].Value])
-	elseif not table.find(var, Settings.CurrentSkins[OrionLib.Flags[main].Value]) then
+        Settings.dropdownfilter = false
+	else
 		Settings.dropdownfilter = true
 		OrionLib.Flags[sub]:Set(var[1])
 		Settings.dropdownfilter = false
@@ -1123,8 +1125,21 @@ local ST_WeaponSec = SkinsTab:AddSection({Name = "Weapons"})
 local ST_KnifeSec = SkinsTab:AddSection({Name = "Knives"})
 local ST_GloveSec = SkinsTab:AddSection({Name = "Gloves"})
 ST_AddSec:AddToggle({Name = "Custom Skins", Default = false, Flag = "skins_custom", Callback = function(val) saveData() if val == true then loadCustomSkins() if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then dropdownCustom("normal", "guns") end if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then dropdownCustom("normal", "knives") end elseif val == false then if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then dropdownCustom("normal", "guns") end if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then dropdownCustom("normal", "knives") end end end})
-ST_WeaponSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val) if val == "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownRefresh("skins_weapon_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownCustom("normal", "guns") end end})
-ST_WeaponSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val) if Settings.dropdownfilter == false and val == "Show custom skins" then dropdownCustom("custom", "guns") elseif Settings.dropdownfilter == false and val == "Show normal skins" then dropdownCustom("normal", "guns") elseif Settings.dropdownfilter == false and val ~= nil then Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val saveData() end end})
+ST_WeaponSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val)
+    if val == "-" and OrionLib.Flags["skins_weapon_skin"] then
+        dropdownRefresh("skins_weapon_skin", "-", {"-"})
+    elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then
+        dropdownCustom("normal", "guns")
+    end end})
+ST_WeaponSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val)
+    if Settings.dropdownfilter == false and val == "Show custom skins" then
+        dropdownCustom("custom", "guns")
+    elseif Settings.dropdownfilter == false and val == "Show normal skins" then
+        dropdownCustom("normal", "guns")
+    elseif Settings.dropdownfilter == false and val ~= nil then
+        Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val
+        saveData()
+    end end})
 ST_KnifeSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_knife", Callback = function(val) if val == "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("skins_knife_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownCustom("normal", "knives") saveData() end end})
 ST_KnifeSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_knife_skin", Callback = function(val) if Settings.dropdownfilter == false and val == "Show custom skins" then dropdownCustom("custom", "knives") elseif Settings.dropdownfilter == false and val == "Show normal skins" then dropdownCustom("normal", "knives") elseif Settings.dropdownfilter == false and val ~= nil then Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] = val saveData() end end})
 ST_GloveSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_glove", Callback = function(val) if val == "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "Stock", skinsList(val, Settings.glove_data)) saveData() end end})
@@ -1221,7 +1236,7 @@ ST_VersionSec:AddButton({Name = "Set", Callback = function()
 		end
 	end
 	table.insert(temp, {url = versiontable.data[OrionLib.Flags["settings_branch"].Value].data[OrionLib.Flags["settings_build"].Value], branch = OrionLib.Flags["settings_branch"].Value, build = OrionLib.Flags["settings_build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})
-    writefile("oblivion/settings.cfg", SaveTable(temp))
+    writefile("oblivion/CB/settings.cfg", SaveTable(temp))
 end})
 
 -- Meta

@@ -35,7 +35,7 @@ writefile("oblivion/CB/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.
 repeat wait() until workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Origin")
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local versions, versiontable = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/universal_versions.cfg"))(), {}
+local versions, versiontable = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/versions.cfg"))(), {}
 
 local Settings = {CurrentSkins = {}, dropdownfilter = false, CustomSkins = false, data = {}, saveerror = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/CB/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}}
 Settings.CurrentSkins["-"] = "-"

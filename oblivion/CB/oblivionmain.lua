@@ -605,11 +605,14 @@ local function tagsListUsernames(type)
 	return temp
 end
 
-local function tagsListUserIds()
-	local temp = {}
+local function tagsListUserIds(page)
+	local temp, range, increment = {}, {min = page * 100, max = ((page + 1) * 100)}, 0
 	table.foreach(TaggedSkids, function(i, v)
 		table.foreach(v, function(i2, v2)
-			table.insert(temp, i2)
+			increment = increment + 1
+			if increment > range.min and increment <= range.max then
+				table.insert(temp, i2)
+			end
 		end)
 	end)
 

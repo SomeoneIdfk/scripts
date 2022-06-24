@@ -134,7 +134,10 @@ end
 
 function EspLibrary.GetCharacter(player)
     local character = player.Character
-    return character, character and findFirstChild(character, "HumanoidRootPart")
+    if player and player.Character and player.Character.FindFirstChild(player.Character, "Humanoid") and player.Character.Humanoid.Health > 0 and tostring(player.Team) ~= "Spec" then
+		return character, character and character.FindFirstChild(character, "HumanoidRootPart")
+	end
+    return character, nil
 end
 
 function EspLibrary.GetDrone(drone)

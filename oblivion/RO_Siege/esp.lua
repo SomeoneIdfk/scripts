@@ -406,7 +406,7 @@ function EspLibrary.Init()
                                 part.BoxHandleAdornment.Visible = true
                                 part.BoxHandleAdornment.Color3 = EspLibrary.options.chamsColor
                                 part.BoxHandleAdornment.Transparency = part == torso and 1 or EspLibrary.options.chamsTransparency
-                            elseif not findFirstChild(part, "BoxHandleAdornment") then
+                            elseif not findFirstChild(part, "BoxHandleAdornment") and string.find(part.ClassName, "Part") then
                                 local adornment = Instance.new("BoxHandleAdornment")
                                 adornment.AlwaysOnTop = true
                                 adornment.Size = part.Size

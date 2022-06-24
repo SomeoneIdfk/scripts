@@ -409,6 +409,14 @@ function EspLibrary.Init()
                                 part.BoxHandleAdornment.Visible = true
                                 part.BoxHandleAdornment.Color3 = EspLibrary.options.chamsColor
                                 part.BoxHandleAdornment.Transparency = part == torso and 1 or EspLibrary.options.chamsTransparency
+                            elseif not findFirstChild(part, "BoxHandleAdornment") then
+                                local adornment = Instance.new("BoxHandleAdornment")
+                                adornment.AlwaysOnTop = true
+                                adornment.Size = part.Size
+                                adornment.Transparency = 1
+                                adornment.Adornee = part
+                                adornment.ZIndex = 1
+                                adornment.Parent = part
                             end
                         end
                     else
@@ -577,6 +585,14 @@ function EspLibrary.Init()
                                     part.BoxHandleAdornment.Visible = true
                                     part.BoxHandleAdornment.Color3 = EspLibrary.options.chamsColor
                                     part.BoxHandleAdornment.Transparency = part == torso and 1 or EspLibrary.options.chamsTransparency
+                                elseif not findFirstChild(part, "BoxHandleAdornment") then
+                                    local adornment = Instance.new("BoxHandleAdornment")
+                                    adornment.AlwaysOnTop = true
+                                    adornment.Size = part.Size
+                                    adornment.Transparency = 1
+                                    adornment.Adornee = part
+                                    adornment.ZIndex = 1
+                                    adornment.Parent = part
                                 end
                             end
                         else

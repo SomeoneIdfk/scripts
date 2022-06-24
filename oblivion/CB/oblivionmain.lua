@@ -871,7 +871,6 @@ end
 local function loadCustomSkins()
     if Settings.CustomSkins == false then
         Settings.CustomSkins = true
-        OrionLib:MakeNotification({Name = "Oblivion", Content = "Custom Skins is still being worked on, but can already be used.", Image = "rbxassetid://4335483762", Time = 5})
 		for i,v in pairs(Settings.weapon_info) do
 			if i ~= "gloves" then
 				for i2,v2 in pairs(v) do
@@ -963,13 +962,13 @@ local function teleportTospawnpoint()
 	end
 	for i = 1,5,1 do
 		LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(lastspawnpoint.Position + Vector3.new(0, 10, 0))
-		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+		LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, -10, 0)
 	end
 	for i = 1,50,1 do
 		if Settings.falldamagefilter == false then
 			Settings.falldamagefilter = true
 		end
-		wait(0.1)
+		RunService.RenderStepped:Wait()
 	end
 	Settings.falldamagefilter = false
 end
@@ -1195,7 +1194,7 @@ MT_MiscSec:AddToggle({Name = "Walk On Water", Default = false, Flag = "misc_walk
 MiscTab:AddDropdown({Name = "Infinite Ammo", Default = "-", Options = {"-", "Mag", "Reserve"}, Flag = "misc_infinite_ammo", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "No Fall Damage", Default = false, Flag = "misc_no_fall_damage", Callback = function() saveData() end})
 MiscTab:AddToggle({Name = "Filter Chat", Default = false, Flag = "misc_filter_chat", Callback = function() saveData() end})
-MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function(val) saveData() if val == true then OrionLib:MakeNotification({Name = "Oblivion", Content = "Dead Chat is still in it's early state.", Image = "rbxassetid://4384401360", Time = 10}) end end})
+MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat", Callback = function() saveData() end})
 MiscTab:AddDropdown({Name = "Auto Join", Default = "None", Options = {"None", "Terrorists", "Counter-Terrorists"}, Flag = "misc_auto_join", Callback = function() saveData() end})
 MiscTab:AddButton({Name = "Kill Server", Callback = function() if mainPlayerCheck(LocalPlayer) then if knifeOrGun() ~= "gun" then OrionLib:MakeNotification({Name = "Oblivion", Content = "Pull out your gun.", Image = "rbxassetid://4384401360", Time = 5}) repeat wait(0.5) until knifeOrGun() == "gun" or mainPlayerCheck(LocalPlayer) == false end if knifeOrGun() == "gun" and mainPlayerCheck(LocalPlayer) then for i = 1,50,1 do repeat wait() until LocalPlayer.Character:FindFirstChild("Gun") and LocalPlayer.Character.Gun:FindFirstChild("Mag") coroutine.wrap(function() for i2 = 1,50,1 do local mag = LocalPlayer.Character.Gun.Mag game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag) if i == 50 and i2 == 50 then OrionLib:MakeNotification({Name = "Oblivion", Content = "Server killed.", Image = "rbxassetid://4384401360", Time = 5}) end end end)() for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do if v.Name == "MagDrop" then v:Destroy() end end end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "Cancelled.", Image = "rbxassetid://4384401360", Time = 5}) end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "You need to be alive for this action.", Image = "rbxassetid://4384401360", Time = 5}) end end})
 MiscTab:AddToggle({Name = "No Preparation", Default = false, Flag = "misc_no_preparation", Callback = function() saveData() end})
@@ -1785,6 +1784,11 @@ OblivionMapChange:GetPropertyChangedSignal("Value"):Connect(function()
 				repeat ReplicatedStorage.Events.JoinTeam:FireServer(var) wait(1) until GetTeam(LocalPlayer) == var and rounds == workspace.Status.Rounds.Value or rounds ~= workspace.Status.Rounds.Value
 			end
 		end)()
+
+        if warmupCheck() and LocalPlayer.PlayerGui.GUI.MapVote.Visible == true or warmupCheck() and LocalPlayer.PlayerGui.GUI.Scoreboard.Visible == true then
+            LocalPlayer.PlayerGui.GUI.MapVote.Visible = false
+	        LocalPlayer.PlayerGui.GUI.Scoreboard.Visible = false
+        end
 	end)
 end)
 

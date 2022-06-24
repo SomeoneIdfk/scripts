@@ -29,7 +29,30 @@ if not isfolder("oblivion/CB/skin_changer") then
     makefolder("oblivion/CB/skin_changer")
 end
 
-writefile("oblivion/CB/skin_changer/weapon_data.cfg", game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/weapon_data.cfg"))
+local file_versions, file_updated = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/file_versions.cfg"))(), false
+
+for i,v in pairs(file_versions) do
+	print("[Oblivion] Checking: "..i)
+	print("[Oblivion] Current version: "..v)
+	if not isfile("oblivion/CB/"..i) then
+		print("[Oblivion] Creating file: "..i)
+		writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+		file_updated = true
+	elseif isfile("oblivion/CB/"..i) then
+		local var = loadstring("return "..readfile("oblivion/"..i))()
+		if not var["data"] or not var.data["version"] then
+			print("[Oblivion] Updating file: "..i)
+			print("[Oblivion] Downloaded version: nil")
+			writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+			file_updated = true
+		elseif var.data.version ~= v then
+			print("[Oblivion] Updating file: "..i)
+			print("[Oblivion] Downloaded version: "..var.data.version)
+			writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
+			file_updated = true
+		end
+	end
+end
 
 -- Main
 repeat wait() until workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Origin")

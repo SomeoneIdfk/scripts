@@ -90,7 +90,7 @@ OrionLib:MakeNotification({Name = "Oblivion", Content = "Oblivion is loading.", 
 
 if file_updated == true then OrionLib:MakeNotification({Name = "Oblivion", Content = "Updated/Created necessary files.", Image = "rbxassetid://4400702947", Time = 5}) end
 
-local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, IntroEnabled = false, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846", Icon = "rbxassetid://1521636846"})
+local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, IntroEnabled = false, Icon = "rbxassetid://1521636846"})
 
 -- Workspace
 local Oblivion = Instance.new("Folder", workspace)

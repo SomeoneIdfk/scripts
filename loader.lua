@@ -147,7 +147,7 @@ if preidcheck and prefilecheck then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/"..prefilecheck))();
 elseif preidcheck and prefilecheck == false then
     OrionLib:MakeNotification({Name = "Oblivion", Content = "Welcome to Oblivion - "..game.Players.LocalPlayer.Name, Image = "rbxassetid://4431165334", Time = 5})
-    local Window = OrionLib:MakeWindow({Name = "Oblivion Loader", HidePremium = true, SaveConfig = false, ConfigFolder = "oblivion"})
+    local Window = OrionLib:MakeWindow({Name = "Oblivion Loader", HidePremium = true, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846"})
     local SettingsTab = Window:MakeTab({Name = "Settings", Icon = "rbxassetid://3605022185", PremiumOnly = false})
 
     SettingsTab:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "branch", Callback = function(val)

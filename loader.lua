@@ -179,5 +179,5 @@ elseif preidcheck and prefilecheck == false then
     OrionLib.Flags["branch"]:Set(preidcheck["tables"][1])
     OrionLib:Init()
 elseif not preidcheck then
-	OrionLib:MakeNotification({Name = "Oblivion", Content = "Failed to load: Running on the wrong game!", Image = "rbxassetid://4384402990", Time = 5})
+	OrionLib:MakeNotification({Name = "Oblivion", Content = "Failed to load: Running on an incompatible game!", Image = "rbxassetid://4384402990", Time = 5})
 end

@@ -19,7 +19,7 @@ if not isfolder("oblivion/RO_Siege") then
     makefolder("oblivion/RO_Siege")
 end
 
-local values = {keybind_toggled = false, fov = Drawing.new("Circle")}
+local values = {aimbot = {keybind_toggled = false, last_target = nil, last_type = nil, last_host = nil, ticks = 0, offset = nil}, fov = Drawing.new("Circle")}
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local espLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/oblivion/RO_Siege/esp.lua"))()
@@ -35,7 +35,7 @@ local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, Intro
 
 -- Functions
 local function GetTeam(plr)
-	if plr.Team ~= "Spec" then
+	if tostring(plr.Team) ~= "Spec" then
 		return tostring(plr.Team)
 	end
 
@@ -50,13 +50,21 @@ local function IsAlive(plr)
 	return false
 end
 
+local function DroneHealth(drone)
+    if drone and drone.FindFirstChild(drone, "Humanoid") and drone.Humanoid.Health > 0 then
+        return true
+    end
+
+    return false
+end
+
 local function GetCharacter(player)
     local character = player.Character
     return character, character and character:FindFirstChild("HumanoidRootPart"), character and character:FindFirstChild("Head")
 end
 
 local function GetDrone(drone)
-    local hrp = drone.HumanoidRootPart
+    local hrp = drone:FindFirstChild("HumanoidRootPart")
     return hrp
 end
 
@@ -69,6 +77,8 @@ end
 local function getClosestTarget()
     local distance = math.huge
     local closestTarget = nil
+    local targettype = nil
+    local targethost = nil
     for i,v in pairs(game.Players:GetChildren()) do
         if v ~= LocalPlayer and IsAlive(v) and GetTeam(LocalPlayer) ~= GetTeam(v) then
 			local character, hrp, head = GetCharacter(v)
@@ -79,17 +89,23 @@ local function getClosestTarget()
                     if FOVCheck < distance then
                         distance = FOVCheck
                         closestTarget = head
+                        targettype = "player"
+                        targethost = v
                     end
                 elseif OrionLib.Flags["aimbot_visible"].Value == true then
                     if VisibleCheck(character, head.Position) then
                         if FOVCheck < distance then
                             distance = FOVCheck
                             closestTarget = head
+                            targettype = "player"
+                            targethost = v
                         end
                     elseif VisibleCheck(character, hrp.Position) then
                         if FOVCheck < distance then
                             distance = FOVCheck
                             closestTarget = hrp
+                            targettype = "player"
+                            targethost = v
                         end
                     end
 				end
@@ -107,12 +123,16 @@ local function getClosestTarget()
                     if FOVCheck < distance then
                         distance = FOVCheck
                         closestTarget = drone
+                        targettype = "drone"
+                        targethost = v
                     end
                 elseif OrionLib.Flags["aimbot_visible"].Value == true then
                     if VisibleCheck(v, drone.Position) then
                         if FOVCheck < distance then
                             distance = FOVCheck
                             closestTarget = drone
+                            targettype = "drone"
+                            targethost = v
                         end
                     end
 				end
@@ -120,7 +140,7 @@ local function getClosestTarget()
         end
     end
 
-	return closestTarget
+	return closestTarget, targettype, targethost
 end
 
 -- Esp Functions
@@ -192,9 +212,11 @@ local AimTab = Window:MakeTab({Name = "Aimbot", Icon = "rbxassetid://4483345998"
 local EspTab = Window:MakeTab({Name = "ESP", Icon = "rbxassetid://4483362458"})
 
 AimTab:AddToggle({Name = "Enable", Default = false, Flag = "aimbot_enable", Save = true})
+AimTab:AddDropdown({Name = "Aim Type", Default = "Aimlock", Options = {"Aimlock", "Smooth"}, Flag = "aimbot_aim_type", Save = true})
+AimTab:AddSlider({Name = "Smoothness", Min = 1, Max = 50, Default = 25, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "aimbot_aim_smoothness", Save = true})
 AimTab:AddToggle({Name = "Visible", Default = false, Flag = "aimbot_visible", Save = true})
 AimTab:AddToggle({Name = "Drones", Default = false, Flag = "aimbot_drones", Save = true})
-AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.LeftAlt, Hold = false, Flag = "aimbot_keybind", Save = true, Callback = function() values.keybind_toggled = values.keybind_toggled == false and true or values.keybind_toggled == true and false if OrionLib.Flags["aimbot_enable"].Value == true then local var = values.keybind_toggled == true and "enabled" or values.keybind_toggled == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..var..".", Image = "rbxassetid://4483345998", Time = 3}) end end})
+AimTab:AddBind({Name = "Bind", Default = Enum.KeyCode.LeftAlt, Hold = false, Flag = "aimbot_keybind", Save = true, Callback = function() values.aimbot.keybind_toggled = values.aimbot.keybind_toggled == false and true or values.aimbot.keybind_toggled == true and false if OrionLib.Flags["aimbot_enable"].Value == true then local var = values.aimbot.keybind_toggled == true and "enabled" or values.aimbot.keybind_toggled == false and "disabled" OrionLib:MakeNotification({Name = "Oblivion", Content = "Aimbot is now "..var..".", Image = "rbxassetid://4483345998", Time = 3}) end end})
 AimTab:AddToggle({Name = "FOV Check", Default = false, Flag = "aimbot_fov_only", Save = true})
 AimTab:AddSlider({Name = "FOV Radius", Min = 5, Max = 360, Default = 120, Color3.fromRGB(255, 255, 255), Increment = 5, Flag = "aimbot_fov_radius", Save = true, Callback = function(val) values.fov.Radius = val end})
 
@@ -217,10 +239,23 @@ EspTab:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bott
 RunService.RenderStepped:Connect(function(step)
     local lp = IsAlive(LocalPlayer)
 
-    if OrionLib.Flags["aimbot_enable"].Value == true and lp and Mode.Value == "Op" and values.keybind_toggled == true or OrionLib.Flags["aimbot_enable"].Value == true and OrionLib.Flags["aimbot_drones"].Value == true and lp and Mode.Value == "Set" and values.keybind_toggled == true then
-        local target = getClosestTarget()
+    if OrionLib.Flags["aimbot_enable"].Value == true and lp and Mode.Value == "Op" and values.aimbot.keybind_toggled == true or OrionLib.Flags["aimbot_enable"].Value == true and OrionLib.Flags["aimbot_drones"].Value == true and lp and Mode.Value == "Set" and values.aimbot.keybind_toggled == true then
+        local target, type, host = getClosestTarget()
         if target then
-            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target.Position)
+            values.aimbot.last_target, values.aimbot.last_type, values.aimbot.last_host, values.aimbot.ticks = target, type, host, 0
+            values.aimbot.offset = type == "player" and Vector3.new(((math.random(200) - 100) / 100), ((math.random(200) - 100) / 100), ((math.random(200) - 100) / 100)) and values.aimbot.last_target and type == "drone" and Vector3.new(((math.random(50) - 25) / 100), ((math.random(50) - 25) / 100), ((math.random(50) - 25) / 100)) or Vector3.new(0, 0, 0)
+        else
+            if values.aimbot.last_type == "player" and IsAlive(values.aimbot.last_host) == false then values.aimbot.last_target = nil elseif values.aimbot.last_type == "drone" and DroneHealth(values.aimbot.last_host) == false then values.aimbot.last_target = nil elseif values.aimbot.ticks == 500 then values.aimbot.last_target = nil end
+            values.aimbot.ticks = values.aimbot.ticks ~= 500 and values.aimbot.ticks + 1 or values.aimbot.ticks
+        end
+        if values.aimbot.last_target then
+            if OrionLib.Flags["aimbot_aim_type"].Value == "Smooth" then
+                local Pos = workspace.CurrentCamera:WorldToScreenPoint((values.aimbot.last_target.Position + values.aimbot.offset))
+				local Magnitude = Vector2.new(Pos.X - Mouse.X, Pos.Y - Mouse.Y)
+				mousemoverel(Magnitude.x/OrionLib.Flags["aimbot_aim_smoothness"].Value, Magnitude.y/OrionLib.Flags["aimbot_aim_smoothness"].Value)
+            elseif OrionLib.Flags["aimbot_aim_type"].Value == "Aimlock" then
+                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, (values.aimbot.last_target.Position + values.aimbot.offset))
+            end
         end
     end
 

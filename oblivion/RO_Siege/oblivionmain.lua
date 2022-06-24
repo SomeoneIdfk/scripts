@@ -31,7 +31,7 @@ local Success, MapInfo = pcall(function() return workspace.SE_Workspace end)
 values.fov.Thickness = 2
 values.fov.Visible = false
 
-local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, IntroEnabled = false, IntroText = "Ready for duty.", IntroIcon = "rbxassetid://1521636846", Icon = "rbxassetid://1521636846", SaveConfig = true, ConfigFolder = "oblivion/RO_Siege"})
+local Window = OrionLib:MakeWindow({Name = "Oblivion", HidePremium = true, IntroEnabled = false, Icon = "rbxassetid://1521636846", SaveConfig = true, ConfigFolder = "oblivion/RO_Siege"})
 
 -- Functions
 local function GetTeam(plr)

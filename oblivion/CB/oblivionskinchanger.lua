@@ -74,7 +74,7 @@ local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skin
 
 OrionLib:MakeNotification({Name = "Oblivion Skin Changer", Content = "Oblivion is loading.", Image = "rbxassetid://4400702947", Time = 3})
 
-local Window = OrionLib:MakeWindow({Name = "Oblivion Skin Changer", HidePremium = true})
+local Window = OrionLib:MakeWindow({Name = "Oblivion Skin Changer", HidePremium = true, IntroEnabled = false, Icon = "rbxassetid://1521636846"})
 
 -- Workspace
 local Oblivion = Instance.new("Folder", workspace)

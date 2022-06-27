@@ -706,6 +706,7 @@ local function tagsListOnlineSkids(player)
 	else
 		local pages = math.ceil(#TaggedSkids / 100)
 		local temp = {}
+		local speed = OrionLib.Flags["tags_check_speed"].Value == "Stable" and 5 or OrionLib.Flags["tags_check_speed"].Value == "Fast" and 3
 		for i = 1,pages,1 do
 			local tags = tagsListUserIds(i - 1)
 			local till = {current = 0, queue = #tags < 100 and #tags or 100}
@@ -717,7 +718,7 @@ local function tagsListOnlineSkids(player)
 					end
 					till.current = till.current + 1
 				end)()
-				for i3 = 1,5,1 do
+				for i3 = 1,speed,1 do
 					RunService.RenderStepped:Wait()
 				end
 			end
@@ -1190,6 +1191,7 @@ TaT_AddSec:AddButton({Name = "Refresh List", Callback = function() TaggedSkids =
 Settings.tags.countlabel = TaT_AddSec:AddLabel("")
 Settings.tags.onlinelabel = TaT_AddSec:AddLabel("Online:")
 TaT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_online_check", Callback = function(val) saveData() if val == true and OblivionRan.Value == true then tagsMessageOnlineSkids() end end})
+TaT_AddSec:AddDropdown({Name = "Check Speed", Default = "Stable", Options = {"Stable", "Fast"}, Flag = "tags_check_speed", Callback = function() saveData() end})
 TaT_MergeSec:AddDropdown({Name = "File", Default = "-", Options = {"-"}, Flag = "tags_merge_file"})
 TaT_MergeSec:AddButton({Name = "Refresh", Callback = function() local temp = {"-"} for i,v in pairs(listfiles("oblivion")) do table.insert(temp, v) end dropdownRefresh("tags_merge_file", "-", temp) end})
 TaT_MergeSec:AddButton({Name = "Merge", Callback = function() if OrionLib.Flags["tags_merge_file"].Value ~= "-" and isfile(OrionLib.Flags["tags_merge_file"].Value) then local temp = TaggedSkids pcall(function() for i,v in pairs(loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) do pcall(function() print(i..'/'..#loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) for i2,v2 in pairs(v) do if not tagsTableFind(i2, "id") then table.insert(temp, {[i2] = v2}) end end end) end end) writefile("oblivion/CB/tagged.cfg", SaveTable(temp)) TaggedSkids = loadstring("return "..readfile("oblivion/CB/tagged.cfg"))() dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") OrionLib:MakeNotification({Name = "Oblivion", Content = "Merged tags from: "..OrionLib.Flags["tags_merge_file"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) end end})

@@ -1018,6 +1018,17 @@ local function removeDeadZones()
 	end
 end
 
+local function RotatePlayer(pos)
+    local Gyro = Instance.new('BodyGyro')
+    Gyro.D = 0
+    Gyro.P = (100 * 100)
+    Gyro.MaxTorque = Vector3.new(0, (100 * 100), 0)
+    Gyro.Parent = game.Players.LocalPlayer.Character.UpperTorso
+    Gyro.CFrame = CFrame.new(Gyro.Parent.Position, pos.Position)
+    wait()
+    Gyro:Destroy()
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -1077,6 +1088,7 @@ local RT_Kill1Sec = RageTab:AddSection({Name = "Kill Player"})
 local RT_Kill2Sec = RageTab:AddSection({Name = "Kill Player"})
 local RT_Kill3Sec = RageTab:AddSection({Name = "Kill Player"})
 local RT_TeleportSec = RageTab:AddSection({Name = "Teleportation"})
+local RT_AntiAimSec = RageTab:AddSection({Name = "Anti-Aim"})
 local RT_AntiAntiAimSec = RageTab:AddSection({Name = "Anti Anti-Aim"})
 RT_GodModeSec:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
 RT_GodModeSec:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
@@ -1094,6 +1106,7 @@ RT_Kill2Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_playe
 RT_Kill3Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_3"})
 RT_Kill3Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_3"})
 RT_TeleportSec:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
+RT_AntiAimSec:AddToggle({Name = "Enable", Default = false, Flag = "rage_anti_aim_enable", Callback = function() saveData() end})
 RT_AntiAntiAimSec:AddToggle({Name = "Pitch Manipulation", Default = false, Flag = "rage_anti_anti_aim_pitch", Callback = function() saveData() end})
 RT_AntiAntiAimSec:AddToggle({Name = "Roll Manipulation", Default = false, Flag = "rage_anti_anti_aim_roll", Callback = function() saveData() end})
 RT_AntiAntiAimSec:AddToggle({Name = "Animation Manipulation", Default = false, Flag = "rage_anti_anti_aim_animation", Callback = function() saveData() end})
@@ -1405,6 +1418,14 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 				return wait(99e99)
 			elseif self.Name == "FallDamage" and OrionLib.Flags["misc_no_fall_damage"].Value == true or self.Name == "FallDamage" and Settings.falldamagefilter == true then
 				return
+            elseif self.Name == "ControlTurn" and OrionLib.Flags["rage_anti_aim_enable"].Value == true then
+                local rdnm = math.random(4)
+				local angle = (
+                    rdnm == 1 and 1 or rdnm == 2 and -2 or rdnm == 3 and -5 or rdnm == 4 and (math.random(2) == 1 and 1 or -1)
+				)
+				if angle then
+					args[1] = angle
+				end
 			end
 		elseif method == "InvokeServer" then
 			if self.Name == "Moolah" then
@@ -1755,6 +1776,15 @@ RunService.RenderStepped:Connect(function(step)
 				Settings.troll.sound.running = false
 			end
 		end)()
+
+        coroutine.wrap(function()
+            if OrionLib.Flags["rage_anti_aim_enable"].Value == true and isalivelp then
+                LocalPlayer.Character.Humanoid.AutoRotate = false
+                LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(100), 0)
+            elseif OrionLib.Flags["rage_anti_aim_enable"].Value == false and isalivelp then
+                game.Players.LocalPlayer.Character.Humanoid.AutoRotate = true
+            end
+        end)()
 	end)
 end)
 

@@ -717,7 +717,7 @@ local function tagsListOnlineSkids(player)
 					end
 					till.current = till.current + 1
 				end)()
-				for i3 = 1,3,1 do
+				for i3 = 1,5,1 do
 					RunService.RenderStepped:Wait()
 				end
 			end

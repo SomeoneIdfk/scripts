@@ -1220,26 +1220,9 @@ local ST_MiscSec = SettingsTab:AddSection({Name = "Misc"})
 local ST_VersionSec = SettingsTab:AddSection({Name = "Version"})
 ST_MiscSec:AddButton({Name = "Server Hop", Callback = function() Serverhop() end})
 ST_MiscSec:AddButton({Name = "Server Rejoin", Callback = function() game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer) end})
-ST_VersionSec:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val)
-	if OrionLib.Flags["settings_build"] then
-		dropdownRefresh("settings_build", versiontable["data"][val]["tables"][1], getAllNames(versiontable["data"][val]["tables"], "empty"))
-	end end})
+ST_VersionSec:AddDropdown({Name = "Branch", Default = "-", Options = {"-"}, Flag = "settings_branch", Callback = function(val) if OrionLib.Flags["settings_build"] then dropdownRefresh("settings_build", versiontable["data"][val]["tables"][1], getAllNames(versiontable["data"][val]["tables"], "empty")) end end})
 ST_VersionSec:AddDropdown({Name = "Build", Default = "-", Options = {"-"}, Flag = "settings_build"})
-ST_VersionSec:AddButton({Name = "Set", Callback = function()
-	local prefilecheckdata = checkFile()
-	local temp = {}
-	if prefilecheckdata then
-		for i,v in pairs(prefilecheckdata) do
-            if table.find(versiontable.tables, v.branch) and table.find(versiontable.data[v.branch].tables, v.build) and versiontable.data[v.branch].data[v.build] ~= v.url then
-                table.insert(temp, v)
-            elseif table.find(versiontable.tables, v.branch) == false then
-                table.insert(temp, v)
-            end
-		end
-	end
-	table.insert(temp, {url = versiontable.data[OrionLib.Flags["settings_branch"].Value].data[OrionLib.Flags["settings_build"].Value], branch = OrionLib.Flags["settings_branch"].Value, build = OrionLib.Flags["settings_build"].Value, folder = versiontable.folder, gameid = versiontable.gameid})
-    writefile("oblivion/CB/settings.cfg", SaveTable(temp))
-end})
+ST_VersionSec:AddButton({Name = "Set", Callback = function() local prefilecheckdata = checkFile() local temp = {} if prefilecheckdata then for i,v in pairs(prefilecheckdata) do if table.find(versiontable.tables, v.branch) and table.find(versiontable.data[v.branch].tables, v.build) and versiontable.data[v.branch].data[v.build] ~= v.url then table.insert(temp, v) elseif table.find(versiontable.tables, v.branch) == false then table.insert(temp, v) end end end table.insert(temp, {url = versiontable.data[OrionLib.Flags["settings_branch"].Value].data[OrionLib.Flags["settings_build"].Value], branch = OrionLib.Flags["settings_branch"].Value, build = OrionLib.Flags["settings_build"].Value, folder = versiontable.folder, gameid = versiontable.gameid}) writefile("oblivion/CB/settings.cfg", SaveTable(temp)) end})
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)

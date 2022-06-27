@@ -1215,6 +1215,7 @@ MiscTab:AddToggle({Name = "Dead Chat", Default = false, Flag = "misc_dead_chat",
 MiscTab:AddDropdown({Name = "Auto Join", Default = "None", Options = {"None", "Terrorists", "Counter-Terrorists"}, Flag = "misc_auto_join", Callback = function() saveData() end})
 MiscTab:AddButton({Name = "Kill Server", Callback = function() if mainPlayerCheck(LocalPlayer) then if knifeOrGun() ~= "gun" then OrionLib:MakeNotification({Name = "Oblivion", Content = "Pull out your gun.", Image = "rbxassetid://4384401360", Time = 5}) repeat wait(0.5) until knifeOrGun() == "gun" or mainPlayerCheck(LocalPlayer) == false end if knifeOrGun() == "gun" and mainPlayerCheck(LocalPlayer) then for i = 1,50,1 do repeat wait() until LocalPlayer.Character:FindFirstChild("Gun") and LocalPlayer.Character.Gun:FindFirstChild("Mag") coroutine.wrap(function() for i2 = 1,50,1 do local mag = LocalPlayer.Character.Gun.Mag game:GetService("ReplicatedStorage").Events.DropMag:FireServer(mag) if i == 50 and i2 == 50 then OrionLib:MakeNotification({Name = "Oblivion", Content = "Server killed.", Image = "rbxassetid://4384401360", Time = 5}) end end end)() for i,v in pairs(workspace["Ray_Ignore"]:GetChildren()) do if v.Name == "MagDrop" then v:Destroy() end end end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "Cancelled.", Image = "rbxassetid://4384401360", Time = 5}) end elseif mainPlayerCheck(LocalPlayer) == false then OrionLib:MakeNotification({Name = "Oblivion", Content = "You need to be alive for this action.", Image = "rbxassetid://4384401360", Time = 5}) end end})
 MiscTab:AddToggle({Name = "No Preparation", Default = false, Flag = "misc_no_preparation", Callback = function() saveData() end})
+MiscTab:AddToggle({Name = "Anti Vote Kick", Default = false, Flag = "misc_anti_vote_kick", Callback = function() saveData() end})
 
 local ST_MiscSec = SettingsTab:AddSection({Name = "Misc"})
 local ST_VersionSec = SettingsTab:AddSection({Name = "Version"})
@@ -1830,6 +1831,19 @@ LocalPlayer.CharacterAdded:Connect(function()
 			end
 		end)()
 	end)
+end)
+
+ReplicatedStorage.Events.SendMsg.OnClientEvent:Connect(function(message)
+	if OrionLib.Flags["misc_anti_vote_kick"].Value == true then
+		local msg = string.split(message, " ")
+		if game.Players:FindFirstChild(msg[1]) and msg[7] == "1" and msg[12] == game.Players.LocalPlayer.Name then
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+		elseif game.Players:FindFirstChild(msg[1]) and msg[7] == "2" and msg[12] == game.Players.LocalPlayer.Name then
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+		elseif game.Players:FindFirstChild(msg[1]) and msg[7] == "-1" and msg[12] == game.Players.LocalPlayer.Name then
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, LocalPlayer)
+		end
+	end
 end)
 
 for _,Player in pairs(game.Players:GetPlayers()) do

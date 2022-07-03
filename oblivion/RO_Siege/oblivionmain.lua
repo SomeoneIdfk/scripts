@@ -239,7 +239,7 @@ EspTab:AddDropdown({Name = "Tracer Origin", Default = "Bottom", Options = {"Bott
 RunService.RenderStepped:Connect(function(step)
     local lp = IsAlive(LocalPlayer)
 
-    if OrionLib.Flags["aimbot_enable"].Value == true and lp and Mode.Value == "Op" and values.aimbot.keybind_toggled == true or OrionLib.Flags["aimbot_enable"].Value == true and OrionLib.Flags["aimbot_drones"].Value == true and lp and Mode.Value == "Set" and values.aimbot.keybind_toggled == true then
+    if OrionLib.Flags["aimbot_enable"].Value == true and lp and values.aimbot.keybind_toggled == true and (Mode.Value == "Op" or OrionLib.Flags["aimbot_drones"].Value == true and Mode.Value == "Set") then
         local target, type, host = getClosestTarget()
         if target then
             values.aimbot.last_target, values.aimbot.last_type, values.aimbot.last_host, values.aimbot.ticks = target, type, host, 0
@@ -259,9 +259,9 @@ RunService.RenderStepped:Connect(function(step)
         end
     end
 
-    if OrionLib.Flags["aimbot_enable"].Value == true and OrionLib.Flags["aimbot_fov_only"].Value == true and Mode.Value == "Op" and lp or OrionLib.Flags["aimbot_enable"].Value == true and OrionLib.Flags["aimbot_fov_only"].Value == true and OrionLib.Flags["aimbot_drones"].Value == true and Mode.Value == "Set" and lp then
+    if OrionLib.Flags["aimbot_enable"].Value == true and OrionLib.Flags["aimbot_fov_only"].Value == true and lp and (Mode.Value == "Op" or OrionLib.Flags["aimbot_drones"].Value == true and Mode.Value == "Set") then
         values.fov.Visible = true
-    elseif Mode.Value ~= "Op" or Mode.Value ~= "Set" or OrionLib.Flags["aimbot_fov_only"].Value == false or lp == false then
+    else
         values.fov.Visible = false
     end
 end)

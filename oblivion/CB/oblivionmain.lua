@@ -1,6 +1,8 @@
 --[[
     Made by:
     SomeoneIdfk
+
+	Please don't steal, it's already open source.
 ]]--
 
 repeat wait() until game:IsLoaded()
@@ -12,6 +14,7 @@ local getsenv = getsenv or false
 local listfiles = listfiles or listdir or syn_io_listdir or false
 local hookfunc = hookfunc or hookfunction or replaceclosure or false
 local workspace = workspace or game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
@@ -34,22 +37,15 @@ end
 local file_versions, file_updated = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/file_versions.cfg"))(), false
 
 for i,v in pairs(file_versions) do
-	print("[Oblivion] Checking: "..i)
-	print("[Oblivion] Current version: "..v)
 	if not isfile("oblivion/CB/"..i) then
-		print("[Oblivion] Creating file: "..i)
 		writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
 		file_updated = true
 	elseif isfile("oblivion/CB/"..i) then
 		local var = loadstring("return "..readfile("oblivion/CB/"..i))()
 		if not var["data"] or not var.data["version"] then
-			print("[Oblivion] Updating file: "..i)
-			print("[Oblivion] Downloaded version: nil")
 			writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
 			file_updated = true
 		elseif var.data.version ~= v then
-			print("[Oblivion] Updating file: "..i)
-			print("[Oblivion] Downloaded version: "..var.data.version)
 			writefile("oblivion/CB/"..i, game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/configs/"..i))
 			file_updated = true
 		end
@@ -63,7 +59,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 local espLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Sirius/request/library/esp/esp.lua')))()
 local versions, versiontable = loadstring("return "..game:HttpGet("https://raw.githubusercontent.com/SomeoneIdfk/scripts/main/versions.cfg"))(), {}
 
-local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}}, saveerror = false, godmodeused = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/CB/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0), deadzones = false, troll = {sound = {running = false, sounds = {["TTT a"] = workspace.RoundEnd, ["TTT b"] = workspace.RoundStart, ["T Win"] = workspace.Sounds.T, ["CT Win"] = workspace.Sounds.CT, ["Planted"] = workspace.Sounds.Arm, ["Defused"] = workspace.Sounds.Defuse, ["Rescued"] = workspace.Sounds.Rescue, ["Explosion"] = workspace.Sounds.Explosion, ["Becky"] = workspace.Sounds.Becky, ["Beep"] = workspace.Sounds.Beep}}}}
+local Settings = {CurrentSkins = {}, LastStep = nil, Ping = nil, dropdownfilter = false, CustomSkins = false, data = {}, tags = {countlabel = nil, onlinelabel = nil, cooldown = 0, cooldowntoggle = false, page = 0}, aimbot = {enable = false, method = "distance", aim = false, target = nil, standing = false, distance = math.huge, targetresettime = 0, filter = false, visiblereset = {["rage_kill_player_1"] = {time = 0, value = false}, ["rage_kill_player_2"] = {time = 0, value = false}, ["rage_kill_player_3"] = {time = 0, value = false}}}, playerlist = {}, lists = {refreshplayerlist = false, alive_enemies = {}, alive_visible_enemies = {}, cooldownlist = {}}, saveerror = false, godmodeused = false, currentmap = nil, weapon_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "guns" then return v end end), knife_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "knives" then return v end end), glove_data = table.foreach(loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), function(i,v) if i == "gloves" then return v end end), weapon_info = loadstring("return "..readfile("oblivion/CB/weapon_data.cfg"))(), weapon_types = loadstring("return "..readfile("oblivion/CB/weapon_types.cfg"))(), loops = {bloodremovalloop = nil, magremovalloop = nil}, teleportreset = true, falldamagefilter = false, calctargets = false, calcstep = nil, loopresult = 0, TaggedColor = Color3.fromRGB(150, 0, 0), DeadColor = Color3.fromRGB(50, 50, 50), WarningColor = Color3.fromRGB(255, 255, 0), deadzones = false, troll = {sound = {running = false, sounds = {["TTT a"] = workspace.RoundEnd, ["TTT b"] = workspace.RoundStart, ["T Win"] = workspace.Sounds.T, ["CT Win"] = workspace.Sounds.CT, ["Planted"] = workspace.Sounds.Arm, ["Defused"] = workspace.Sounds.Defuse, ["Rescued"] = workspace.Sounds.Rescue, ["Explosion"] = workspace.Sounds.Explosion, ["Becky"] = workspace.Sounds.Becky, ["Beep"] = workspace.Sounds.Beep}}}, rage = {antiaim = {1, -1, -5/93 -13, 20, math.huge -5/0 -1, 23, -13, 12, -92, 15, math.huge, -13, 2.5}, spin = 0}, defaultGravity = workspace.Gravity}
 Settings.CurrentSkins["-"] = "-"
 
 for i,v in pairs(Settings.weapon_data) do
@@ -82,6 +78,8 @@ local FOV = Drawing.new("Circle")
 FOV.Thickness = 2
 local TriggerbotFOV = Drawing.new("Circle")
 TriggerbotFOV.Thickness = 2
+local BodyVelocity = Instance.new("BodyVelocity")
+BodyVelocity.MaxForce = Vector3.new(math.huge, 0, math.huge)
 
 local IgnoredFlags = {"settings_branch", "settings_build", "skins_weapon", "skins_weapon_skin", "tags_select_player", "tags_select_tag", "skins_knife_skin", "rage_kill_player_1", "rage_kill_player_enable_1", "rage_kill_player_2", "rage_kill_player_enable_2", "rage_kill_player_3", "rage_kill_player_enable_3", "tags_merge_file", "troll_sound_spam"}
 local Hitboxes = {"Head", "LeftHand", "LeftUpperArm", "RightHand", "RightUpperArm", "LeftFoot", "LeftUpperLeg", "RightFoot", "RightUpperLeg", "UpperTorso", "LowerTorso"}
@@ -288,7 +286,16 @@ local function hasCustom(shelf, weapon)
 end
 
 local function skinsGunList(gun, state, type)
-    local temp = OrionLib.Flags["skins_custom"].Value == false and {} or OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) == false and {} or OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) and state == "normal" and {[1] = "Show custom skins"} or OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) and state == "custom" and {[1] = "Show normal skins"}
+	local temp = {}
+    --[[local temp = (
+		OrionLib.Flags["skins_custom"].Value == false and {} or
+		OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) == false and {} or
+		OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) and state == "normal" and {[1] = "Show custom skins"} or
+		OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) and state == "custom" and {[1] = "Show normal skins"}
+	)]]
+	if OrionLib.Flags["skins_custom"].Value == true and hasCustom(type, gun) then
+		table.insert(temp, state == "normal" and "Show custom skins" or state == "custom" and "Show normal skins")
+	end
 	if state == "normal" then
 		for i,v in pairs(Settings.weapon_info[type][gun].list) do
 			table.insert(temp, v)
@@ -354,18 +361,18 @@ local function dropdownRefresh(flag, value, list)
 end
 
 local function dropdownCustom(state, type)
-	local main = type == "guns" and "skins_weapon" or type == "knives" and "skins_knife"
-	local sub = type == "guns" and "skins_weapon_skin" or type == "knives" and "skins_knife_skin"
-	local var = skinsGunList(OrionLib.Flags[main].Value, state, type)
-	OrionLib.Flags[sub]:Refresh(var, true)
-	if table.find(var, Settings.CurrentSkins[OrionLib.Flags[main].Value]) then
+	local var = skinsGunList(OrionLib.Flags[type == "guns" and "skins_weapon" or type == "knives" and "skins_knife"].Value, state, type)
+	OrionLib.Flags[type == "guns" and "skins_weapon_skin" or type == "knives" and "skins_knife_skin"]:Refresh({"-"}, true)
+	Settings.dropdownfilter = true
+	OrionLib.Flags[type == "guns" and "skins_weapon_skin" or type == "knives" and "skins_knife_skin"]:Set("-")
+	repeat wait() until Settings.dropdownfilter == false
+	OrionLib.Flags[type == "guns" and "skins_weapon_skin" or type == "knives" and "skins_knife_skin"]:Refresh(var, true)
+	if table.find(var, Settings.CurrentSkins[OrionLib.Flags[type == "guns" and "skins_weapon" or type == "knives" and "skins_knife"].Value]) then
         Settings.dropdownfilter = true
-		OrionLib.Flags[sub]:Set(Settings.CurrentSkins[OrionLib.Flags[main].Value])
-        Settings.dropdownfilter = false
-	else
+		OrionLib.Flags[type == "guns" and "skins_weapon_skin" or type == "knives" and "skins_knife_skin"]:Set(Settings.CurrentSkins[OrionLib.Flags[type == "guns" and "skins_weapon" or type == "knives" and "skins_knife"].Value])
+    else
 		Settings.dropdownfilter = true
-		OrionLib.Flags[sub]:Set(var[1])
-		Settings.dropdownfilter = false
+		OrionLib.Flags[type == "guns" and "skins_weapon_skin" or type == "knives" and "skins_knife_skin"]:Set(var[1])
 	end
 end
 
@@ -376,8 +383,12 @@ end
 
 local function VisibleCheck(character, position)
     local origin = workspace.CurrentCamera.CFrame.Position
-    local part = workspace.FindPartOnRayWithIgnoreList(workspace, Ray.new(origin, position - origin), { GetCharacter(LocalPlayer), workspace.CurrentCamera, character }, false, true)
-    return part == nil
+    local part = workspace.FindPartOnRayWithIgnoreList(workspace, Ray.new(origin, position - origin), {GetCharacter(LocalPlayer), workspace.CurrentCamera, character}, false, true)
+    if part then
+		return #workspace.CurrentCamera:GetPartsObscuringTarget({origin, position}, {GetCharacter(LocalPlayer), workspace.CurrentCamera, character}) == 0 and true or false
+	end
+
+	return part == nil
 end
 
 local function GetTeam(plr)
@@ -502,7 +513,9 @@ local function triggerBot()
 		if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and OblivionASD.Value == 0 or OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" and FOVCheck < distance and OblivionASD.Value == 0 then
 			if OrionLib.Flags["aimbot_stand_still"].Value == true and Settings.aimbot.standing == true or OrionLib.Flags["aimbot_stand_still"].Value == false then
 				OblivionASD.Value = OrionLib.Flags["aimbot_shooting_delay"].Value == true and getGunName() and Settings.weapon_data[getGunName()].data.triggerbot_delay or OrionLib.Flags["aimbot_shooting_delay"].Value == true and 100 or OrionLib.Flags["aimbot_shooting_delay"].Value == false and 0
+				Settings.aimbot.filter = true
 				Client.firebullet()
+				Settings.aimbot.filter = false
 			end
 		end
 	end
@@ -907,6 +920,27 @@ local function targetAlive(flag)
 	return false
 end
 
+local function targetChecks(flag)
+	if game.Players:FindFirstChild(OrionLib.Flags[flag].Value) and targetAlive(flag) then
+		if OrionLib.Flags[flag.."_visible"].Value == true then
+			if Settings.aimbot.visiblereset[flag].time == 0 then
+				Settings.aimbot.visiblereset[flag].time = 30
+				local character, torso = GetCharacter(game.Players[OrionLib.Flags[flag].Value])
+				local returned = VisibleCheck(character, torso.Position)
+				Settings.aimbot.visiblereset[flag].value = returned
+				return returned
+			else
+				Settings.aimbot.visiblereset[flag].time = Settings.aimbot.visiblereset[flag].time - 1
+				return Settings.aimbot.visiblereset[flag].value
+			end
+		elseif OrionLib.Flags[flag.."_visible"].Value == false then
+			return true
+		end
+	end
+
+	return false
+end
+
 local function killTarget(target, loop)
 	local looped = loop == "kill_specific" and Settings.resultloop or loop == "kill_all" and 5 or 1
 	local prepcheck = OrionLib.Flags["rage_kill_prep_check"].Value == false and true or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == true and false or OrionLib.Flags["rage_kill_prep_check"].Value == true and workspace.Status.Preparation.Value == false and true
@@ -1029,6 +1063,11 @@ local function RotatePlayer(pos)
     Gyro:Destroy()
 end
 
+local function YROTATION(cframe)
+    local x, y, z = cframe:ToOrientation()
+    return CFrame.new(cframe.Position) * CFrame.Angles(0,y,0)
+end
+
 -- Esp Setup
 espLib.whitelist = {}
 espLib.blacklist = {}
@@ -1083,6 +1122,7 @@ AT_TriggerBotSec:AddToggle({Name = "Shooting Delay", Default = true, Flag = "aim
 AT_TriggerBotSec:AddSlider({Name = "TriggerBot Delay", Min = 0, Max = 1000, Default = 100, Color3.fromRGB(255, 255, 255), Increment = 100, ValueName = "ms", Flag = "aimbot_triggerbot_delay", Callback = function() saveData() end})
 
 local RT_GodModeSec = RageTab:AddSection({Name = "God Mode"})
+local RT_BHopSec = RageTab:AddSection({Name = "B-Hop"})
 local RT_KillAllSec = RageTab:AddSection({Name = "Kill All"})
 local RT_Kill1Sec = RageTab:AddSection({Name = "Kill Player"})
 local RT_Kill2Sec = RageTab:AddSection({Name = "Kill Player"})
@@ -1093,19 +1133,27 @@ local RT_AntiAntiAimSec = RageTab:AddSection({Name = "Anti Anti-Aim"})
 RT_GodModeSec:AddDropdown({Name = "Type", Default = "-", Options = {"-", "Fall Damage", "Humanoid", "Invisibility"}, Flag = "rage_god_mode", Callback = function() saveData() end})
 RT_GodModeSec:AddToggle({Name = "Auto Set", Default = false, Flag = "rage_auto_set", Callback = function(val) saveData() if val == true then godMode() end end})
 RT_GodModeSec:AddButton({Name = "Set", Callback = function() godMode() end})
+RT_BHopSec:AddToggle({Name = "Enable", Default = false, Flag = "rage_bhop_enable", Callback = function() saveData() end})
+RT_BHopSec:AddDropdown({Name = "Type", Default = "Gyro", Options = {"Gyro", "CFrame", "Gyro Walk", "CFrame Walk"}, Flag = "rage_bhop_type", Callback = function() saveData() end})
+RT_BHopSec:AddSlider({Name = "Speed", Min = 1, Max = 100, Default = 20, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_bhop_speed", Callback = function() saveData() end})
 RT_KillAllSec:AddDropdown({Name = "Weapon", Default = "Held", Options = {"Held", "Random Gun", "Random Knife", "Both"}, Flag = "rage_kill_weapon", Callback = function() saveData() end})
 RT_KillAllSec:AddToggle({Name = "Insta Kill", Default = false, Flag = "rage_insta_kill", Callback = function() saveData() end})
 RT_KillAllSec:AddToggle({Name = "Velocity Prediction", Default = false, Flag = "rage_kill_velocity_prediction", Callback = function() saveData() end})
 RT_KillAllSec:AddToggle({Name = "Preparation Check", Default = false, Flag = "rage_kill_prep_check", Callback = function() saveData() end})
 RT_KillAllSec:AddSlider({Name = "Loop Rate", Min = 1, Max = 30, Default = 5, Color3.fromRGB(255, 255, 255), Increment = 1, Flag = "rage_kill_loop_rate", Callback = function() saveData() end})
+RT_KillAllSec:AddToggle({Name = "Visible", Default = false, Flag = "rage_kill_all_visible", Callback = function() saveData() end})
 RT_KillAllSec:AddToggle({Name = "Kill All", Default = false, Flag = "rage_kill_all", Callback = function() saveData() end})
 RT_Kill1Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_1"})
+RT_Kill1Sec:AddToggle({Name = "Visible", Default = false, Flag = "rage_kill_player_1_visible", Callback = function() saveData() end})
 RT_Kill1Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_1"})
 RT_Kill2Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_2"})
+RT_Kill1Sec:AddToggle({Name = "Visible", Default = false, Flag = "rage_kill_player_2_visible", Callback = function() saveData() end})
 RT_Kill2Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_2"})
 RT_Kill3Sec:AddDropdown({Name = "Player", Default = "-", Options = {"-"}, Flag = "rage_kill_player_3"})
+RT_Kill1Sec:AddToggle({Name = "Visible", Default = false, Flag = "rage_kill_player_3_visible", Callback = function() saveData() end})
 RT_Kill3Sec:AddToggle({Name = "Enable", Default = false, Flag = "rage_kill_player_enable_3"})
 RT_TeleportSec:AddToggle({Name = "Target Dodge", Default = false, Flag = "rage_teleport_target_dodge", Callback = function() saveData() end})
+RT_TeleportSec:AddToggle({Name = "Continuous Teleport", Default = false, Flag = "rage_teleport_continuous_teleport", Callback = function() saveData() end})
 RT_AntiAimSec:AddToggle({Name = "Enable", Default = false, Flag = "rage_anti_aim_enable", Callback = function() saveData() end})
 RT_AntiAntiAimSec:AddToggle({Name = "Pitch Manipulation", Default = false, Flag = "rage_anti_anti_aim_pitch", Callback = function() saveData() end})
 RT_AntiAntiAimSec:AddToggle({Name = "Roll Manipulation", Default = false, Flag = "rage_anti_anti_aim_roll", Callback = function() saveData() end})
@@ -1139,23 +1187,10 @@ local ST_WeaponSec = SkinsTab:AddSection({Name = "Weapons"})
 local ST_KnifeSec = SkinsTab:AddSection({Name = "Knives"})
 local ST_GloveSec = SkinsTab:AddSection({Name = "Gloves"})
 ST_AddSec:AddToggle({Name = "Custom Skins", Default = false, Flag = "skins_custom", Callback = function(val) saveData() if val == true then loadCustomSkins() if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then dropdownCustom("normal", "guns") end if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then dropdownCustom("normal", "knives") end elseif val == false then if OrionLib.Flags["skins_weapon"] and OrionLib.Flags["skins_weapon"].Value ~= "-" then dropdownCustom("normal", "guns") end if OrionLib.Flags["skins_knife"] and OrionLib.Flags["skins_knife"].Value ~= "-" then dropdownCustom("normal", "knives") end end end})
-ST_WeaponSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val)
-    if val == "-" and OrionLib.Flags["skins_weapon_skin"] then
-        dropdownRefresh("skins_weapon_skin", "-", {"-"})
-    elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then
-        dropdownCustom("normal", "guns")
-    end end})
-ST_WeaponSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val)
-    if Settings.dropdownfilter == false and val == "Show custom skins" then
-        dropdownCustom("custom", "guns")
-    elseif Settings.dropdownfilter == false and val == "Show normal skins" then
-        dropdownCustom("normal", "guns")
-    elseif Settings.dropdownfilter == false and val ~= nil then
-        Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val
-        saveData()
-    end end})
-ST_KnifeSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_knife", Callback = function(val) if val == "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("skins_knife_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownCustom("normal", "knives") saveData() end end})
-ST_KnifeSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_knife_skin", Callback = function(val) if Settings.dropdownfilter == false and val == "Show custom skins" then dropdownCustom("custom", "knives") elseif Settings.dropdownfilter == false and val == "Show normal skins" then dropdownCustom("normal", "knives") elseif Settings.dropdownfilter == false and val ~= nil then Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] = val saveData() end end})
+ST_WeaponSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_weapon", Callback = function(val) if val == "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownRefresh("skins_weapon_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["skins_weapon_skin"] then dropdownCustom("normal", "guns") end end})
+ST_WeaponSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_weapon_skin", Callback = function(val) if Settings.dropdownfilter == false and (val == "Show custom skins" or val == "Show normal skins") then dropdownCustom(val == "Show custom skins" and "custom" or val == "Show normal skins" and "normal", "guns") elseif Settings.dropdownfilter == false and val ~= "-" then Settings.CurrentSkins[OrionLib.Flags["skins_weapon"].Value] = val saveData() elseif Settings.dropdownfilter == true then Settings.dropdownfilter = false end end})
+ST_KnifeSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_knife", Callback = function(val) saveData() if val == "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_T Knife") modelChange("v_CT Knife", "v_CT Knife") dropdownRefresh("skins_knife_skin", "-", {"-"}) elseif val ~= "-" and OrionLib.Flags["skins_knife_skin"] then modelChange("v_T Knife", "v_"..val) modelChange("v_CT Knife", "v_"..val) dropdownCustom("normal", "knives") end end})
+ST_KnifeSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_knife_skin", Callback = function(val) if Settings.dropdownfilter == false and (val == "Show custom skins" or val == "Show normal skins") then dropdownCustom(val == "Show custom skins" and "custom" or val == "Show normal skins" and "normal", "knives") elseif Settings.dropdownfilter == false and val ~= "-" then Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] = val saveData() elseif Settings.dropdownfilter == true then Settings.dropdownfilter = false end end})
 ST_GloveSec:AddDropdown({Name = "Model", Default = "-", Options = {"-"}, Flag = "skins_glove", Callback = function(val) if val == "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "-", {"-"}) saveData() elseif val ~= "-" and OrionLib.Flags["skins_glove_skin"] then dropdownRefresh("skins_glove_skin", "Stock", skinsList(val, Settings.glove_data)) saveData() end end})
 ST_GloveSec:AddDropdown({Name = "Skin", Default = "-", Options = {"-"}, Flag = "skins_glove_skin", Callback = function() saveData() end})
 
@@ -1197,7 +1232,7 @@ local TaT_AddSec = TagTab:AddSection({Name = "Additional"})
 local TaT_MergeSec = TagTab:AddSection({Name = "Merge"})
 TaT_InSessionSec:AddDropdown({Name = "Select Player", Default = "-", Options = {"-"}, Flag = "tags_select_player"})
 TaT_InSessionSec:AddButton({Name = "Add Tag", Callback = function() if OrionLib.Flags["tags_select_player"].Value ~= "-" then if not tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then table.insert(TaggedSkids, {[game.Players[OrionLib.Flags["tags_select_player"].Value].UserId] = OrionLib.Flags["tags_select_player"].Value}) writefile("oblivion/CB/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/CB/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Tagged player: "..OrionLib.Flags["tags_select_player"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) OrionLib.Flags["tags_select_player"]:Set("-") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() elseif tagsTableFind(game.Players[OrionLib.Flags["tags_select_player"].Value].UserId, "id") then OrionLib:MakeNotification({Name = "Oblivion", Content = OrionLib.Flags["tags_select_player"].Value.." is already tagged.", Image = "rbxassetid://4384401919", Time = 5}) end end end})
-TaT_TaggedSec:AddDropdown({Name = "Select Tag", Default = "-", Options = {"-"}, Flag = "tags_select_tag", Callback = function(val) tagsUpdateLabels("live_reset") if val ~= "-" then if val == "Next Page" then Settings.tags.page = Settings.tags.page + 1 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif val == "Previous Page" and Settings.tags.page ~= 0 then Settings.tags.page = Settings.tags.page - 1 dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif tagsTableFind(val, "name") then tagsUpdateLabels("live", tagsListOnlineSkids(val)) end end end})
+TaT_TaggedSec:AddDropdown({Name = "Select Tag", Default = "-", Options = {"-"}, Flag = "tags_select_tag", Callback = function(val) tagsUpdateLabels("live_reset") if val ~= "-" then if val == "Next Page" then Settings.tags.page = Settings.tags.page + 1 dropdownRefresh("tags_select_tag", "-", {"-"}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif val == "Previous Page" and Settings.tags.page ~= 0 then Settings.tags.page = Settings.tags.page - 1 dropdownRefresh("tags_select_tag", "-", {"-"}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) elseif tagsTableFind(val, "name") then tagsUpdateLabels("live", tagsListOnlineSkids(val)) end end end})
 TaT_TaggedSec:AddButton({Name = "Remove Tag", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then if tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name") then table.remove(TaggedSkids, tagsTableFind(OrionLib.Flags["tags_select_tag"].Value, "name")) writefile("oblivion/CB/tagged.cfg", SaveTable(TaggedSkids)) TaggedSkids = loadstring("return "..readfile("oblivion/CB/tagged.cfg"))() OrionLib:MakeNotification({Name = "Oblivion", Content = "Removed tag on: "..OrionLib.Flags["tags_select_tag"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") checkTaggedSkidsInGame() tagsMessageOnlineSkids() end end end})
 TaT_AddSec:AddButton({Name = "Copy Username", Callback = function() if OrionLib.Flags["tags_select_tag"].Value ~= "-" then setclipboard(OrionLib.Flags["tags_select_tag"].Value) end end})
 TaT_AddSec:AddButton({Name = "Refresh List", Callback = function() TaggedSkids = loadstring("return "..readfile("oblivion/CB/tagged.cfg"))() tagsUpdateLabels("offline") dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) checkTaggedSkidsInGame() end})
@@ -1207,7 +1242,7 @@ TaT_AddSec:AddToggle({Name = "Online Check", Default = false, Flag = "tags_onlin
 TaT_AddSec:AddDropdown({Name = "Check Speed", Default = "Stable", Options = {"Stable", "Fast"}, Flag = "tags_check_speed", Callback = function() saveData() end})
 TaT_MergeSec:AddDropdown({Name = "File", Default = "-", Options = {"-"}, Flag = "tags_merge_file"})
 TaT_MergeSec:AddButton({Name = "Refresh", Callback = function() local temp = {"-"} for i,v in pairs(listfiles("oblivion")) do table.insert(temp, v) end dropdownRefresh("tags_merge_file", "-", temp) end})
-TaT_MergeSec:AddButton({Name = "Merge", Callback = function() if OrionLib.Flags["tags_merge_file"].Value ~= "-" and isfile(OrionLib.Flags["tags_merge_file"].Value) then local temp = TaggedSkids pcall(function() for i,v in pairs(loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) do pcall(function() print(i..'/'..#loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) for i2,v2 in pairs(v) do if not tagsTableFind(i2, "id") then table.insert(temp, {[i2] = v2}) end end end) end end) writefile("oblivion/CB/tagged.cfg", SaveTable(temp)) TaggedSkids = loadstring("return "..readfile("oblivion/CB/tagged.cfg"))() dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") OrionLib:MakeNotification({Name = "Oblivion", Content = "Merged tags from: "..OrionLib.Flags["tags_merge_file"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) end end})
+TaT_MergeSec:AddButton({Name = "Merge", Callback = function() if OrionLib.Flags["tags_merge_file"].Value ~= "-" and isfile(OrionLib.Flags["tags_merge_file"].Value) then local temp = TaggedSkids pcall(function() for i,v in pairs(loadstring("return "..readfile(OrionLib.Flags["tags_merge_file"].Value))()) do pcall(function() for i2,v2 in pairs(v) do if not tagsTableFind(i2, "id") then table.insert(temp, {[i2] = v2}) end end end) end end) writefile("oblivion/CB/tagged.cfg", SaveTable(temp)) TaggedSkids = loadstring("return "..readfile("oblivion/CB/tagged.cfg"))() dropdownRefresh("tags_select_tag", "-", tagsListUsernames("page")) tagsUpdateLabels("offline") OrionLib:MakeNotification({Name = "Oblivion", Content = "Merged tags from: "..OrionLib.Flags["tags_merge_file"].Value..".", Image = "rbxassetid://4384401919", Time = 5}) end end})
 
 local TrT_SoundSec = TrollTab:AddSection({Name = "Sound"})
 TrT_SoundSec:AddDropdown({Name = "Sound Speed", Default = "Spam", Options = {"Full speed", "Spammy", "Spam", "Slow", "Confusion"}, Flag = "troll_sound_speed", Callback = function() saveData() end})
@@ -1240,126 +1275,128 @@ ST_VersionSec:AddButton({Name = "Set", Callback = function() local prefilecheckd
 
 -- Meta
 workspace.CurrentCamera.ChildAdded:Connect(function(new)
-	local Model
-	for i,v in pairs(new:GetChildren()) do      
-		if v:IsA("Model") and (v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm")) then      
-			Model = v      
+	pcall(function()
+		local Model
+		for i,v in pairs(new:GetChildren()) do      
+			if v:IsA("Model") and (v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm")) then      
+				Model = v      
+			end      
 		end      
-	end      
-	if Model == nil then return end
+		if Model == nil then return end
 
-	local weaponname = Client.gun ~= "none" and knifeOrGun() == "knife" and OrionLib.Flags["skins_knife"].Value ~= "-" and OrionLib.Flags["skins_knife"].Value or Client.gun ~= "none" and knifeOrGun() == "gun" and Client.gun.Name
-	if weaponname ~= nil and ReplicatedStorage.Skins:FindFirstChild(weaponname) then  
-		local var = knifeOrGun() == "knife" and Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] ~= "Stock" and Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] or knifeOrGun() == "gun" and Settings.CurrentSkins[getGunNameFromCheck(weaponname)]
-		if var ~= nil then
-			MapSkin(weaponname, var)
-		end      
-	end
-
-	RArm = Model:FindFirstChild("Right Arm"); LArm = Model:FindFirstChild("Left Arm") 
-	if RArm then
-		RGlove = RArm:FindFirstChild("Glove") or RArm:FindFirstChild("RGlove")
-		if OrionLib.Flags["skins_glove"].Value ~= "-" and Client.gun ~= "none" and OrionLib.Flags["skins_glove_skin"].Value ~= "Stock" then
-			if RGlove then RGlove:Destroy() end      
-			RGlove = ReplicatedStorage.Gloves.Models[OrionLib.Flags["skins_glove"].Value].RGlove:Clone()      
-			RGlove.Mesh.TextureId = ReplicatedStorage.Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
-			RGlove.Parent = RArm      
-			RGlove.Transparency = 0      
-			RGlove.Welded.Part0 = RArm      
+		local weaponname = Client.gun ~= "none" and knifeOrGun() == "knife" and OrionLib.Flags["skins_knife"].Value ~= "-" and OrionLib.Flags["skins_knife"].Value or Client.gun ~= "none" and knifeOrGun() == "gun" and Client.gun.Name
+		if weaponname ~= nil and ReplicatedStorage.Skins:FindFirstChild(weaponname) then  
+			local var = knifeOrGun() == "knife" and Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] ~= "Stock" and Settings.CurrentSkins[OrionLib.Flags["skins_knife"].Value] or knifeOrGun() == "gun" and Settings.CurrentSkins[getGunNameFromCheck(weaponname)]
+			if var ~= nil then
+				MapSkin(weaponname, var)
+			end      
 		end
-	end
-	if LArm then
-		LGlove = LArm:FindFirstChild("Glove") or LArm:FindFirstChild("LGlove")      
-		if OrionLib.Flags["skins_glove"].Value ~= "-" and Client.gun ~= "none" and OrionLib.Flags["skins_glove_skin"].Value ~= "Stock" then      
-			if LGlove then LGlove:Destroy() end      
-			LGlove = ReplicatedStorage.Gloves.Models[OrionLib.Flags["skins_glove"].Value].LGlove:Clone()       
-			LGlove.Mesh.TextureId = ReplicatedStorage.Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
-			LGlove.Transparency = 0      
-			LGlove.Parent = LArm      
-			LGlove.Welded.Part0 = LArm      
-		end   
-	end
 
-	coroutine.wrap(function()
-		if new.Name == "Arms" and new:IsA("Model") then
-			for i,v in pairs(new:GetChildren()) do
-				if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
-					local RightArm = v:FindFirstChild("Right Arm") or nil
-					local LeftArm = v:FindFirstChild("Left Arm") or nil
-					local RightGlove = (RightArm and (RightArm:FindFirstChild("Glove") or RightArm:FindFirstChild("RGlove"))) or nil
-					local LeftGlove = (LeftArm and (LeftArm:FindFirstChild("Glove") or LeftArm:FindFirstChild("LGlove"))) or nil
-					local RightSleeve = RightArm and RightArm:FindFirstChild("Sleeve") or nil
-					local LeftSleeve = LeftArm and LeftArm:FindFirstChild("Sleeve") or nil
-					if OrionLib.Flags["viewmodels_arms_enable"].Value == true then
-						if RightArm ~= nil then
-							RightArm.Mesh.TextureId = ""
-							RightArm.Transparency = (OrionLib.Flags["viewmodels_arms_transparency"].Value / 100)
-							RightArm.Color = OrionLib.Flags["viewmodels_arms_color"].Value
-							RightArm.Material = OrionLib.Flags["viewmodels_arms_material"].Value
-						end
-						if LeftArm ~= nil then
-							LeftArm.Mesh.TextureId = ""
-							LeftArm.Transparency = (OrionLib.Flags["viewmodels_arms_transparency"].Value / 100)
-							LeftArm.Color = OrionLib.Flags["viewmodels_arms_color"].Value
-							LeftArm.Material = OrionLib.Flags["viewmodels_arms_material"].Value
-						end
-					end
-					if OrionLib.Flags["viewmodels_gloves_enable"].Value == true then
-						if RightGlove ~= nil then
-							if OrionLib.Flags["viewmodels_gloves_show"].Value ~= "Skin" then
-								RightGlove.Mesh.TextureId = ""
-							end
-							
-							if OrionLib.Flags["viewmodels_gloves_show"].Value == "Color" then
-								RightGlove.Color = OrionLib.Flags["viewmodels_gloves_color"].Value
-							end
-
-							RightGlove.Transparency = (OrionLib.Flags["viewmodels_gloves_transparency"].Value / 100)
-							RightGlove.Material = OrionLib.Flags["viewmodels_gloves_material"].Value
-						end
-						if LeftGlove ~= nil then
-							if OrionLib.Flags["viewmodels_gloves_show"].Value ~= "Skin" then
-								LeftGlove.Mesh.TextureId = ""
-							end
-							
-							if OrionLib.Flags["viewmodels_gloves_show"].Value == "Color" then
-								LeftGlove.Color = OrionLib.Flags["viewmodels_gloves_color"].Value
-							end
-
-							LeftGlove.Transparency = (OrionLib.Flags["viewmodels_gloves_transparency"].Value / 100)
-							LeftGlove.Material = OrionLib.Flags["viewmodels_gloves_material"].Value
-						end
-					end
-					if OrionLib.Flags["viewmodels_sleeves_enable"].Value == true then
-						if RightSleeve ~= nil then
-							RightSleeve.Mesh.TextureId = ""
-							RightSleeve.Color = OrionLib.Flags["viewmodels_sleeves_color"].Value
-							RightSleeve.Transparency = (OrionLib.Flags["viewmodels_sleeves_transparency"].Value / 100)
-							RightSleeve.Material = OrionLib.Flags["viewmodels_sleeves_material"].Value
-						end
-						if LeftSleeve ~= nil then
-							LeftSleeve.Mesh.TextureId = ""
-							LeftSleeve.Color = OrionLib.Flags["viewmodels_sleeves_color"].Value
-							LeftSleeve.Transparency = (OrionLib.Flags["viewmodels_sleeves_transparency"].Value / 100)
-							LeftSleeve.Material = OrionLib.Flags["viewmodels_sleeves_material"].Value
-						end
-					end
-				elseif OrionLib.Flags["viewmodels_weapon_enable"].Value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
-					if OrionLib.Flags["viewmodels_weapon_show"].Value ~= "Skin" then
-						if v:IsA("MeshPart") then v.TextureID = "" end
-						if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
-					end
-	
-					if OrionLib.Flags["viewmodels_weapon_show"].Value == "Color" then
-						v.Color = OrionLib.Flags["viewmodels_weapon_color"].Value
-					end
-	
-					v.Transparency = (OrionLib.Flags["viewmodels_weapon_transparency"].Value / 100)
-					v.Material = OrionLib.Flags["viewmodels_weapon_material"].Value
-				end
+		RArm = Model:FindFirstChild("Right Arm"); LArm = Model:FindFirstChild("Left Arm") 
+		if RArm then
+			RGlove = RArm:FindFirstChild("Glove") or RArm:FindFirstChild("RGlove")
+			if OrionLib.Flags["skins_glove"].Value ~= "-" and Client.gun ~= "none" and OrionLib.Flags["skins_glove_skin"].Value ~= "Stock" then
+				if RGlove then RGlove:Destroy() end      
+				RGlove = ReplicatedStorage.Gloves.Models[OrionLib.Flags["skins_glove"].Value].RGlove:Clone()      
+				RGlove.Mesh.TextureId = ReplicatedStorage.Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
+				RGlove.Parent = RArm      
+				RGlove.Transparency = 0      
+				RGlove.Welded.Part0 = RArm      
 			end
 		end
-	end)()
+		if LArm then
+			LGlove = LArm:FindFirstChild("Glove") or LArm:FindFirstChild("LGlove")      
+			if OrionLib.Flags["skins_glove"].Value ~= "-" and Client.gun ~= "none" and OrionLib.Flags["skins_glove_skin"].Value ~= "Stock" then      
+				if LGlove then LGlove:Destroy() end      
+				LGlove = ReplicatedStorage.Gloves.Models[OrionLib.Flags["skins_glove"].Value].LGlove:Clone()       
+				LGlove.Mesh.TextureId = ReplicatedStorage.Gloves[OrionLib.Flags["skins_glove"].Value][OrionLib.Flags["skins_glove_skin"].Value].Textures.TextureId      
+				LGlove.Transparency = 0      
+				LGlove.Parent = LArm      
+				LGlove.Welded.Part0 = LArm      
+			end   
+		end
+
+		coroutine.wrap(function()
+			if new.Name == "Arms" and new:IsA("Model") then
+				for i,v in pairs(new:GetChildren()) do
+					if v:IsA("Model") and v:FindFirstChild("Right Arm") or v:FindFirstChild("Left Arm") then
+						local RightArm = v:FindFirstChild("Right Arm") or nil
+						local LeftArm = v:FindFirstChild("Left Arm") or nil
+						local RightGlove = (RightArm and (RightArm:FindFirstChild("Glove") or RightArm:FindFirstChild("RGlove"))) or nil
+						local LeftGlove = (LeftArm and (LeftArm:FindFirstChild("Glove") or LeftArm:FindFirstChild("LGlove"))) or nil
+						local RightSleeve = RightArm and RightArm:FindFirstChild("Sleeve") or nil
+						local LeftSleeve = LeftArm and LeftArm:FindFirstChild("Sleeve") or nil
+						if OrionLib.Flags["viewmodels_arms_enable"].Value == true then
+							if RightArm ~= nil then
+								RightArm.Mesh.TextureId = ""
+								RightArm.Transparency = (OrionLib.Flags["viewmodels_arms_transparency"].Value / 100)
+								RightArm.Color = OrionLib.Flags["viewmodels_arms_color"].Value
+								RightArm.Material = OrionLib.Flags["viewmodels_arms_material"].Value
+							end
+							if LeftArm ~= nil then
+								LeftArm.Mesh.TextureId = ""
+								LeftArm.Transparency = (OrionLib.Flags["viewmodels_arms_transparency"].Value / 100)
+								LeftArm.Color = OrionLib.Flags["viewmodels_arms_color"].Value
+								LeftArm.Material = OrionLib.Flags["viewmodels_arms_material"].Value
+							end
+						end
+						if OrionLib.Flags["viewmodels_gloves_enable"].Value == true then
+							if RightGlove ~= nil then
+								if OrionLib.Flags["viewmodels_gloves_show"].Value ~= "Skin" then
+									RightGlove.Mesh.TextureId = ""
+								end
+								
+								if OrionLib.Flags["viewmodels_gloves_show"].Value == "Color" then
+									RightGlove.Color = OrionLib.Flags["viewmodels_gloves_color"].Value
+								end
+
+								RightGlove.Transparency = (OrionLib.Flags["viewmodels_gloves_transparency"].Value / 100)
+								RightGlove.Material = OrionLib.Flags["viewmodels_gloves_material"].Value
+							end
+							if LeftGlove ~= nil then
+								if OrionLib.Flags["viewmodels_gloves_show"].Value ~= "Skin" then
+									LeftGlove.Mesh.TextureId = ""
+								end
+								
+								if OrionLib.Flags["viewmodels_gloves_show"].Value == "Color" then
+									LeftGlove.Color = OrionLib.Flags["viewmodels_gloves_color"].Value
+								end
+
+								LeftGlove.Transparency = (OrionLib.Flags["viewmodels_gloves_transparency"].Value / 100)
+								LeftGlove.Material = OrionLib.Flags["viewmodels_gloves_material"].Value
+							end
+						end
+						if OrionLib.Flags["viewmodels_sleeves_enable"].Value == true then
+							if RightSleeve ~= nil then
+								RightSleeve.Mesh.TextureId = ""
+								RightSleeve.Color = OrionLib.Flags["viewmodels_sleeves_color"].Value
+								RightSleeve.Transparency = (OrionLib.Flags["viewmodels_sleeves_transparency"].Value / 100)
+								RightSleeve.Material = OrionLib.Flags["viewmodels_sleeves_material"].Value
+							end
+							if LeftSleeve ~= nil then
+								LeftSleeve.Mesh.TextureId = ""
+								LeftSleeve.Color = OrionLib.Flags["viewmodels_sleeves_color"].Value
+								LeftSleeve.Transparency = (OrionLib.Flags["viewmodels_sleeves_transparency"].Value / 100)
+								LeftSleeve.Material = OrionLib.Flags["viewmodels_sleeves_material"].Value
+							end
+						end
+					elseif OrionLib.Flags["viewmodels_weapon_enable"].Value == true and v:IsA("BasePart") and not table.find({"Right Arm", "Left Arm", "Flash"}, v.Name) and v.Transparency ~= 1 then
+						if OrionLib.Flags["viewmodels_weapon_show"].Value ~= "Skin" then
+							if v:IsA("MeshPart") then v.TextureID = "" end
+							if v:FindFirstChildOfClass("SpecialMesh") then v:FindFirstChildOfClass("SpecialMesh").TextureId = "" end
+						end
+		
+						if OrionLib.Flags["viewmodels_weapon_show"].Value == "Color" then
+							v.Color = OrionLib.Flags["viewmodels_weapon_color"].Value
+						end
+		
+						v.Transparency = (OrionLib.Flags["viewmodels_weapon_transparency"].Value / 100)
+						v.Material = OrionLib.Flags["viewmodels_weapon_material"].Value
+					end
+				end
+			end
+		end)()
+	end)
 end)
 
 hookfunc(getrenv().xpcall, function() end)
@@ -1373,90 +1410,82 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 	local callingscript = getcallingscript()
     local args = {...}
 	
-	if not checkcaller() then
-		if method == "Kick" then
+	if method == "Kick" then
+		return
+	elseif method == "FireServer" then
+		if string.len(self.Name) == 38 then
+			return wait(99e99)
+        elseif self.Name == "HitPart" and not checkcaller() then
+            if OrionLib.Flags["viewmodels_bullet_tracer_enable"].Value == true then
+				coroutine.wrap(function()
+					local BulletTracers = Instance.new("Part")
+					BulletTracers.Anchored = true
+					BulletTracers.CanCollide = false
+					BulletTracers.Material = OrionLib.Flags["viewmodels_bullet_tracer_material"].Value
+					BulletTracers.Color = OrionLib.Flags["viewmodels_bullet_tracer_color"].Value
+                    BulletTracers.Transparency = (OrionLib.Flags["viewmodels_bullet_tracer_transparency"].Value / 100)
+					BulletTracers.Size = Vector3.new(0.1, 0.1, (LocalPlayer.Character.Head.CFrame.p - args[2]).magnitude)
+					BulletTracers.CFrame = CFrame.new(LocalPlayer.Character.Head.CFrame.p, args[2]) * CFrame.new(0, 0, -BulletTracers.Size.Z / 2)
+					BulletTracers.Name = "BulletTracers"
+					BulletTracers.Parent = workspace.CurrentCamera
+					wait(3)
+					BulletTracers:Destroy()
+				end)()
+			end
+            if OrionLib.Flags["viewmodels_bullet_impact_enable"].Value == true then
+				coroutine.wrap(function()
+					local BulletImpacts = Instance.new("Part")
+					BulletImpacts.Anchored = true
+					BulletImpacts.CanCollide = false
+					BulletImpacts.Material = OrionLib.Flags["viewmodels_bullet_impact_material"].Value
+					BulletImpacts.Color = OrionLib.Flags["viewmodels_bullet_impact_color"].Value
+                    BulletImpacts.Transparency = (OrionLib.Flags["viewmodels_bullet_impact_transparency"].Value / 100)
+					BulletImpacts.Size = Vector3.new(0.25, 0.25, 0.25)
+					BulletImpacts.CFrame = CFrame.new(args[2])
+					BulletImpacts.Name = "BulletImpacts"
+					BulletImpacts.Parent = workspace.CurrentCamera
+					wait(3)
+					BulletImpacts:Destroy()
+				end)()
+			end
+		elseif self.Name == "ApplyGun" and args[1] == ReplicatedStorage.Weapons.Banana or args[1] == ReplicatedStorage.Weapons["Flip Knife"] then
+			args[1] = ReplicatedStorage.Weapons.Karambit
+		elseif self.Name == "test" then
+			return wait(99e99)
+		elseif self.Name == "FallDamage" and OrionLib.Flags["misc_no_fall_damage"].Value == true or self.Name == "FallDamage" and Settings.falldamagefilter == true then
 			return
-		elseif method == "FireServer" then
-			if string.len(self.Name) == 38 then
-				return wait(99e99)
-            elseif self.Name == "HitPart" then
-                if OrionLib.Flags["viewmodels_bullet_tracer_enable"].Value == true then
+		end
+	elseif method == "InvokeServer" then
+		if self.Name == "Moolah" then
+			return wait(99e99)
+		elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
+			--print(args[2].Name .. ": " .. args[1])
+			if args[2] == LocalPlayer then
+				if true == false then
+					return args[1]
+				end
+			elseif args[2] ~= LocalPlayer then
+				if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" and IsAlive(args[2]) == false and GetTeam(args[2]) ~= "s" then
 					coroutine.wrap(function()
-						local BulletTracers = Instance.new("Part")
-						BulletTracers.Anchored = true
-						BulletTracers.CanCollide = false
-						BulletTracers.Material = OrionLib.Flags["viewmodels_bullet_tracer_material"].Value
-						BulletTracers.Color = OrionLib.Flags["viewmodels_bullet_tracer_color"].Value
-                        BulletTracers.Transparency = (OrionLib.Flags["viewmodels_bullet_tracer_transparency"].Value / 100)
-						BulletTracers.Size = Vector3.new(0.1, 0.1, (LocalPlayer.Character.Head.CFrame.p - args[2]).magnitude)
-						BulletTracers.CFrame = CFrame.new(LocalPlayer.Character.Head.CFrame.p, args[2]) * CFrame.new(0, 0, -BulletTracers.Size.Z / 2)
-						BulletTracers.Name = "BulletTracers"
-						BulletTracers.Parent = workspace.CurrentCamera
-						wait(3)
-						BulletTracers:Destroy()
+						if tagsTableFind(args[2].UserId, "id") then
+							DisplayChat.moveOldMessages()
+							DisplayChat.createNewMessage("<Dead Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
+						else
+							DisplayChat.moveOldMessages()
+							DisplayChat.createNewMessage("<Dead Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
+						end
 					end)()
 				end
-                if OrionLib.Flags["viewmodels_bullet_impact_enable"].Value == true then
-					coroutine.wrap(function()
-						local BulletImpacts = Instance.new("Part")
-						BulletImpacts.Anchored = true
-						BulletImpacts.CanCollide = false
-						BulletImpacts.Material = OrionLib.Flags["viewmodels_bullet_impact_material"].Value
-						BulletImpacts.Color = OrionLib.Flags["viewmodels_bullet_impact_color"].Value
-                        BulletImpacts.Transparency = (OrionLib.Flags["viewmodels_bullet_impact_transparency"].Value / 100)
-						BulletImpacts.Size = Vector3.new(0.25, 0.25, 0.25)
-						BulletImpacts.CFrame = CFrame.new(args[2])
-						BulletImpacts.Name = "BulletImpacts"
-						BulletImpacts.Parent = workspace.CurrentCamera
-						wait(3)
-						BulletImpacts:Destroy()
-					end)()
-				end
-			elseif self.Name == "ApplyGun" and args[1] == ReplicatedStorage.Weapons.Banana or args[1] == ReplicatedStorage.Weapons["Flip Knife"] then
-				args[1] = ReplicatedStorage.Weapons.Karambit
-			elseif self.Name == "test" then
-				return wait(99e99)
-			elseif self.Name == "FallDamage" and OrionLib.Flags["misc_no_fall_damage"].Value == true or self.Name == "FallDamage" and Settings.falldamagefilter == true then
-				return
-            elseif self.Name == "ControlTurn" and OrionLib.Flags["rage_anti_aim_enable"].Value == true then
-                local rdnm = math.random(4)
-				local angle = (
-                    rdnm == 1 and 1 or rdnm == 2 and -2 or rdnm == 3 and -5 or rdnm == 4 and (math.random(2) == 1 and 1 or -1)
-				)
-				if angle then
-					args[1] = angle
-				end
 			end
-		elseif method == "InvokeServer" then
-			if self.Name == "Moolah" then
-				return wait(99e99)
-			elseif self.Name == "Filter" and callingscript == LocalPlayer.PlayerGui.GUI.Main.Chats.DisplayChat then
-				--print(args[2].Name .. ": " .. args[1])
-				if args[2] == LocalPlayer then
-					if true == false then
-						return args[1]
-					end
-				elseif args[2] ~= LocalPlayer then
-					if OrionLib.Flags["misc_dead_chat"].Value == true and workspace.Status.RoundOver.Value == false and workspace.Status.Preparation.Value == false and warmupCheck() == false and mainPlayerCheck(LocalPlayer) and checkGame() == "casual" and IsAlive(args[2]) == false and GetTeam(args[2]) ~= "s" then
-						coroutine.wrap(function()
-							if tagsTableFind(args[2].UserId, "id") then
-								DisplayChat.moveOldMessages()
-								DisplayChat.createNewMessage("<Dead Chat> [Tagged] "..args[2].Name, args[1], Settings.TaggedColor, Color3.new(1,1,1), 0.01, nil)
-							else
-								DisplayChat.moveOldMessages()
-								DisplayChat.createNewMessage("<Dead Chat> "..args[2].Name, args[1], Settings.DeadColor, Color3.new(1,1,1), 0.01, nil)
-							end
-						end)()
-					end
-				end
-			end
-		elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
+		end
+	elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
+		if not checkcaller() or Settings.aimbot.filter then
 			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and Settings.aimbot.target ~= nil then
 				args[1] = Ray.new(LocalPlayer.Character.Head.Position, (Settings.aimbot.target.Character.Head.Position - LocalPlayer.Character.Head.Position).unit * (ReplicatedStorage.Weapons[LocalPlayer.Character.EquippedTool.Value].Range.Value * 0.1))
 			end
-        end
-	end
-	
+		end
+    end
+
 	return oldNamecall(self, unpack(args))
 end))
 
@@ -1546,12 +1575,10 @@ RunService.RenderStepped:Connect(function(step)
 
 		coroutine.wrap(function()
 			if OrionLib.Flags["aimbot_triggerbot_enable"].Value == true and Settings.aimbot.target and mainlp then
-				if OrionLib.Flags["aimbot_method"].Value ~= "Silent Aim" then
-					if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
-						wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
-					end
-					triggerBot()
+				if OrionLib.Flags["aimbot_triggerbot_delay"].Value ~= 0 then
+					wait((OrionLib.Flags["aimbot_triggerbot_delay"].Value / 1000))
 				end
+				triggerBot()
 			end
 		end)()
 
@@ -1596,7 +1623,7 @@ RunService.RenderStepped:Connect(function(step)
             if Settings.lists.refreshplayerlist == false then
                 Settings.lists.refreshplayerlist = true
 
-                local temp = {all_players = {"-"}, alive_players = {"-"}, enemy_players = {"-"}, team_players = {"-"}, alive_enemy_players = {"-"}}
+                local temp = {all_players = {"-"}, alive_players = {"-"}, enemy_players = {"-"}, team_players = {"-"}, alive_enemy_players = {"-"}, alive_visible_enemy_players = {}}
                 for i,v in pairs(game.Players:GetChildren()) do
                     if v ~= LocalPlayer then
                         table.insert(temp.all_players, v.Name)
@@ -1615,6 +1642,21 @@ RunService.RenderStepped:Connect(function(step)
 
 						if PlayerCheck(v) then
 							table.insert(temp.alive_enemy_players, v.Name)
+							local success, response = pcall(function() return Settings.lists.cooldownlist[v.Name] and true or false end)
+							if success and response then
+								if Settings.lists.cooldownlist[v.Name].time == 0 then
+									Settings.lists.cooldownlist[v.Name].time = 10
+									local character, torso = GetCharacter(v)
+									local returned = VisibleCheck(character, torso.Position)
+									Settings.lists.cooldownlist[v.Name].value = returned
+									if returned then table.insert(temp.alive_visible_enemy_players, v.Name) end
+								else
+									Settings.lists.cooldownlist[v.Name].time = Settings.lists.cooldownlist[v.Name].time - 1
+									if Settings.lists.cooldownlist[v.Name].value == true then table.insert(temp.alive_visible_enemy_players, v.Name) end
+								end
+							else
+								Settings.lists.cooldownlist[v.Name] = {time = 0, value = false}
+							end
 						end
 					end
                 end
@@ -1648,6 +1690,7 @@ RunService.RenderStepped:Connect(function(step)
                 end
 
 				Settings.lists.alive_enemies = temp.alive_enemy_players
+				Settings.lists.alive_visible_enemies = temp.alive_visible_enemy_players
 
                 RunService.RenderStepped:Wait()
                 Settings.lists.refreshplayerlist = false
@@ -1692,21 +1735,21 @@ RunService.RenderStepped:Connect(function(step)
 				end)()
 
 				coroutine.wrap(function()
-					local targetsalive = OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") and true or OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") and true or OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") and true or OrionLib.Flags["rage_kill_all"].Value == true and #Settings.lists.alive_enemies ~= 1 or false
-					if mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck and Player ~= LocalPlayer and PlayerCheck(Player) then
+					local targetsalive = OrionLib.Flags["rage_teleport_continuous_teleport"].Value == true and true or OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetChecks("rage_kill_player_1") and true or OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetChecks("rage_kill_player_2") and true or OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetChecks("rage_kill_player_3") and true or OrionLib.Flags["rage_kill_all"].Value == true and (OrionLib.Flags["rage_kill_all_visible"].Value == false and #Settings.lists.alive_enemies ~= 1 or OrionLib.Flags["rage_kill_all_visible"].Value == true and #Settings.lists.alive_visible_enemies ~= 1) or false
+					if mainlp and (OrionLib.Flags["rage_teleport_target_dodge"].Value == true or OrionLib.Flags["rage_teleport_continuous_teleport"].Value == true) and targetsalive and prepcheck and Player ~= LocalPlayer and PlayerCheck(Player) then
 						teleportToPlayer(Player, "random_radius")
 						Settings.teleportreset = false
-					elseif mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive and prepcheck == false then
+					elseif mainlp and (OrionLib.Flags["rage_teleport_target_dodge"].Value == true or OrionLib.Flags["rage_teleport_continuous_teleport"].Value == true) and targetsalive and prepcheck == false then
 						teleportToPlayer(LocalPlayer, "after_prep")
 						Settings.teleportreset = false
-					elseif mainlp and OrionLib.Flags["rage_teleport_target_dodge"].Value == true and targetsalive == false and Settings.teleportreset == false then
+					elseif mainlp and (OrionLib.Flags["rage_teleport_target_dodge"].Value == true or OrionLib.Flags["rage_teleport_continuous_teleport"].Value == true) and targetsalive == false and Settings.teleportreset == false then
 						Settings.teleportreset = true
 						teleportTospawnpoint()
 					end
 				end)()
 
 				coroutine.wrap(function()
-					if mainlp and OrionLib.Flags["rage_kill_all"].Value == true and prepcheck and Player ~= LocalPlayer then
+					if mainlp and OrionLib.Flags["rage_kill_all"].Value == true and prepcheck and Player ~= LocalPlayer and (OrionLib.Flags["rage_kill_all_visible"].Value == false or OrionLib.Flags["rage_kill_all_visible"].Value == true and table.find(Settings.lists.alive_visible_enemies, Player.Name)) then
 						killTarget(Player, "kill_all")
 					end
 				end)()
@@ -1736,29 +1779,27 @@ RunService.RenderStepped:Connect(function(step)
 
 		coroutine.wrap(function()
 			coroutine.wrap(function()
-				if mainlp and OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetAlive("rage_kill_player_1") then
+				if mainlp and OrionLib.Flags["rage_kill_player_enable_1"].Value == true and targetChecks("rage_kill_player_1") then
 					killTarget(game.Players[OrionLib.Flags["rage_kill_player_1"].Value], "kill_specific")
 				end
 			end)()
 
 			coroutine.wrap(function()
-				if mainlp and OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetAlive("rage_kill_player_2") then
+				if mainlp and OrionLib.Flags["rage_kill_player_enable_2"].Value == true and targetChecks("rage_kill_player_2") then
 					killTarget(game.Players[OrionLib.Flags["rage_kill_player_2"].Value], "kill_specific")
 				end
 			end)()
 
 			coroutine.wrap(function()
-				if mainlp and OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetAlive("rage_kill_player_3") then
+				if mainlp and OrionLib.Flags["rage_kill_player_enable_3"].Value == true and targetChecks("rage_kill_player_3") then
 					killTarget(game.Players[OrionLib.Flags["rage_kill_player_3"].Value], "kill_specific")
 				end
 			end)()
 		end)()
 
-		coroutine.wrap(function()
-			if OrionLib.Flags["misc_no_preparation"].Value == true and workspace["Status"] and workspace.Status["Preparation"] then
-				workspace.Status.Preparation.Value = false
-			end
-		end)()
+		if OrionLib.Flags["misc_no_preparation"].Value == true and workspace["Status"] and workspace.Status["Preparation"] then
+			workspace.Status.Preparation.Value = false
+		end
 
 		coroutine.wrap(function()
 			if OrionLib.Flags["troll_sound_spam"].Value == true and Settings.troll.sound.running == false then
@@ -1777,14 +1818,61 @@ RunService.RenderStepped:Connect(function(step)
 			end
 		end)()
 
-        coroutine.wrap(function()
-            if OrionLib.Flags["rage_anti_aim_enable"].Value == true and isalivelp then
-                LocalPlayer.Character.Humanoid.AutoRotate = false
-                LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(100), 0)
-            elseif OrionLib.Flags["rage_anti_aim_enable"].Value == false and isalivelp then
-                game.Players.LocalPlayer.Character.Humanoid.AutoRotate = true
-            end
-        end)()
+        BodyVelocity:Destroy()
+        BodyVelocity = Instance.new("BodyVelocity")
+        BodyVelocity.MaxForce = Vector3.new(math.huge,0,math.huge)
+		if OrionLib.Flags["rage_bhop_enable"].Value == true and mainlp and UserInputService:IsKeyDown("Space") then
+			local add = 0
+			if UserInputService:IsKeyDown("A") then add = 90 end
+			if UserInputService:IsKeyDown("S") then add = 180 end
+			if UserInputService:IsKeyDown("D") then add = 270 end
+			if UserInputService:IsKeyDown("A") and UserInputService:IsKeyDown("W") then add = 45 end
+			if UserInputService:IsKeyDown("D") and UserInputService:IsKeyDown("W") then add = 315 end
+			if UserInputService:IsKeyDown("D") and UserInputService:IsKeyDown("S") then add = 225 end
+			if UserInputService:IsKeyDown("A") and UserInputService:IsKeyDown("S") then add = 145 end
+			local rot = YROTATION(workspace.CurrentCamera.CFrame) * CFrame.Angles(0,math.rad(add),0)
+			BodyVelocity.Parent = LocalPlayer.Character.UpperTorso
+			LocalPlayer.Character.Humanoid.Jump = true
+			if OrionLib.Flags["rage_bhop_type"].Value == "Gyro Walk" then LocalPlayer.Character.Humanoid.JumpPower = 1 end
+			workspace.Gravity = (OrionLib.Flags["rage_bhop_type"].Value == "CFrame" or OrionLib.Flags["rage_bhop_type"].Value == "Gyro") and Settings.defaultGravity or (OrionLib.Flags["rage_bhop_type"].Value == "CFrame Walk" or OrionLib.Flags["rage_bhop_type"].Value == "Gyro Walk") and 99999
+			BodyVelocity.Velocity = Vector3.new(rot.LookVector.X,0,rot.LookVector.Z) * (OrionLib.Flags["rage_bhop_speed"].Value * 2)
+			if add == 0 and not UserInputService:IsKeyDown("W") then
+				BodyVelocity:Destroy()
+			elseif OrionLib.Flags["rage_bhop_type"].Value == "CFrame" or OrionLib.Flags["rage_bhop_type"].Value == "CFrame Walk" then
+				BodyVelocity:Destroy()
+				LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(rot.LookVector.X,0,rot.LookVector.Z) * OrionLib.Flags["rage_bhop_speed"].Value/50
+			end
+		elseif OrionLib.Flags["rage_bhop_enable"].Value == false then
+			if workspace.Gravity ~= Settings.defaultGravity then workspace.Gravity = Settings.defaultGravity end
+		end
+
+        if OrionLib.Flags["rage_anti_aim_enable"].Value == true and isalivelp then
+			if LocalPlayer.Character.Humanoid.AutoRotate == true then LocalPlayer.Character.Humanoid.AutoRotate = false end
+			--[[Settings.rage.spin = math.clamp(Settings.rage.spin + 1, 0, 360)
+			if Settings.rage.spin == 360 then Settings.rage.spin = 0 end]]
+			local Angle = -math.atan2(workspace.CurrentCamera.CFrame.LookVector.Z, workspace.CurrentCamera.CFrame.LookVector.X) + math.rad(-90)
+			Angle = Angle + math.rad(math.random(0, 360))
+			local CFramePos = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position) * CFrame.Angles(0, Angle, 0)
+
+            LocalPlayer.Character.HumanoidRootPart.CFrame = YROTATION(CFramePos)
+			--[[if values.rage.angles["body roll"].Dropdown == "180" then
+				Root.CFrame = Root.CFrame * CFrame.Angles(values.rage.angles["body roll"].Dropdown == "180" and math.rad(180) or 0, 1, 0)
+				LocalPlayer.Character.Humanoid.HipHeight = 4
+			else
+				LocalPlayer.Character.Humanoid.HipHeight = 2
+			end]]
+			local rdnm = math.random(#Settings.rage.antiaim + 1)
+			local Pitch = rdnm == (#Settings.rage.antiaim + 1) and math.random(-100, 100)/10 or Settings.rage.antiaim[rdnm]
+			--[[if values.rage.angles["extend pitch"].Toggle and (values.rage.angles["pitch"].Dropdown == "up" or values.rage.angles["pitch"].Dropdown == "down") then
+				Pitch = (Pitch*2)/1.6
+			end]]
+			ReplicatedStorage.Events.ControlTurn:FireServer(Pitch, LocalPlayer.Character:FindFirstChild("Climbing") and true or false)
+		elseif OrionLib.Flags["rage_anti_aim_enable"].Value == false and isalivelp then
+			if LocalPlayer.Character.Humanoid.AutoRotate == false then LocalPlayer.Character.Humanoid.AutoRotate = true end
+			LocalPlayer.Character.Humanoid.HipHeight = 2
+            LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(LocalPlayer.Character.HumanoidRootPart.Position) * CFrame.Angles(0, -math.atan2(workspace.CurrentCamera.CFrame.LookVector.Z, workspace.CurrentCamera.CFrame.LookVector.X) + math.rad(270), 0)
+			ReplicatedStorage.Events.ControlTurn:FireServer(workspace.CurrentCamera.CFrame.LookVector.Y, LocalPlayer.Character:FindFirstChild("Climbing") and true or false)
+		end
 	end)
 end)
 
@@ -1832,11 +1920,11 @@ game.Players.PlayerAdded:Connect(function(player)
 
 		player.CharacterAdded:Connect(function(Character)
 			wait(1)
-			if Character ~= nil then
-				local Value = Instance.new("Vector3Value")      
-				Value.Name = "OldPosition"      
-				Value.Value = Character.HumanoidRootPart.Position      
-				Value.Parent = Character.HumanoidRootPart  
+			if Character ~= nil and Character:FindFirstChild("HumanoidRootPart") then
+				local Value = Instance.new("Vector3Value")
+				Value.Name = "OldPosition"
+				Value.Value = Character.HumanoidRootPart.Position
+				Value.Parent = Character.HumanoidRootPart
 			end
 		end)
     end)

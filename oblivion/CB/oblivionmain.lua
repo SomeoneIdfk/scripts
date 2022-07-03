@@ -1480,7 +1480,7 @@ oldNamecall = hookfunc(mt.__namecall, newcclosure(function(self, ...)
 		end
 	elseif method == "FindPartOnRayWithIgnoreList" and args[2][1] == workspace.Debris then
 		if not checkcaller() or Settings.aimbot.filter then
-			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and Settings.aimbot.target ~= nil then
+			if OrionLib.Flags["aimbot_method"].Value == "Silent Aim" and Settings.aimbot.target ~= nil and (OrionLib.Flags["aimbot_keybind_only"].Value == false or OrionLib.Flags["aimbot_keybind_only"].Value == true and Settings.aimbot.aim == true) then
 				args[1] = Ray.new(LocalPlayer.Character.Head.Position, (Settings.aimbot.target.Character.Head.Position - LocalPlayer.Character.Head.Position).unit * (ReplicatedStorage.Weapons[LocalPlayer.Character.EquippedTool.Value].Range.Value * 0.1))
 			end
 		end
